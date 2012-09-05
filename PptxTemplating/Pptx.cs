@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
-using A = DocumentFormat.OpenXml.Drawing;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 namespace PptxTemplating
 {
@@ -52,8 +51,8 @@ namespace PptxTemplating
             /*
             // Get the inner text of the slide:
             StringBuilder paragraphText = new StringBuilder();
-            IEnumerable<A.Text> texts = slide.Slide.Descendants<A.Text>();
-            foreach (A.Text text in texts)
+            IEnumerable<Drawing.Text> texts = slide.Slide.Descendants<Drawing.Text>();
+            foreach (Drawing.Text text in texts)
             {
                 paragraphText.Append(text.Text);
             }
@@ -69,14 +68,12 @@ namespace PptxTemplating
             LinkedList<string> texts = new LinkedList<string>();
 
             // Iterate through all the paragraphs in the slide.
-            foreach (DocumentFormat.OpenXml.Drawing.Paragraph paragraph in
-                     slide.Slide.Descendants<DocumentFormat.OpenXml.Drawing.Paragraph>())
+            foreach (Drawing.Paragraph paragraph in slide.Slide.Descendants<Drawing.Paragraph>())
             {
                 StringBuilder paragraphText = new StringBuilder();
 
                 // Iterate through the lines of the paragraph.
-                foreach (DocumentFormat.OpenXml.Drawing.Text text in
-                         paragraph.Descendants<DocumentFormat.OpenXml.Drawing.Text>())
+                foreach (Drawing.Text text in paragraph.Descendants<Drawing.Text>())
                 {
                     paragraphText.Append(text.Text);
                 }
