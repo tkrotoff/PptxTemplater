@@ -29,9 +29,14 @@ namespace PptxTemplating.Tests
 
             string[] expected = {"test1", "Hello, world!"};
             CollectionAssert.AreEqual(expected, slidesText[0]);
-            expected = new string[] {"Titre 1", "Bullet 1", "Bullet 2"};
+            expected = new string[]
+                           {
+                               "Title 1", "Bullet 1", "Bullet 2",
+                               "Column 1", "Column 2", "Column 3", "Column 4", "Column 5",
+                               "Line 1", "Line 2", "Line 3", "Line 4"
+                           };
             CollectionAssert.AreEqual(expected, slidesText[1]);
-            expected = new string[] {"Titre 2", "Bullet 1", "Bullet 2"};
+            expected = new string[] {"Title 2", "Bullet 1", "Bullet 2"};
             CollectionAssert.AreEqual(expected, slidesText[2]);
         }
     }
