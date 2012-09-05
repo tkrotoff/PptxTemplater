@@ -11,66 +11,84 @@ namespace PptxTemplating
 {
     public class Pptx
     {
-        // See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
-        public static int CountSlides(string presentationFile)
+        private PresentationDocument _pptx;
+
+        public Pptx(string file, bool isEditable)
         {
-            // Open the presentation as read-only.
-            using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationFile, false))
-            {
-                // Pass the presentation to the next CountSlides method
-                // and return the slide count.
-                return CountSlides(presentationDocument);
-            }
+            _pptx = PresentationDocument.Open(file, isEditable);
+        }
+
+        public void Close()
+        {
+            _pptx.Close();
         }
 
         // Count the slides in the presentation.
         // See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
-        public static int CountSlides(PresentationDocument presentationDocument)
+        public int CountSlides()
         {
-            // Check for a null document object.
-            if (presentationDocument == null)
-            {
-                throw new ArgumentNullException("presentationDocument");
-            }
-
-            int slidesCount = 0;
-
             // Get the presentation part of document.
-            PresentationPart presentationPart = presentationDocument.PresentationPart;
-            // Get the slide count from the SlideParts.
-            if (presentationPart != null)
-            {
-                slidesCount = presentationPart.SlideParts.Count();
-            }
-            // Return the slide count to the previous method.
-            return slidesCount;
+            PresentationPart part = _pptx.PresentationPart;
+
+            return part.SlideParts.Count();
         }
 
+        // See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
         // See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
-        public static void GetSlideIdAndText(out string sldText, string docName, int index)
+        public string[] GetAllTextInSlide(int slideIndex)
         {
-            using (PresentationDocument ppt = PresentationDocument.Open(docName, false))
+            // Get the presentation part of the presentation document.
+            PresentationPart part = _pptx.PresentationPart;
+
+            // Get the collection of slide IDs
+            OpenXmlElementList slideIds = part.Presentation.SlideIdList.ChildElements;
+
+            // Get the relationship ID of the slide.
+            string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
+
+            // Get the specified slide part from the relationship ID.
+            SlidePart slide = (SlidePart) part.GetPartById(relId);
+
+            /*
+            // Get the inner text of the slide:
+            StringBuilder paragraphText = new StringBuilder();
+            IEnumerable<A.Text> texts = slide.Slide.Descendants<A.Text>();
+            foreach (A.Text text in texts)
             {
-                // Get the relationship ID of the first slide.
-                PresentationPart part = ppt.PresentationPart;
-                OpenXmlElementList slideIds = part.Presentation.SlideIdList.ChildElements;
+                paragraphText.Append(text.Text);
+            }
+            */
 
-                string relId = (slideIds[index] as SlideId).RelationshipId;
+            return GetAllTextInSlide(slide);
+        }
 
-                // Get the slide part from the relationship ID.
-                SlidePart slide = (SlidePart)part.GetPartById(relId);
+        // See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
+        private static string[] GetAllTextInSlide(SlidePart slide)
+        {
+            // Create a new linked list of strings.
+            LinkedList<string> texts = new LinkedList<string>();
 
-                // Build a StringBuilder object.
+            // Iterate through all the paragraphs in the slide.
+            foreach (DocumentFormat.OpenXml.Drawing.Paragraph paragraph in
+                     slide.Slide.Descendants<DocumentFormat.OpenXml.Drawing.Paragraph>())
+            {
                 StringBuilder paragraphText = new StringBuilder();
 
-                // Get the inner text of the slide:
-                IEnumerable<A.Text> texts = slide.Slide.Descendants<A.Text>();
-                foreach (A.Text text in texts)
+                // Iterate through the lines of the paragraph.
+                foreach (DocumentFormat.OpenXml.Drawing.Text text in
+                         paragraph.Descendants<DocumentFormat.OpenXml.Drawing.Text>())
                 {
                     paragraphText.Append(text.Text);
                 }
-                sldText = paragraphText.ToString();
+
+                if (paragraphText.Length > 0)
+                {
+                    texts.AddLast(paragraphText.ToString());
+                }
             }
+
+            return texts.ToArray();
         }
+
     }
 }
