@@ -1,0 +1,4 @@
+*.suo
+PptxTemplating/obj/
+PptxTemplating/bin/
+_ReSharper.PptxTemplating/
