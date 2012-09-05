@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PptxTemplating
 {
-    public class Class1
+    public class Pptx
     {
     }
 }
