@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PptxTemplating", "PptxTemplating\PptxTemplating.csproj", "{DBF3DA44-73D2-43C0-B800-65EEDBF4282E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PptxTemplating.Tests", "PptxTemplating.Tests\PptxTemplating.Tests.csproj", "{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1AE4361E-2DBD-4CED-B900-27BDDFEBFBE8}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		PptxTemplating.vsmdi = PptxTemplating.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = PptxTemplating.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -13,6 +25,10 @@ Global
 		{DBF3DA44-73D2-43C0-B800-65EEDBF4282E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBF3DA44-73D2-43C0-B800-65EEDBF4282E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBF3DA44-73D2-43C0-B800-65EEDBF4282E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
