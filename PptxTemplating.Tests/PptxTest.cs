@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace PptxTemplating.Tests
 {
@@ -38,6 +39,28 @@ namespace PptxTemplating.Tests
             CollectionAssert.AreEqual(expected, slidesText[1]);
             expected = new string[] {"Title 2", "Bullet 1", "Bullet 2"};
             CollectionAssert.AreEqual(expected, slidesText[2]);
+        }
+
+        [TestMethod]
+        public void TestReplaceTagInSlide()
+        {
+            string srcFileName = "../../files/ReplaceTagInSlide.pptx";
+            string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+            int nbSlides = pptx.CountSlides();
+
+            for (int i = 0; i < nbSlides; i++)
+            {
+                pptx.ReplaceTagInSlide(i, "<hello>", "HELLO");
+                pptx.ReplaceTagInSlide(i, "<bonjour>", "BONJOUR");
+                pptx.ReplaceTagInSlide(i, "<hola>", "HOLA");
+
+                pptx.ReplaceTagInSlide(i, "<notfound>", "NOTFOUND");
+            }
+
+            pptx.Close();
         }
     }
 }
