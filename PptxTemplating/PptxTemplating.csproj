@@ -42,6 +42,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StringExtension.cs" />
     <Compile Include="Pptx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
