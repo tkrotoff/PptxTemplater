@@ -36,6 +36,8 @@ namespace PptxTemplating.Tests
             CollectionAssert.AreEqual(expected, slidesText[1]);
             expected = new string[] {"Title 2", "Bullet 1", "Bullet 2"};
             CollectionAssert.AreEqual(expected, slidesText[2]);
+
+            pptx.Close();
         }
 
         [TestMethod]

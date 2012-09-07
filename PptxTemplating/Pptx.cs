@@ -18,11 +18,6 @@ namespace PptxTemplating
             _pptx = PresentationDocument.Open(file, isEditable);
         }
 
-        ~Pptx()
-        {
-            //Close();
-        }
-
         public void Close()
         {
             _pptx.Close();
@@ -125,20 +120,6 @@ namespace PptxTemplating
              </a:p>
             */
 
-            // Iterate through all the paragraphs in the slide.
-            foreach (A.Paragraph p in slide.Slide.Descendants<A.Paragraph>())
-            {
-                // Iterate through the lines of the paragraph.
-                foreach (A.Text t in p.Descendants<A.Text>())
-                {
-                    if (Regex.Match(t.Text, tag).Success)
-                    {
-                        string modifiedText = Regex.Replace(t.Text, tag, newText);
-                        t.Text = modifiedText;
-                    }
-                }
-            }
-
             /*
              <a:p>
               <a:r>
@@ -150,7 +131,7 @@ namespace PptxTemplating
               <a:r>
                <a:rPr lang="en-US" dirty="0" smtClean="0"/>
                <a:t>
-                >
+                > le monde !
                </a:t>
               </a:r>
               <a:endParaRPr lang="en-US" dirty="0"/>

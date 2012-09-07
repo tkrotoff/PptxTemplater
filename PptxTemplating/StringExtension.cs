@@ -9,10 +9,8 @@ namespace PptxTemplating
             List<string> strList = new List<string>();
 
             int fullLength = 0;
-            for (int i = 0; i < lengths.Count; i++)
+            foreach (int length in lengths)
             {
-                int length = lengths[i];
-
                 if (fullLength + length >= str.Length)
                 {
                     strList.Add(str.Substring(fullLength, str.Length - fullLength));
