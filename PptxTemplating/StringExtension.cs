@@ -4,7 +4,7 @@ namespace PptxTemplating
 {
     public static class StringExtension
     {
-        public static string[] Substrings(this string str, List<int> lengths)
+        public static string[] Substrings(this string str, IEnumerable<int> lengths)
         {
             List<string> strList = new List<string>();
 
