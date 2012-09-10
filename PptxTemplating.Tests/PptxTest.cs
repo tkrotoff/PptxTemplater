@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PptxTemplating.Tests
@@ -49,17 +50,27 @@ namespace PptxTemplating.Tests
 
             Pptx pptx = new Pptx(dstFileName, true);
             int nbSlides = pptx.CountSlides();
-
             for (int i = 0; i < nbSlides; i++)
             {
-                pptx.ReplaceTagInSlide(i, "<hello>", "HELLO");
-                pptx.ReplaceTagInSlide(i, "<bonjour>", "BONJOUR");
-                pptx.ReplaceTagInSlide(i, "<hola>", "HOLA");
-
-                pptx.ReplaceTagInSlide(i, "<notfound>", "NOTFOUND");
+                pptx.ReplaceTagInSlide(i, "{{hello}}", "HELLO");
+                pptx.ReplaceTagInSlide(i, "{{bonjour}}", "BONJOUR");
+                pptx.ReplaceTagInSlide(i, "{{hola}}", "HOLA");
             }
-
             pptx.Close();
+
+            // Check the replaced text is here
+            pptx = new Pptx(dstFileName, false);
+            nbSlides = pptx.CountSlides();
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                string[] texts = pptx.GetAllTextInSlide(i);
+                result.Append(string.Join(" ", texts));
+                result.Append(" ");
+            }
+            pptx.Close();
+            const string expected = "ReplaceTagInSlide HELLO, world! A tag HOLA inside a sentence A tag BONJOUR inside a sentence HELLO, world! ";
+            Assert.AreEqual(expected, result.ToString());
         }
     }
 }
