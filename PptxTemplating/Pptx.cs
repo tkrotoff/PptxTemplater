@@ -19,8 +19,8 @@ namespace PptxTemplating
             _pptx.Close();
         }
 
-        // Count the slides in the presentation.
-        // See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
+        /// Count the slides in the presentation.
+        /// See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
         public int CountSlides()
         {
             // Get the presentation part of document.
@@ -29,8 +29,8 @@ namespace PptxTemplating
             return part.SlideParts.Count();
         }
 
-        // See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
-        // See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
+        /// See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
+        /// See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
         public string[] GetAllTextInSlide(int slideIndex)
         {
             // Get the presentation part of the presentation document.
