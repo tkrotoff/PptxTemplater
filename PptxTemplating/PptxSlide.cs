@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Presentation;
 using A = DocumentFormat.OpenXml.Drawing;
 
 namespace PptxTemplating
@@ -19,33 +16,32 @@ namespace PptxTemplating
         }
 
         /// Returns all text found inside the slide.
+        /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
         public string[] GetAllText()
         {
-            // Create a new linked list of strings.
-            LinkedList<string> texts = new LinkedList<string>();
-
-            // Iterate through all the paragraphs in the slide.
+            List<string> texts = new List<string>();
             foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
             {
-                StringBuilder paragraphText = new StringBuilder();
-
-                // Iterate through the lines of the paragraph.
-                foreach (A.Text t in p.Descendants<A.Text>())
-                {
-                    paragraphText.Append(t.Text);
-                }
-
-                if (paragraphText.Length > 0)
-                {
-                    texts.AddLast(paragraphText.ToString());
-                }
+                texts.Add(GetParagraphAllText(p));
             }
-
             return texts.ToArray();
         }
 
-        class TextIndex
+        /// Returns all text found inside a given paragraph.
+        /// If all A.Text in the given paragraph are empty, returns an empty string
+        private string GetParagraphAllText(A.Paragraph p)
+        {
+            StringBuilder concat = new StringBuilder();
+            foreach (A.Text t in p.Descendants<A.Text>())
+            {
+                concat.Append(t.Text);
+            }
+            return concat.ToString();
+        }
+
+        /// Associates a A.Text with start and end index matching a paragraph full string (= the concatenation of all A.Text of a paragraph).
+        private class TextIndex
         {
             public A.Text Text { get; private set; }
             public int StartIndex { get; private set; }
@@ -56,6 +52,22 @@ namespace PptxTemplating
                 Text = t;
                 StartIndex = startIndex;
             }
+        }
+
+        /// Gets all the TextIndex for a given paragraph.
+        private List<TextIndex> GetTextIndexList(A.Paragraph p)
+        {
+            List<TextIndex> texts = new List<TextIndex>();
+
+            StringBuilder concat = new StringBuilder();
+            foreach (A.Text t in p.Descendants<A.Text>())
+            {
+                int startIndex = concat.Length;
+                texts.Add(new TextIndex(t, startIndex));
+                concat.Append(t.Text);
+            }
+
+            return texts;
         }
 
         /// Replaces a text (tag) by another inside the slide.
@@ -94,32 +106,29 @@ namespace PptxTemplating
 
             foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
             {
-                StringBuilder concat = new StringBuilder();
-                List<TextIndex> texts = new List<TextIndex>();
-
-                // Concats all a:t
-                foreach (A.Text t in p.Descendants<A.Text>())
+                while (true)
                 {
-                    texts.Add(new TextIndex(t, concat.Length));
-                    concat.Append(t.Text);
-                }
-                //
+                    string allText = GetParagraphAllText(p);
 
-                string fullText = concat.ToString();
+                    // Search for the tag
+                    Match match = Regex.Match(allText, tag);
+                    if (!match.Success)
+                    {
+                        break;
+                    }
 
-                // Search for the tag
-                MatchCollection matches = Regex.Matches(fullText, tag);
-                foreach (Match match in matches)
-                {
+                    List<TextIndex> texts = GetTextIndexList(p);
+
                     for (int i = 0; i < texts.Count; i++)
                     {
                         TextIndex text = texts[i];
                         if (match.Index >= text.StartIndex && match.Index <= text.EndIndex)
                         {
-                            // Ok we got the right a:r/a:t
+                            // Got the right A.Text
 
-                            int index = match.Index;
+                            int index = match.Index - text.StartIndex;
                             int done = 0;
+
                             for (; i < texts.Count; i++)
                             {
                                 TextIndex currentText = texts[i];
@@ -166,6 +175,7 @@ namespace PptxTemplating
                                         }
                                     }
                                 }
+
                                 currentText.Text.Text = new string(currentTextChars.ToArray());
                                 index = 0;
                             }

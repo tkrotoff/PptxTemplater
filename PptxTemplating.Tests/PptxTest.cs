@@ -11,7 +11,7 @@ namespace PptxTemplating.Tests
         [TestMethod]
         public void TestGetAllTextInAllSlides()
         {
-            string file = "../../files/test1.pptx";
+            const string file = "../../files/test1.pptx";
 
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.CountSlides();
@@ -30,7 +30,10 @@ namespace PptxTemplating.Tests
                            {
                                "Title 1", "Bullet 1", "Bullet 2",
                                "Column 1", "Column 2", "Column 3", "Column 4", "Column 5",
-                               "Line 1", "Line 2", "Line 3", "Line 4"
+                               "Line 1", "", "", "", "",
+                               "Line 2", "", "", "", "",
+                               "Line 3", "", "", "", "",
+                               "Line 4", "", "", "", ""
                            };
             CollectionAssert.AreEqual(expected, slidesText[1]);
             expected = new string[] {"Title 2", "Bullet 1", "Bullet 2"};
@@ -42,14 +45,14 @@ namespace PptxTemplating.Tests
         [TestMethod]
         public void TestReplaceTagInSlide()
         {
-            string srcFileName = "../../files/ReplaceTagInSlide.pptx";
-            string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
+            const string srcFileName = "../../files/ReplaceTagInSlide.pptx";
+            const string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
             int nbSlides = pptx.CountSlides();
-            Assert.AreEqual(2, nbSlides);
+            Assert.AreEqual(3, nbSlides);
 
             // First slide
             pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO HOW ARE YOU?");
@@ -60,6 +63,11 @@ namespace PptxTemplating.Tests
             pptx.ReplaceTagInSlide(1, "{{hello}}", "H");
             pptx.ReplaceTagInSlide(1, "{{bonjour}}", "B");
             pptx.ReplaceTagInSlide(1, "{{hola}}", "H");
+
+            // Third slide
+            pptx.ReplaceTagInSlide(2, "{{hello}}", "");
+            pptx.ReplaceTagInSlide(2, "{{bonjour}}", "");
+            pptx.ReplaceTagInSlide(2, "{{hola}}", "");
 
             pptx.Close();
 
@@ -74,7 +82,7 @@ namespace PptxTemplating.Tests
                 result.Append(" ");
             }
             pptx.Close();
-            const string expected = "words HELLO HOW ARE YOU?, world! A tag HOLA MAMA QUE TAL? inside a sentence A tag BONJOUR TOUT LE MONDE inside a sentence HELLO HOW ARE YOU?, world! words H, world! A tag H inside a sentence A tag Binside a sentence H, world! ";
+            const string expected = "words HELLO HOW ARE YOU?|HELLO HOW ARE YOU?|HOLA MAMA QUE TAL?, world! A tag {{hoHOLA MAMA QUE TAL?la}} inside a sentence BONJOUR TOUT LE MONDE A tag BONJOUR TOUT LE MONDEHOLA MAMA QUE TAL?BONJOUR TOUT LE MONDE inside a sentence HELLO HOW ARE YOU?, world! words H|H|H, world! A tag {{hoHla}} inside a sentence B A tag BHB inside a sentence H, world! words ||, world! A tag  inside a sentence  A tag inside a sentence , world! ";
             Assert.AreEqual(expected, result.ToString());
         }
     }
