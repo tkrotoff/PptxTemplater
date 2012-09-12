@@ -186,42 +186,5 @@ namespace PptxTemplating
                 }
             }
         }
-
-        /// <a:p xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-        ///   <a:r>
-        ///     <a:rPr lang="en-US" dirty="0" smtClean="0" />
-        ///     <a:t>Some text</a:t>
-        ///   </a:r>
-        ///   [...]
-        /// </a:p>
-        private static void InsertTextInsideParagraph(A.Paragraph p, A.Run rAfter, string text)
-        {
-            A.Run r = new A.Run();
-            //A.RunProperties rPr = new A.RunProperties(/*rPrTemplate*/);
-            A.RunProperties rPr = new A.RunProperties() { Language = "fr-FR", Dirty = false, SmartTagClean = false };
-            A.Text t = new A.Text(text);
-
-            r.AppendChild(rPr);
-            //r.AppendChild(rPr);
-            r.AppendChild(t);
-
-            //p.AppendChild(r);
-            p.InsertAfter(r, rAfter);
-        }
-
-        private static void InsertTextInsideParagraph(A.Paragraph p, int at, string text)
-        {
-            A.Run r = new A.Run();
-            //A.RunProperties rPr = new A.RunProperties(/*rPrTemplate*/);
-            A.RunProperties rPr = new A.RunProperties() { Language = "fr-FR", Dirty = false, SmartTagClean = false };
-            A.Text t = new A.Text(text);
-
-            r.AppendChild(rPr);
-            //r.AppendChild(rPr);
-            r.AppendChild(t);
-
-            //p.AppendChild(r);
-            p.InsertAt(r, at);
-        }
     }
 }

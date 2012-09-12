@@ -60,6 +60,7 @@ namespace PptxTemplating.Tests
             pptx.ReplaceTagInSlide(1, "{{hello}}", "H");
             pptx.ReplaceTagInSlide(1, "{{bonjour}}", "B");
             pptx.ReplaceTagInSlide(1, "{{hola}}", "H");
+
             pptx.Close();
 
             // Check the replaced text is here
