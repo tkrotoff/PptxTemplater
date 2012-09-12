@@ -44,6 +44,7 @@ namespace PptxTemplating.Tests
         {
             string srcFileName = "../../files/ReplaceTagInSlide.pptx";
             string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
+            File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
@@ -72,8 +73,8 @@ namespace PptxTemplating.Tests
                 result.Append(" ");
             }
             pptx.Close();
-            const string expected = "ReplaceTagInSlide HELLO, world! A tag HOLA inside a sentence A tag BONJOUR inside a sentence HELLO, world! ";
-            //Assert.AreEqual(expected, result.ToString());
+            const string expected = "words HELLO HOW ARE YOU?, world! A tag HOLA MAMA QUE TAL? inside a sentence A tag BONJOUR TOUT LE MONDE inside a sentence HELLO HOW ARE YOU?, world! words H, world! A tag H inside a sentence A tag Binside a sentence H, world! ";
+            Assert.AreEqual(expected, result.ToString());
         }
     }
 }
