@@ -6,6 +6,7 @@ using A = DocumentFormat.OpenXml.Drawing;
 
 namespace PptxTemplating
 {
+    /// Represents a slide inside a PowerPoint file.
     class PptxSlide
     {
         private readonly SlidePart _slide;
@@ -15,8 +16,9 @@ namespace PptxTemplating
             _slide = slide;
         }
 
-        /// Returns all text found inside the slide.
+        /// Gets all text found inside the slide.
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
+        ///
         /// See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
         public string[] GetAllText()
         {
@@ -71,6 +73,7 @@ namespace PptxTemplating
         }
 
         /// Replaces a text (tag) by another inside the slide.
+        ///
         /// See How to replace a paragraph's text using OpenXML SDK http://stackoverflow.com/questions/4276077/how-to-replace-an-paragraphs-text-using-openxml-sdk
         public void ReplaceTag(string tag, string newText)
         {
