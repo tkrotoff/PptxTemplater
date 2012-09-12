@@ -69,7 +69,7 @@ namespace PptxTemplating
               <a:r>
                <a:rPr lang="en-US" dirty="0" smtClean="0"/>
                <a:t>
-                Hello this is a tag: <hello>
+                Hello this is a tag: {{hello}}
                </a:t>
               </a:r>
               <a:endParaRPr lang="fr-FR" dirty="0"/>
@@ -81,13 +81,13 @@ namespace PptxTemplating
               <a:r>
                <a:rPr lang="en-US" dirty="0" smtClean="0"/>
                <a:t>
-                Another tag: <bonjour
+                Another tag: {{bonjour
                </a:t>
               </a:r>
               <a:r>
                <a:rPr lang="en-US" dirty="0" smtClean="0"/>
                <a:t>
-                > le monde !
+                }} le monde !
                </a:t>
               </a:r>
               <a:endParaRPr lang="en-US" dirty="0"/>
@@ -128,22 +128,24 @@ namespace PptxTemplating
 
                             int index = match.Index;
                             int done = 0;
-                            for (int j = i; j < runs.Count - i; j++)
+                            for (; i < runs.Count; i++)
                             {
-                                RunIndex currentRun = runs[j];
+                                RunIndex currentRun = runs[i];
 
-                                int currentRunTextLength = currentRun.Text.Text.Length;
                                 List<char> currentRunText = new List<char>(currentRun.Text.Text.ToCharArray());
 
-                                for (int k = index; k < currentRunTextLength; k++, done++)
+                                for (int k = index; k < currentRunText.Count; k++, done++)
                                 {
                                     if (done < newText.Length)
                                     {
-                                        if (done >= tag.Length)
+                                        if (done >= tag.Length - 1)
                                         {
+                                            // Case if newText is longer than the tag
                                             // Insert characters
                                             int remains = newText.Length - done;
+                                            currentRunText.RemoveAt(k);
                                             currentRunText.InsertRange(k, newText.Substring(done, remains));
+                                            done += remains;
                                             break;
                                         }
                                         else
@@ -155,12 +157,17 @@ namespace PptxTemplating
                                     {
                                         if (done < tag.Length)
                                         {
+                                            // Case if newText is shorter than the tag
                                             // Erase characters
-                                            currentRunText[k] = 'X';
+                                            int remains = tag.Length - done;
+                                            currentRunText.RemoveRange(k, remains);
+                                            done += remains;
+                                            break;
                                         }
                                         else
                                         {
-                                            currentRunText[k] = currentRunText[k];
+                                            // Regular case, no need to implement it
+                                            //currentRunText[k] = currentRunText[k];
                                         }
                                     }
                                 }

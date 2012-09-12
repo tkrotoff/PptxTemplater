@@ -50,9 +50,9 @@ namespace PptxTemplating.Tests
             int nbSlides = pptx.CountSlides();
             for (int i = 0; i < nbSlides; i++)
             {
-                pptx.ReplaceTagInSlide(i, "{{hello}}", "HELLO");
-                pptx.ReplaceTagInSlide(i, "{{bonjour}}", "BONJOUR BONJOUR BONJOUR BONJOUR BONJOUR BONJOUR");
-                pptx.ReplaceTagInSlide(i, "{{hola}}", "HOLA");
+                pptx.ReplaceTagInSlide(i, "{{hello}}", "HELLO HOW ARE YOU?");
+                pptx.ReplaceTagInSlide(i, "{{bonjour}}", "BONJOUR");
+                pptx.ReplaceTagInSlide(i, "{{hola}}", "HOLA MAMA QUE TAL?");
             }
             pptx.Close();
 
