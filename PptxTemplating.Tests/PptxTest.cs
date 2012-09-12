@@ -9,7 +9,7 @@ namespace PptxTemplating.Tests
     public class PptxTest
     {
         [TestMethod]
-        public void TestGetAllTextInAllSlides()
+        public void GetAllTextInAllSlides()
         {
             const string file = "../../files/test1.pptx";
 
@@ -43,7 +43,7 @@ namespace PptxTemplating.Tests
         }
 
         [TestMethod]
-        public void TestReplaceTagInSlide()
+        public void ReplaceTagsInAllSlides()
         {
             const string srcFileName = "../../files/ReplaceTagInSlide.pptx";
             const string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
