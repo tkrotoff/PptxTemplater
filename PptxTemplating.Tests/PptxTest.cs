@@ -11,7 +11,7 @@ namespace PptxTemplating.Tests
         [TestMethod]
         public void GetAllTextInAllSlides()
         {
-            const string file = "../../files/test1.pptx";
+            const string file = "../../files/GetAllTextInAllSlides.pptx";
 
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.CountSlides();
@@ -45,8 +45,8 @@ namespace PptxTemplating.Tests
         [TestMethod]
         public void ReplaceTagsInAllSlides()
         {
-            const string srcFileName = "../../files/ReplaceTagInSlide.pptx";
-            const string dstFileName = "../../files/ReplaceTagInSlide2.pptx";
+            const string srcFileName = "../../files/ReplaceTagsInAllSlides.pptx";
+            const string dstFileName = "../../files/ReplaceTagsInAllSlides_result.pptx";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
