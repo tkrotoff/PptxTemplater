@@ -45,16 +45,14 @@ namespace PptxTemplating
             return texts.ToArray();
         }
 
-        class RunIndex
+        class TextIndex
         {
-            public A.Run Run { get; set; }
-            public A.Text Text { get; set; }
-            public int StartIndex { get; set; }
+            public A.Text Text { get; private set; }
+            public int StartIndex { get; private set; }
             public int EndIndex { get { return StartIndex + Text.Text.Length; } }
 
-            public RunIndex(A.Run r, A.Text t, int startIndex)
+            public TextIndex(A.Text t, int startIndex)
             {
-                Run = r;
                 Text = t;
                 StartIndex = startIndex;
             }
@@ -97,18 +95,13 @@ namespace PptxTemplating
             foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
             {
                 StringBuilder concat = new StringBuilder();
-                List<RunIndex> runs = new List<RunIndex>();
+                List<TextIndex> texts = new List<TextIndex>();
 
                 // Concats all a:t
-                foreach (A.Run r in p.Descendants<A.Run>())
+                foreach (A.Text t in p.Descendants<A.Text>())
                 {
-                    foreach (A.Text t in r.Descendants<A.Text>())
-                    {
-                        runs.Add(new RunIndex(r, t, concat.Length));
-
-                        string tmp = t.Text;
-                        concat.Append(tmp);
-                    }
+                    texts.Add(new TextIndex(t, concat.Length));
+                    concat.Append(t.Text);
                 }
                 //
 
@@ -118,23 +111,21 @@ namespace PptxTemplating
                 MatchCollection matches = Regex.Matches(fullText, tag);
                 foreach (Match match in matches)
                 {
-                    //foreach (RunIndex run in runs)
-                    for (int i = 0; i < runs.Count; i++)
+                    for (int i = 0; i < texts.Count; i++)
                     {
-                        RunIndex run = runs[i];
-                        if (match.Index >= run.StartIndex && match.Index <= run.EndIndex)
+                        TextIndex text = texts[i];
+                        if (match.Index >= text.StartIndex && match.Index <= text.EndIndex)
                         {
                             // Ok we got the right a:r/a:t
 
                             int index = match.Index;
                             int done = 0;
-                            for (; i < runs.Count; i++)
+                            for (; i < texts.Count; i++)
                             {
-                                RunIndex currentRun = runs[i];
+                                TextIndex currentText = texts[i];
+                                List<char> currentTextChars = new List<char>(currentText.Text.Text.ToCharArray());
 
-                                List<char> currentRunText = new List<char>(currentRun.Text.Text.ToCharArray());
-
-                                for (int k = index; k < currentRunText.Count; k++, done++)
+                                for (int k = index; k < currentTextChars.Count; k++, done++)
                                 {
                                     if (done < newText.Length)
                                     {
@@ -143,14 +134,14 @@ namespace PptxTemplating
                                             // Case if newText is longer than the tag
                                             // Insert characters
                                             int remains = newText.Length - done;
-                                            currentRunText.RemoveAt(k);
-                                            currentRunText.InsertRange(k, newText.Substring(done, remains));
+                                            currentTextChars.RemoveAt(k);
+                                            currentTextChars.InsertRange(k, newText.Substring(done, remains));
                                             done += remains;
                                             break;
                                         }
                                         else
                                         {
-                                            currentRunText[k] = newText[done];
+                                            currentTextChars[k] = newText[done];
                                         }
                                     }
                                     else
@@ -160,27 +151,24 @@ namespace PptxTemplating
                                             // Case if newText is shorter than the tag
                                             // Erase characters
                                             int remains = tag.Length - done;
-                                            if (remains > currentRunText.Count - k)
+                                            if (remains > currentTextChars.Count - k)
                                             {
-                                                remains = currentRunText.Count - k;
+                                                remains = currentTextChars.Count - k;
                                             }
-                                            currentRunText.RemoveRange(k, remains);
+                                            currentTextChars.RemoveRange(k, remains);
                                             done += remains;
                                             break;
                                         }
                                         else
                                         {
                                             // Regular case, nothing to do
-                                            //currentRunText[k] = currentRunText[k];
+                                            //currentTextChars[k] = currentTextChars[k];
                                         }
                                     }
                                 }
-                                currentRun.Text.Text = new string(currentRunText.ToArray());
+                                currentText.Text.Text = new string(currentTextChars.ToArray());
                                 index = 0;
                             }
-
-                            // Leave the list of a:r
-                            //break;
                         }
                     }
                 }
