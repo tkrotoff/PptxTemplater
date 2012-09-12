@@ -160,13 +160,17 @@ namespace PptxTemplating
                                             // Case if newText is shorter than the tag
                                             // Erase characters
                                             int remains = tag.Length - done;
+                                            if (remains > currentRunText.Count - k)
+                                            {
+                                                remains = currentRunText.Count - k;
+                                            }
                                             currentRunText.RemoveRange(k, remains);
                                             done += remains;
                                             break;
                                         }
                                         else
                                         {
-                                            // Regular case, no need to implement it
+                                            // Regular case, nothing to do
                                             //currentRunText[k] = currentRunText[k];
                                         }
                                     }

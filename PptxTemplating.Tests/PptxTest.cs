@@ -48,12 +48,17 @@ namespace PptxTemplating.Tests
 
             Pptx pptx = new Pptx(dstFileName, true);
             int nbSlides = pptx.CountSlides();
-            for (int i = 0; i < nbSlides; i++)
-            {
-                pptx.ReplaceTagInSlide(i, "{{hello}}", "HELLO HOW ARE YOU?");
-                pptx.ReplaceTagInSlide(i, "{{bonjour}}", "BONJOUR");
-                pptx.ReplaceTagInSlide(i, "{{hola}}", "HOLA MAMA QUE TAL?");
-            }
+            Assert.AreEqual(2, nbSlides);
+
+            // First slide
+            pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO HOW ARE YOU?");
+            pptx.ReplaceTagInSlide(0, "{{bonjour}}", "BONJOUR TOUT LE MONDE");
+            pptx.ReplaceTagInSlide(0, "{{hola}}", "HOLA MAMA QUE TAL?");
+
+            // Second slide
+            pptx.ReplaceTagInSlide(1, "{{hello}}", "H");
+            pptx.ReplaceTagInSlide(1, "{{bonjour}}", "B");
+            pptx.ReplaceTagInSlide(1, "{{hola}}", "H");
             pptx.Close();
 
             // Check the replaced text is here
