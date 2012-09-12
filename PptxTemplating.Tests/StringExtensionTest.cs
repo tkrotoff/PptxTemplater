@@ -12,7 +12,7 @@ namespace PptxTemplating.Tests
             int[] splits = {};
             string[] substrings = {};
 
-            // Regular case
+            // Regular case, last split too small compared to the given string
             str = "Bonjour tout le monde";
             splits = new int[] { 5, 8, 3 };
             substrings = str.Substrings(splits);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,6 +45,21 @@ namespace PptxTemplating
             return texts.ToArray();
         }
 
+        class RunIndex
+        {
+            public A.Run Run { get; set; }
+            public A.Text Text { get; set; }
+            public int StartIndex { get; set; }
+            public int EndIndex { get { return StartIndex + Text.Text.Length; } }
+
+            public RunIndex(A.Run r, A.Text t, int startIndex)
+            {
+                Run = r;
+                Text = t;
+                StartIndex = startIndex;
+            }
+        }
+
         /// Replaces a text (tag) by another inside the slide.
         /// See How to replace a paragraph's text using OpenXML SDK http://stackoverflow.com/questions/4276077/how-to-replace-an-paragraphs-text-using-openxml-sdk
         public void ReplaceTag(string tag, string newText)
@@ -78,44 +94,83 @@ namespace PptxTemplating
              </a:p>
             */
 
-            bool insert = true;
-            //foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
-            for (int j = 0; j < _slide.Slide.Descendants<A.Paragraph>().Count(); j++)
+            foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
             {
-                A.Paragraph p = _slide.Slide.Descendants<A.Paragraph>().ElementAt(j);
-
                 StringBuilder concat = new StringBuilder();
-                List<int> splits = new List<int>();
+                List<RunIndex> runs = new List<RunIndex>();
 
+                // Concats all a:t
                 foreach (A.Run r in p.Descendants<A.Run>())
                 {
                     foreach (A.Text t in r.Descendants<A.Text>())
                     {
+                        runs.Add(new RunIndex(r, t, concat.Length));
+
                         string tmp = t.Text;
                         concat.Append(tmp);
-                        splits.Add(tmp.Count());
-                    }
-                    if (insert)
-                    {
-                        //InsertTextInsideParagraph(p, r, "FUCK");
-                        insert = false;
                     }
                 }
+                //
 
                 string fullText = concat.ToString();
-                List<string> modifiedTexts = new List<string>();
 
-                if (Regex.Match(fullText, tag).Success)
+                // Search for the tag
+                MatchCollection matches = Regex.Matches(fullText, tag);
+                foreach (Match match in matches)
                 {
-                    string modifiedText = Regex.Replace(fullText, tag, newText);
-                    modifiedTexts.AddRange(modifiedText.Substrings(splits));
-
-                    var texts = p.Descendants<A.Text>().ToList();
-                    for (int i = 0; i < texts.Count(); i++)
+                    //foreach (RunIndex run in runs)
+                    for (int i = 0; i < runs.Count; i++)
                     {
-                        /*A.Text t = texts[i];
-                        t.Text = modifiedTexts[i];*/
-                        InsertTextInsideParagraph(p, i + 1, "YOU");
+                        RunIndex run = runs[i];
+                        if (match.Index >= run.StartIndex && match.Index <= run.EndIndex)
+                        {
+                            // Ok we got the right a:r/a:t
+
+                            int index = match.Index;
+                            int done = 0;
+                            for (int j = i; j < runs.Count - i; j++)
+                            {
+                                RunIndex currentRun = runs[j];
+
+                                int currentRunTextLength = currentRun.Text.Text.Length;
+                                List<char> currentRunText = new List<char>(currentRun.Text.Text.ToCharArray());
+
+                                for (int k = index; k < currentRunTextLength; k++, done++)
+                                {
+                                    if (done < newText.Length)
+                                    {
+                                        if (done >= tag.Length)
+                                        {
+                                            // Insert characters
+                                            int remains = newText.Length - done;
+                                            currentRunText.InsertRange(k, newText.Substring(done, remains));
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            currentRunText[k] = newText[done];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (done < tag.Length)
+                                        {
+                                            // Erase characters
+                                            currentRunText[k] = 'X';
+                                        }
+                                        else
+                                        {
+                                            currentRunText[k] = currentRunText[k];
+                                        }
+                                    }
+                                }
+                                currentRun.Text.Text = new string(currentRunText.ToArray());
+                                index = 0;
+                            }
+
+                            // Leave the list of a:r
+                            //break;
+                        }
                     }
                 }
             }
