@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 
-namespace PptxTemplating
+namespace PptxTemplater
 {
     /// Represents a PowerPoint file.
     public class Pptx

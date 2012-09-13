@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PptxTemplating.Tests
+namespace PptxTemplater.Tests
 {
     [TestClass]
     public class PptxTest

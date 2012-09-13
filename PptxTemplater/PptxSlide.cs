@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 using A = DocumentFormat.OpenXml.Drawing;
 
-namespace PptxTemplating
+namespace PptxTemplater
 {
     /// Represents a slide inside a PowerPoint file.
     class PptxSlide

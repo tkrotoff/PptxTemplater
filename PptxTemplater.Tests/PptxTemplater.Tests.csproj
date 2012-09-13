@@ -9,8 +9,8 @@
     <ProjectGuid>{5178AC0B-FA2D-4EDC-AD95-4461AF2AEEB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PptxTemplating.Tests</RootNamespace>
-    <AssemblyName>PptxTemplating.Tests</AssemblyName>
+    <RootNamespace>PptxTemplater.Tests</RootNamespace>
+    <AssemblyName>PptxTemplater.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,13 +50,13 @@
     <Compile Include="PptxTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PptxTemplating\PptxTemplating.csproj">
+    <ProjectReference Include="..\PptxTemplater\PptxTemplater.csproj">
       <Project>{DBF3DA44-73D2-43C0-B800-65EEDBF4282E}</Project>
-      <Name>PptxTemplating</Name>
+      <Name>PptxTemplater</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
