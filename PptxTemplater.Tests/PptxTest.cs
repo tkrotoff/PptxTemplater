@@ -17,15 +17,15 @@ namespace PptxTemplater.Tests
             int nbSlides = pptx.CountSlides();
             Assert.AreEqual(3, nbSlides);
 
-            var slidesText = new Dictionary<int, string[]>();
+            var slidesTexts = new Dictionary<int, string[]>();
             for (int i = 0; i < nbSlides; i++)
             {
                 string[] texts = pptx.GetAllTextInSlide(i);
-                slidesText.Add(i, texts);
+                slidesTexts.Add(i, texts);
             }
 
             string[] expected = {"test1", "Hello, world!"};
-            CollectionAssert.AreEqual(expected, slidesText[0]);
+            CollectionAssert.AreEqual(expected, slidesTexts[0]);
             expected = new string[]
                            {
                                "Title 1", "Bullet 1", "Bullet 2",
@@ -35,9 +35,9 @@ namespace PptxTemplater.Tests
                                "Line 3", "", "", "", "",
                                "Line 4", "", "", "", ""
                            };
-            CollectionAssert.AreEqual(expected, slidesText[1]);
+            CollectionAssert.AreEqual(expected, slidesTexts[1]);
             expected = new string[] {"Title 2", "Bullet 1", "Bullet 2"};
-            CollectionAssert.AreEqual(expected, slidesText[2]);
+            CollectionAssert.AreEqual(expected, slidesTexts[2]);
 
             pptx.Close();
         }

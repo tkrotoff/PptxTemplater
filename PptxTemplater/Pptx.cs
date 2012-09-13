@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
@@ -14,6 +15,11 @@ namespace PptxTemplater
         public Pptx(string file, bool isEditable)
         {
             _pptx = PresentationDocument.Open(file, isEditable);
+        }
+
+        public Pptx(Stream stream, bool isEditable)
+        {
+            _pptx = PresentationDocument.Open(stream, isEditable);
         }
 
         /// Closes the PowerPoint file.
