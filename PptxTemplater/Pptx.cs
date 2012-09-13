@@ -34,9 +34,25 @@ namespace PptxTemplater
         /// See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
         public int CountSlides()
         {
-            PresentationPart part = _pptx.PresentationPart;
+            PresentationPart presentationPart = _pptx.PresentationPart;
+            return presentationPart.SlideParts.Count();
+        }
 
-            return part.SlideParts.Count();
+        /// Gets the PptxSlide given a slide index.
+        private PptxSlide GetPptxSlide(int slideIndex)
+        {
+            PresentationPart presentationPart = _pptx.PresentationPart;
+
+            // Get the collection of slide IDs
+            OpenXmlElementList slideIds = presentationPart.Presentation.SlideIdList.ChildElements;
+
+            // Get the relationship ID of the slide
+            string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
+
+            // Get the specified slide part from the relationship ID
+            SlidePart slide = (SlidePart) presentationPart.GetPartById(relId);
+
+            return new PptxSlide(slide);
         }
 
         /// Gets all text found inside the given slide.
@@ -45,35 +61,20 @@ namespace PptxTemplater
         /// See How to: Get All the Text in All Slides in a Presentation http://msdn.microsoft.com/en-us/library/office/gg278331
         public string[] GetAllTextInSlide(int slideIndex)
         {
-            PresentationPart part = _pptx.PresentationPart;
-
-            // Get the collection of slide IDs
-            OpenXmlElementList slideIds = part.Presentation.SlideIdList.ChildElements;
-
-            // Get the relationship ID of the slide
-            string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
-
-            // Get the specified slide part from the relationship ID
-            SlidePart slide = (SlidePart) part.GetPartById(relId);
-
-            return new PptxSlide(slide).GetAllText();
+            PptxSlide slide = GetPptxSlide(slideIndex);
+            return slide.GetAllText();
         }
 
         /// Replaces a text (tag) by another inside the given slide.
         public void ReplaceTagInSlide(int slideIndex, string tag, string newText)
         {
-            PresentationPart part = _pptx.PresentationPart;
+            PptxSlide slide = GetPptxSlide(slideIndex);
+            slide.ReplaceTag(tag, newText);
+        }
 
-            // Get the collection of slide IDs
-            OpenXmlElementList slideIds = part.Presentation.SlideIdList.ChildElements;
-
-            // Get the relationship ID of the slide
-            string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
-
-            // Get the specified slide part from the relationship ID
-            SlidePart slide = (SlidePart) part.GetPartById(relId);
-
-            new PptxSlide(slide).ReplaceTag(tag, newText);
+        public void ReplacePictureInSlide(int slideIndex, string tag, string newPicture)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
