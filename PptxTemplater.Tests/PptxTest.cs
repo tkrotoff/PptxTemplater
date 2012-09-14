@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace PptxTemplater.Tests
+﻿namespace PptxTemplater.Tests
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class PptxTest
     {
@@ -65,13 +65,13 @@ namespace PptxTemplater.Tests
             pptx.ReplaceTagInSlide(1, "{{hola}}", "H");
 
             // Third slide
-            pptx.ReplaceTagInSlide(2, "{{hello}}", "");
-            pptx.ReplaceTagInSlide(2, "{{bonjour}}", "");
-            pptx.ReplaceTagInSlide(2, "{{hola}}", "");
+            pptx.ReplaceTagInSlide(2, "{{hello}}", string.Empty);
+            pptx.ReplaceTagInSlide(2, "{{bonjour}}", string.Empty);
+            pptx.ReplaceTagInSlide(2, "{{hola}}", string.Empty);
 
             pptx.Close();
 
-            // Check the replaced text is here
+            // Check the replaced texts are here
             pptx = new Pptx(dstFileName, false);
             nbSlides = pptx.CountSlides();
             StringBuilder result = new StringBuilder();

@@ -1,39 +1,48 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Packaging;
-using A = DocumentFormat.OpenXml.Drawing;
-using Picture = DocumentFormat.OpenXml.Presentation.Picture;
-
-namespace PptxTemplater
+﻿namespace PptxTemplater
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using DocumentFormat.OpenXml.Packaging;
+    using A = DocumentFormat.OpenXml.Drawing;
+    using Picture = DocumentFormat.OpenXml.Presentation.Picture;
+
+    /// <summary>
     /// Represents a slide inside a PowerPoint file.
+    /// </summary>
     class PptxSlide
     {
-        private readonly SlidePart _slidePart;
+        private readonly SlidePart slidePart;
 
         public PptxSlide(SlidePart slidePart)
         {
-            _slidePart = slidePart;
+            this.slidePart = slidePart;
         }
 
+        /// <summary>
         /// Gets all text found inside the slide.
+        /// </summary>
+        /// <remarks>
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
-        ///
-        /// See How to: Get All the Text in a Slide in a Presentation http://msdn.microsoft.com/en-us/library/office/cc850836
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
+        /// </remarks>
         public string[] GetAllText()
         {
             List<string> texts = new List<string>();
-            foreach (A.Paragraph p in _slidePart.Slide.Descendants<A.Paragraph>())
+            foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
                 texts.Add(GetParagraphAllText(p));
             }
             return texts.ToArray();
         }
 
+        /// <summary>
         /// Returns all text found inside a given paragraph.
+        /// </summary>
+        /// <remarks>
         /// If all A.Text in the given paragraph are empty, returns an empty string
+        /// </remarks>
         private static string GetParagraphAllText(A.Paragraph p)
         {
             StringBuilder concat = new StringBuilder();
@@ -44,7 +53,9 @@ namespace PptxTemplater
             return concat.ToString();
         }
 
+        /// <summary>
         /// Associates a A.Text with start and end index matching a paragraph full string (= the concatenation of all A.Text of a paragraph).
+        /// </summary>
         private class TextIndex
         {
             public A.Text Text { get; private set; }
@@ -53,12 +64,14 @@ namespace PptxTemplater
 
             public TextIndex(A.Text t, int startIndex)
             {
-                Text = t;
-                StartIndex = startIndex;
+                this.Text = t;
+                this.StartIndex = startIndex;
             }
         }
 
+        /// <summary>
         /// Gets all the TextIndex for a given paragraph.
+        /// </summary>
         private static List<TextIndex> GetTextIndexList(A.Paragraph p)
         {
             List<TextIndex> texts = new List<TextIndex>();
@@ -74,7 +87,9 @@ namespace PptxTemplater
             return texts;
         }
 
+        /// <summary>
         /// Replaces a text (tag) by another inside the slide.
+        /// </summary>
         public void ReplaceTag(string tag, string newText)
         {
             /*
@@ -107,7 +122,7 @@ namespace PptxTemplater
              </a:p>
             */
 
-            foreach (A.Paragraph p in _slidePart.Slide.Descendants<A.Paragraph>())
+            foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
                 while (true)
                 {
@@ -188,11 +203,14 @@ namespace PptxTemplater
             }
         }
 
+        /// <summary>
         /// Replaces a picture by another inside the slide.
-        ///
-        /// See How can I retrieve images from a .pptx file using MS Open XML SDK? http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk
-        /// See How can I retrieve some image data and format using MS Open XML SDK? http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk
-        /// See How to: Insert a Picture into a Word Processing Document http://msdn.microsoft.com/en-us/library/office/bb497430.aspx
+        /// </summary>
+        /// <remarks>
+        /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
+        /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
+        /// </remarks>
         public void ReplacePicture(string tag, Stream newPicture, string contentType)
         {
             // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
@@ -201,7 +219,7 @@ namespace PptxTemplater
             // but I don't want to expose DocumentFormat.OpenXml.Packaging.ImagePartType to the outside world nor
             // want to add boilerplate code if ... else if ... else if ...
             // OpenXML SDK should be fixed and handle "image/png" and friends properly
-            ImagePart imagePart = _slidePart.AddImagePart(contentType);
+            ImagePart imagePart = this.slidePart.AddImagePart(contentType);
 
             // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
             // solution: copy the original stream to a MemoryStream
@@ -216,14 +234,14 @@ namespace PptxTemplater
             // No need to detect duplicated images
             // PowerPoint do it for us on the next manual save
 
-            foreach (Picture pic in _slidePart.Slide.Descendants<Picture>())
+            foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
             {
                 string xml = pic.NonVisualPictureProperties.OuterXml;
 
                 if (xml.Contains(tag))
                 {
                     // Gets the relationship ID of the part
-                    string rId = _slidePart.GetIdOfPart(imagePart);
+                    string rId = this.slidePart.GetIdOfPart(imagePart);
 
                     pic.BlipFill.Blip.Embed.Value = rId;
                 }
