@@ -50,9 +50,9 @@ namespace PptxTemplater
             string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
 
             // Get the specified slide part from the relationship ID
-            SlidePart slide = (SlidePart) presentationPart.GetPartById(relId);
+            SlidePart slidePart = (SlidePart) presentationPart.GetPartById(relId);
 
-            return new PptxSlide(slide);
+            return new PptxSlide(slidePart);
         }
 
         /// Gets all text found inside the given slide.
@@ -72,9 +72,19 @@ namespace PptxTemplater
             slide.ReplaceTag(tag, newText);
         }
 
-        public void ReplacePictureInSlide(int slideIndex, string tag, string newPicture)
+        public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile)
         {
-            throw new System.NotImplementedException();
+            using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
+            {
+                ReplacePictureInSlide(slideIndex, tag, stream);
+            }
+        }
+
+        /// Replaces a picture by another inside the given slide.
+        public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture)
+        {
+            PptxSlide slide = GetPptxSlide(slideIndex);
+            slide.ReplacePicture(tag, newPicture);
         }
     }
 }

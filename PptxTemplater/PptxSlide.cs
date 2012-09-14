@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 using A = DocumentFormat.OpenXml.Drawing;
+using Picture = DocumentFormat.OpenXml.Presentation.Picture;
 
 namespace PptxTemplater
 {
     /// Represents a slide inside a PowerPoint file.
     class PptxSlide
     {
-        private readonly SlidePart _slide;
+        private readonly SlidePart _slidePart;
 
-        public PptxSlide(SlidePart slide)
+        public PptxSlide(SlidePart slidePart)
         {
-            _slide = slide;
+            _slidePart = slidePart;
         }
 
         /// Gets all text found inside the slide.
@@ -23,7 +25,7 @@ namespace PptxTemplater
         public string[] GetAllText()
         {
             List<string> texts = new List<string>();
-            foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
+            foreach (A.Paragraph p in _slidePart.Slide.Descendants<A.Paragraph>())
             {
                 texts.Add(GetParagraphAllText(p));
             }
@@ -32,7 +34,7 @@ namespace PptxTemplater
 
         /// Returns all text found inside a given paragraph.
         /// If all A.Text in the given paragraph are empty, returns an empty string
-        private string GetParagraphAllText(A.Paragraph p)
+        private static string GetParagraphAllText(A.Paragraph p)
         {
             StringBuilder concat = new StringBuilder();
             foreach (A.Text t in p.Descendants<A.Text>())
@@ -57,7 +59,7 @@ namespace PptxTemplater
         }
 
         /// Gets all the TextIndex for a given paragraph.
-        private List<TextIndex> GetTextIndexList(A.Paragraph p)
+        private static List<TextIndex> GetTextIndexList(A.Paragraph p)
         {
             List<TextIndex> texts = new List<TextIndex>();
 
@@ -73,8 +75,6 @@ namespace PptxTemplater
         }
 
         /// Replaces a text (tag) by another inside the slide.
-        ///
-        /// See How to replace a paragraph's text using OpenXML SDK http://stackoverflow.com/questions/4276077/how-to-replace-an-paragraphs-text-using-openxml-sdk
         public void ReplaceTag(string tag, string newText)
         {
             /*
@@ -107,7 +107,7 @@ namespace PptxTemplater
              </a:p>
             */
 
-            foreach (A.Paragraph p in _slide.Slide.Descendants<A.Paragraph>())
+            foreach (A.Paragraph p in _slidePart.Slide.Descendants<A.Paragraph>())
             {
                 while (true)
                 {
@@ -184,6 +184,37 @@ namespace PptxTemplater
                             }
                         }
                     }
+                }
+            }
+        }
+
+        /// Replaces a picture by another inside the slide.
+        ///
+        /// See How can I retrieve images from a .pptx file using MS Open XML SDK? http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk
+        /// See How can I retrieve some image data and format using MS Open XML SDK? http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk
+        public void ReplacePicture(string tag, Stream newPicture)
+        {
+            foreach (Picture pic in _slidePart.Slide.Descendants<Picture>())
+            {
+                string xml = pic.NonVisualPictureProperties.OuterXml;
+
+                if (xml.Contains(tag))
+                {
+                    // Get the relationship id
+                    string rId = pic.BlipFill.Blip.Embed.Value;
+
+                    ImagePart imagePart = (ImagePart) _slidePart.GetPartById(rId);
+
+                    // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
+                    // solution: copy the original stream to a MemoryStream
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        newPicture.Position = 0;
+                        newPicture.CopyTo(stream);
+                        stream.Position = 0;
+                        imagePart.FeedData(stream);
+                    }
+                    //
                 }
             }
         }
