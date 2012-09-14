@@ -192,29 +192,40 @@ namespace PptxTemplater
         ///
         /// See How can I retrieve images from a .pptx file using MS Open XML SDK? http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk
         /// See How can I retrieve some image data and format using MS Open XML SDK? http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk
-        public void ReplacePicture(string tag, Stream newPicture)
+        /// See How to: Insert a Picture into a Word Processing Document http://msdn.microsoft.com/en-us/library/office/bb497430.aspx
+        public void ReplacePicture(string tag, Stream newPicture, string contentType)
         {
+            // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
+            // All files inside the media directory are suffixed with .bin
+            // Instead if DocumentFormat.OpenXml.Packaging.ImagePartType is used, files are suffixed with the right extension
+            // but I don't want to expose DocumentFormat.OpenXml.Packaging.ImagePartType to the outside world nor
+            // want to add boilerplate code if ... else if ... else if ...
+            // OpenXML SDK should be fixed and handle "image/png" and friends properly
+            ImagePart imagePart = _slidePart.AddImagePart(contentType);
+
+            // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
+            // solution: copy the original stream to a MemoryStream
+            using (MemoryStream stream = new MemoryStream())
+            {
+                newPicture.Position = 0;
+                newPicture.CopyTo(stream);
+                stream.Position = 0;
+                imagePart.FeedData(stream);
+            }
+
+            // No need to detect duplicated images
+            // PowerPoint do it for us on the next manual save
+
             foreach (Picture pic in _slidePart.Slide.Descendants<Picture>())
             {
                 string xml = pic.NonVisualPictureProperties.OuterXml;
 
                 if (xml.Contains(tag))
                 {
-                    // Get the relationship id
-                    string rId = pic.BlipFill.Blip.Embed.Value;
+                    // Gets the relationship ID of the part
+                    string rId = _slidePart.GetIdOfPart(imagePart);
 
-                    ImagePart imagePart = (ImagePart) _slidePart.GetPartById(rId);
-
-                    // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
-                    // solution: copy the original stream to a MemoryStream
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        newPicture.Position = 0;
-                        newPicture.CopyTo(stream);
-                        stream.Position = 0;
-                        imagePart.FeedData(stream);
-                    }
-                    //
+                    pic.BlipFill.Blip.Embed.Value = rId;
                 }
             }
         }

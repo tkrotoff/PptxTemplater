@@ -72,19 +72,19 @@ namespace PptxTemplater
             slide.ReplaceTag(tag, newText);
         }
 
-        public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile)
+        public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile, string contentType)
         {
             using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
             {
-                ReplacePictureInSlide(slideIndex, tag, stream);
+                ReplacePictureInSlide(slideIndex, tag, stream, contentType);
             }
         }
 
         /// Replaces a picture by another inside the given slide.
-        public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture)
+        public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture, string contentType)
         {
             PptxSlide slide = GetPptxSlide(slideIndex);
-            slide.ReplacePicture(tag, newPicture);
+            slide.ReplacePicture(tag, newPicture, contentType);
         }
     }
 }
