@@ -85,5 +85,38 @@ namespace PptxTemplater.Tests
             const string expected = "words HELLO HOW ARE YOU?|HELLO HOW ARE YOU?|HOLA MAMA QUE TAL?, world! A tag {{hoHOLA MAMA QUE TAL?la}} inside a sentence BONJOUR TOUT LE MONDE A tag BONJOUR TOUT LE MONDEHOLA MAMA QUE TAL?BONJOUR TOUT LE MONDE inside a sentence HELLO HOW ARE YOU?, world! words H|H|H, world! A tag {{hoHla}} inside a sentence B A tag BHB inside a sentence H, world! words ||, world! A tag  inside a sentence  A tag inside a sentence , world! ";
             Assert.AreEqual(expected, result.ToString());
         }
+
+        [TestMethod]
+        public void ReplacePicturesInAllSlides()
+        {
+            const string srcFileName = "../../files/ReplacePicturesInAllSlides.pptx";
+            const string dstFileName = "../../files/ReplacePicturesInAllSlides_result.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+            int nbSlides = pptx.CountSlides();
+            Assert.AreEqual(2, nbSlides);
+
+            const string picture1_replace_png = "../../files/picture1_replace.png";
+            const string picture1_replace_png_contentType = "image/png";
+            const string picture1_replace_bmp = "../../files/picture1_replace.bmp";
+            const string picture1_replace_bmp_contentType = "image/bmp";
+            const string picture1_replace_jpeg = "../../files/picture1_replace.jpeg";
+            const string picture1_replace_jpeg_contentType = "image/jpeg";
+            for (int i = 0; i < nbSlides; i++)
+            {
+                pptx.ReplacePictureInSlide(i, "{{picture1png}}", picture1_replace_png, picture1_replace_png_contentType);
+                pptx.ReplacePictureInSlide(i, "{{picture1bmp}}", picture1_replace_bmp, picture1_replace_bmp_contentType);
+                pptx.ReplacePictureInSlide(i, "{{picture1jpeg}}", picture1_replace_jpeg, picture1_replace_jpeg_contentType);
+            }
+
+            pptx.Close();
+
+            // Check the replaced pictures are here
+            pptx = new Pptx(dstFileName, false);
+            nbSlides = pptx.CountSlides();
+            pptx.Close();
+        }
     }
 }
