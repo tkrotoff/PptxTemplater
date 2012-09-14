@@ -11,6 +11,9 @@
     /// </summary>
     public class Pptx
     {
+        /// <summary>
+        /// The presentation document.
+        /// </summary>
         private readonly PresentationDocument presentationDocument;
 
         #region ctor
