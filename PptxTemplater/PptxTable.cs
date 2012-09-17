@@ -18,12 +18,25 @@
             this.tbl = tbl;
         }
 
-        public void AppendRow(params string[] cells)
+        public class Cell
+        {
+            public string Tag { get; set; }
+
+            public string NewText { get; set; }
+
+            public Cell(string tag, string newText)
+            {
+                this.Tag = tag;
+                this.NewText = newText;
+            }
+        }
+
+        public void AppendRow(Cell[] cells)
         {
             A.TableRow tr = (A.TableRow)this.GetSecondRow().CloneNode(false);
             foreach (var cell in cells)
             {
-                tr.AppendChild(CreateTextCell(cell));
+                tr.AppendChild(CreateTextCell(cell.NewText));
             }
             this.tbl.AppendChild(tr);
         }

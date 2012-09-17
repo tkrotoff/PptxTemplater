@@ -128,10 +128,50 @@
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
+
             PptxTable[] tables = pptx.FindTables("{{table1}}");
+            PptxTable.Cell[] cells = new PptxTable.Cell[]
+                {
+                    new PptxTable.Cell("{{cell1.1}}", "Hello, world! 1.1"),
+                    new PptxTable.Cell("{{cell1.2}}", "Hello, world! 1.2"),
+                    new PptxTable.Cell("{{cell1.3}}", "Hello, world! 1.3"),
+                    new PptxTable.Cell("{{cell1.4}}", "Hello, world! 1.4"),
+                    new PptxTable.Cell("{{cell1.5}}", "Hello, world! 1.5"),
+                    new PptxTable.Cell("{{cell1.6}}", "Hello, world! 1.6")
+                };
             foreach (PptxTable table in tables)
             {
-                table.AppendRow("1", "2", "3", "4", "5", "6");
+                table.AppendRow(cells);
+            }
+
+            tables = pptx.FindTables("{{table2}}");
+            cells = new PptxTable.Cell[]
+                {
+                    new PptxTable.Cell("{{cell1.1}}", "Bonjour 1.1"),
+                    new PptxTable.Cell("{{cell1.2}}", "Bonjour 1.2"),
+                    new PptxTable.Cell("{{cell1.3}}", "Bonjour 1.3"),
+                    new PptxTable.Cell("{{cell1.4}}", "Bonjour 1.4"),
+                    new PptxTable.Cell("{{cell1.5}}", "Bonjour 1.5"),
+                    new PptxTable.Cell("{{cell1.6}}", "Bonjour 1.6")
+                };
+            foreach (PptxTable table in tables)
+            {
+                table.AppendRow(cells);
+            }
+
+            tables = pptx.FindTables("{{table3}}");
+            cells = new PptxTable.Cell[]
+                {
+                    new PptxTable.Cell("{{cell1.1}}", "Hola! 1.1"),
+                    new PptxTable.Cell("{{cell1.2}}", "Hola! 1.2"),
+                    new PptxTable.Cell("{{cell1.3}}", "Hola! 1.3"),
+                    new PptxTable.Cell("{{cell1.4}}", "Hola! 1.4"),
+                    new PptxTable.Cell("{{cell1.5}}", "Hola! 1.5"),
+                    new PptxTable.Cell("{{cell1.6}}", "Hola! 1.6")
+                };
+            foreach (PptxTable table in tables)
+            {
+                table.AppendRow(cells);
             }
 
             pptx.Close();
