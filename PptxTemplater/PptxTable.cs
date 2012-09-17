@@ -33,11 +33,16 @@
 
         public void AppendRow(Cell[] cells)
         {
-            A.TableRow tr = (A.TableRow)this.GetSecondRow().CloneNode(false);
-            foreach (var cell in cells)
+            A.TableRow tr = (A.TableRow)this.GetSecondRow().CloneNode(true);
+
+            foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
             {
-                tr.AppendChild(CreateTextCell(cell.NewText));
+                foreach (var cell in cells)
+                {
+                    PptxSlide.ReplaceTagInParagraph(p, cell.Tag, cell.NewText);
+                }
             }
+
             this.tbl.AppendChild(tr);
         }
 
@@ -47,20 +52,6 @@
             // is erronous and does not contains two rows (titles + first row)
             A.TableRow tr = this.tbl.Descendants<A.TableRow>().ElementAt(1);
             return tr;
-        }
-
-        /// <summary>
-        /// Creates a table cell that contains a text.
-        /// </summary>
-        /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
-        private static A.TableCell CreateTextCell(string text)
-        {
-            A.TableCell tc =
-                new A.TableCell(
-                    new A.TextBody(
-                        new A.BodyProperties(), new A.ListStyle(), new A.Paragraph(new A.Run(new A.Text(text)))),
-                    new A.TableCellProperties());
-            return tc;
         }
     }
 }

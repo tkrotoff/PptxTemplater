@@ -129,79 +129,84 @@
 
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
-                while (true)
+                ReplaceTagInParagraph(p, tag, newText);
+            }
+        }
+
+        internal static void ReplaceTagInParagraph(A.Paragraph p, string tag, string newText)
+        {
+            while (true)
+            {
+                string allText = GetParagraphAllText(p);
+
+                // Search for the tag
+                Match match = Regex.Match(allText, tag);
+                if (!match.Success)
                 {
-                    string allText = GetParagraphAllText(p);
+                    break;
+                }
 
-                    // Search for the tag
-                    Match match = Regex.Match(allText, tag);
-                    if (!match.Success)
+                List<TextIndex> texts = GetTextIndexList(p);
+
+                for (int i = 0; i < texts.Count; i++)
+                {
+                    TextIndex text = texts[i];
+                    if (match.Index >= text.StartIndex && match.Index <= text.EndIndex)
                     {
-                        break;
-                    }
+                        // Got the right A.Text
 
-                    List<TextIndex> texts = GetTextIndexList(p);
+                        int index = match.Index - text.StartIndex;
+                        int done = 0;
 
-                    for (int i = 0; i < texts.Count; i++)
-                    {
-                        TextIndex text = texts[i];
-                        if (match.Index >= text.StartIndex && match.Index <= text.EndIndex)
+                        for (; i < texts.Count; i++)
                         {
-                            // Got the right A.Text
+                            TextIndex currentText = texts[i];
+                            List<char> currentTextChars = new List<char>(currentText.Text.Text.ToCharArray());
 
-                            int index = match.Index - text.StartIndex;
-                            int done = 0;
-
-                            for (; i < texts.Count; i++)
+                            for (int k = index; k < currentTextChars.Count; k++, done++)
                             {
-                                TextIndex currentText = texts[i];
-                                List<char> currentTextChars = new List<char>(currentText.Text.Text.ToCharArray());
-
-                                for (int k = index; k < currentTextChars.Count; k++, done++)
+                                if (done < newText.Length)
                                 {
-                                    if (done < newText.Length)
+                                    if (done >= tag.Length - 1)
                                     {
-                                        if (done >= tag.Length - 1)
-                                        {
-                                            // Case if newText is longer than the tag
-                                            // Insert characters
-                                            int remains = newText.Length - done;
-                                            currentTextChars.RemoveAt(k);
-                                            currentTextChars.InsertRange(k, newText.Substring(done, remains));
-                                            done += remains;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            currentTextChars[k] = newText[done];
-                                        }
+                                        // Case if newText is longer than the tag
+                                        // Insert characters
+                                        int remains = newText.Length - done;
+                                        currentTextChars.RemoveAt(k);
+                                        currentTextChars.InsertRange(k, newText.Substring(done, remains));
+                                        done += remains;
+                                        break;
                                     }
                                     else
                                     {
-                                        if (done < tag.Length)
-                                        {
-                                            // Case if newText is shorter than the tag
-                                            // Erase characters
-                                            int remains = tag.Length - done;
-                                            if (remains > currentTextChars.Count - k)
-                                            {
-                                                remains = currentTextChars.Count - k;
-                                            }
-                                            currentTextChars.RemoveRange(k, remains);
-                                            done += remains;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            // Regular case, nothing to do
-                                            //currentTextChars[k] = currentTextChars[k];
-                                        }
+                                        currentTextChars[k] = newText[done];
                                     }
                                 }
-
-                                currentText.Text.Text = new string(currentTextChars.ToArray());
-                                index = 0;
+                                else
+                                {
+                                    if (done < tag.Length)
+                                    {
+                                        // Case if newText is shorter than the tag
+                                        // Erase characters
+                                        int remains = tag.Length - done;
+                                        if (remains > currentTextChars.Count - k)
+                                        {
+                                            remains = currentTextChars.Count - k;
+                                        }
+                                        currentTextChars.RemoveRange(k, remains);
+                                        done += remains;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        // Regular case, nothing to do
+                                        //currentTextChars[k] = currentTextChars[k];
+                                    }
+                                }
                             }
+
+                            currentText.Text.Text = new string(currentTextChars.ToArray());
+                            index = 0;
                         }
                     }
                 }

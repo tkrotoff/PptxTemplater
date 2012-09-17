@@ -142,6 +142,8 @@
             foreach (PptxTable table in tables)
             {
                 table.AppendRow(cells);
+                table.AppendRow(cells);
+                table.AppendRow(cells);
             }
 
             tables = pptx.FindTables("{{table2}}");
