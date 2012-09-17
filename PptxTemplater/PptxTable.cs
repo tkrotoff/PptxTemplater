@@ -20,15 +20,20 @@
 
         public void AppendRow(params string[] cells)
         {
-            A.TableRow tr = new A.TableRow
-                {
-                    Height = 370840 // TODO
-                };
+            A.TableRow tr = (A.TableRow)this.GetSecondRow().CloneNode(false);
             foreach (var cell in cells)
             {
                 tr.AppendChild(CreateTextCell(cell));
             }
             this.tbl.AppendChild(tr);
+        }
+
+        private A.TableRow GetSecondRow()
+        {
+            // TODO check for error and throw an nice exception saying the template table
+            // is erronous and does not contains two rows (titles + first row)
+            A.TableRow tr = this.tbl.Descendants<A.TableRow>().ElementAt(1);
+            return tr;
         }
 
         /// <summary>
