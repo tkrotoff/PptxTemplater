@@ -118,6 +118,23 @@
             slide.ReplacePicture(tag, newPicture, contentType);
         }
 
+        public PptxTable FindTable(string tag)
+        {
+            PptxTable table = null;
+
+            for (int i = 0; i < this.CountSlides(); i++)
+            {
+                PptxSlide slide = this.GetPptxSlide(i);
+                table = slide.FindTable(tag);
+                if (table != null)
+                {
+                    break;
+                }
+            }
+
+            return table;
+        }
+
         /// <summary>
         /// Gets the PptxSlide given a slide index.
         /// </summary>

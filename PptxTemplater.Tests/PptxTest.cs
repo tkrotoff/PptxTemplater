@@ -46,7 +46,7 @@
         public void ReplaceTagsInAllSlides()
         {
             const string srcFileName = "../../files/ReplaceTagsInAllSlides.pptx";
-            const string dstFileName = "../../files/ReplaceTagsInAllSlides_result.pptx";
+            const string dstFileName = "../../files/ReplaceTagsInAllSlides_output.pptx";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
@@ -90,7 +90,7 @@
         public void ReplacePicturesInAllSlides()
         {
             const string srcFileName = "../../files/ReplacePicturesInAllSlides.pptx";
-            const string dstFileName = "../../files/ReplacePicturesInAllSlides_result.pptx";
+            const string dstFileName = "../../files/ReplacePicturesInAllSlides_output.pptx";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
@@ -116,6 +116,24 @@
             // Check the replaced pictures are here
             pptx = new Pptx(dstFileName, false);
             nbSlides = pptx.CountSlides();
+            pptx.Close();
+        }
+
+        [TestMethod]
+        public void CreateTable()
+        {
+            const string srcFileName = "../../files/Table5.pptx";
+            const string dstFileName = "../../files/Table5_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+            PptxTable table = pptx.FindTable("{{table1}}");
+            if (table != null)
+            {
+                table.AppendRow("1", "2", "3", "4", "5", "6");
+            }
+
             pptx.Close();
         }
     }

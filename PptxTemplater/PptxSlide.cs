@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using DocumentFormat.OpenXml.Packaging;
@@ -11,6 +12,7 @@
     /// <summary>
     /// Represents a slide inside a PowerPoint file.
     /// </summary>
+    /// <remarks>Could not simply be named Slide, conflicts with DocumentFormat.OpenXml.Drawing.Slide.</remarks>
     class PptxSlide
     {
         private readonly SlidePart slidePart;
@@ -246,6 +248,17 @@
                     pic.BlipFill.Blip.Embed.Value = rId;
                 }
             }
+        }
+
+        /// <summary>
+        /// Finds a table given its tag inside the slide.
+        /// </summary>
+        /// <returns>The table or null.</returns>
+        public PptxTable FindTable(string tag)
+        {
+            // TODO
+            A.Table tbl = this.slidePart.Slide.Descendants<A.Table>().First();
+            return new PptxTable(tbl);
         }
     }
 }
