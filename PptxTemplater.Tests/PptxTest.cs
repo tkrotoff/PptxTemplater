@@ -130,7 +130,7 @@
             Pptx pptx = new Pptx(dstFileName, true);
 
             PptxTable[] tables = pptx.FindTables("{{table1}}");
-            PptxTable.Cell[] cells = new PptxTable.Cell[]
+            PptxTable.Cell[] cells = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Hello, world! 1.1"),
                     new PptxTable.Cell("{{cell1.2}}", "Hello, world! 1.2"),
@@ -145,7 +145,7 @@
             }
 
             tables = pptx.FindTables("{{table2}}");
-            cells = new PptxTable.Cell[]
+            cells = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Bonjour 1.1"),
                     new PptxTable.Cell("{{cell1.2}}", "Bonjour 1.2"),
@@ -160,7 +160,7 @@
             }
 
             tables = pptx.FindTables("{{table3}}");
-            cells = new PptxTable.Cell[]
+            cells = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Hola! 1.1"),
                     new PptxTable.Cell("{{cell1.2}}", "Hola! 1.2"),
