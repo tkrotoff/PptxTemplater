@@ -18,11 +18,6 @@
             this.tbl = tbl;
         }
 
-        internal static A.Table FindTable(SlidePart slidePart, string tag)
-        {
-            return slidePart.Slide.Descendants<A.Table>().First();
-        }
-
         public void AppendRow(params string[] cells)
         {
             A.TableRow tr = new A.TableRow

@@ -128,8 +128,8 @@
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
-            PptxTable table = pptx.FindTable("{{table1}}");
-            if (table != null)
+            PptxTable[] tables = pptx.FindTables("{{table1}}");
+            foreach (PptxTable table in tables)
             {
                 table.AppendRow("1", "2", "3", "4", "5", "6");
             }

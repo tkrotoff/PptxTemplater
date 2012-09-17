@@ -1,5 +1,6 @@
 ﻿namespace PptxTemplater
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
 
@@ -118,21 +119,17 @@
             slide.ReplacePicture(tag, newPicture, contentType);
         }
 
-        public PptxTable FindTable(string tag)
+        public PptxTable[] FindTables(string tag)
         {
-            PptxTable table = null;
+            List<PptxTable> tables = new List<PptxTable>();
 
             for (int i = 0; i < this.CountSlides(); i++)
             {
                 PptxSlide slide = this.GetPptxSlide(i);
-                table = slide.FindTable(tag);
-                if (table != null)
-                {
-                    break;
-                }
+                tables.AddRange(slide.FindTables(tag));
             }
 
-            return table;
+            return tables.ToArray();
         }
 
         /// <summary>

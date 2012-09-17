@@ -5,7 +5,10 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+
     using DocumentFormat.OpenXml.Packaging;
+    using DocumentFormat.OpenXml.Presentation;
+
     using A = DocumentFormat.OpenXml.Drawing;
     using Picture = DocumentFormat.OpenXml.Presentation.Picture;
 
@@ -254,11 +257,22 @@
         /// Finds a table given its tag inside the slide.
         /// </summary>
         /// <returns>The table or null.</returns>
-        public PptxTable FindTable(string tag)
+        public PptxTable[] FindTables(string tag)
         {
-            // TODO
-            A.Table tbl = this.slidePart.Slide.Descendants<A.Table>().First();
-            return new PptxTable(tbl);
+            List<PptxTable> tables = new List<PptxTable>();
+
+            foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
+            {
+                string xml = graphicFrame.NonVisualGraphicFrameProperties.OuterXml;
+
+                if (xml.Contains(tag))
+                {
+                    A.Table tbl = graphicFrame.Descendants<A.Table>().First();
+                    tables.Add(new PptxTable(tbl));
+                }
+            }
+
+            return tables.ToArray();
         }
     }
 }
