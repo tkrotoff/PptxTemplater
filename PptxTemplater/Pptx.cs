@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.Linq;
+
     using DocumentFormat.OpenXml;
     using DocumentFormat.OpenXml.Packaging;
     using DocumentFormat.OpenXml.Presentation;
@@ -14,7 +15,7 @@
         /// <summary>
         /// The presentation document.
         /// </summary>
-        private readonly PresentationDocument presentationDocument;
+        private PresentationDocument presentationDocument;
 
         #region ctor
 
@@ -65,25 +66,6 @@
         }
 
         /// <summary>
-        /// Gets the PptxSlide given a slide index.
-        /// </summary>
-        private PptxSlide GetPptxSlide(int slideIndex)
-        {
-            PresentationPart presentationPart = this.presentationDocument.PresentationPart;
-
-            // Get the collection of slide IDs
-            OpenXmlElementList slideIds = presentationPart.Presentation.SlideIdList.ChildElements;
-
-            // Get the relationship ID of the slide
-            string relId = (slideIds[slideIndex] as SlideId).RelationshipId;
-
-            // Get the specified slide part from the relationship ID
-            SlidePart slidePart = (SlidePart)presentationPart.GetPartById(relId);
-
-            return new PptxSlide(slidePart);
-        }
-
-        /// <summary>
         /// Gets all text found inside the given slide.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
@@ -111,6 +93,10 @@
         /// <summary>
         /// Replaces a picture by another from a file inside the given slide.
         /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <param name="tag">The tag.</param>
+        /// <param name="newPictureFile">The new picture file.</param>
+        /// <param name="contentType">Type of the content.</param>
         public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile, string contentType)
         {
             using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
@@ -122,10 +108,35 @@
         /// <summary>
         /// Replaces a picture by another from a stream inside the given slide.
         /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <param name="tag">The tag.</param>
+        /// <param name="newPicture">The new picture.</param>
+        /// <param name="contentType">Type of the content.</param>
         public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture, string contentType)
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);
             slide.ReplacePicture(tag, newPicture, contentType);
+        }
+
+        /// <summary>
+        /// Gets the PptxSlide given a slide index.
+        /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <returns>A PptxSlide</returns>
+        private PptxSlide GetPptxSlide(int slideIndex)
+        {
+            PresentationPart presentationPart = this.presentationDocument.PresentationPart;
+
+            // Get the collection of slide IDs
+            OpenXmlElementList slideIds = presentationPart.Presentation.SlideIdList.ChildElements;
+
+            // Get the relationship ID of the slide
+            string relId = ((SlideId)slideIds[slideIndex]).RelationshipId;
+
+            // Get the specified slide part from the relationship ID
+            SlidePart slidePart = (SlidePart)presentationPart.GetPartById(relId);
+
+            return new PptxSlide(slidePart);
         }
     }
 }
