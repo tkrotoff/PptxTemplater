@@ -75,10 +75,10 @@
                 }
             }
 
-            // Remove the last remaining rows
-            for (int i = RowsCount(tbl) - 1; i >= donePerSlide; i--)
+            // Remove the last remaining rows if any
+            for (int row = RowsCount(tbl) - 1; row >= donePerSlide; row--)
             {
-                A.TableRow tr = GetRow(tbl, i);
+                A.TableRow tr = GetRow(tbl, row);
                 tr.Remove();
             }
 
