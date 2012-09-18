@@ -18,7 +18,7 @@
         private readonly PresentationPart presentationPart;
         private readonly SlidePart slidePart;
 
-        public PptxSlide(PresentationPart presentationPart, SlidePart slidePart)
+        internal PptxSlide(PresentationPart presentationPart, SlidePart slidePart)
         {
             this.presentationPart = presentationPart;
             this.slidePart = slidePart;
@@ -31,7 +31,7 @@
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// </remarks>
-        public string[] GetAllText()
+        internal string[] GetAllText()
         {
             List<string> texts = new List<string>();
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
@@ -44,7 +44,7 @@
         /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
-        public void ReplaceTag(string tag, string newText)
+        internal void ReplaceTag(string tag, string newText)
         {
             /*
              <a:p>
@@ -90,7 +90,7 @@
         /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
         /// </remarks>
-        public void ReplacePicture(string tag, Stream newPicture, string contentType)
+        internal void ReplacePicture(string tag, Stream newPicture, string contentType)
         {
             // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
             // All files inside the media directory are suffixed with .bin
@@ -159,7 +159,7 @@
 
         private static int index = 0;
 
-        public PptxSlide Clone()
+        internal PptxSlide Clone()
         {
             SlidePart newSlidePart = this.presentationPart.AddNewPart<SlidePart>("newSlide" + index++);
 

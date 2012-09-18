@@ -21,9 +21,9 @@
 
         public class Cell
         {
-            public string Tag { get; set; }
+            internal string Tag { get; set; }
 
-            public string NewText { get; set; }
+            internal string NewText { get; set; }
 
             public Cell(string tag, string newText)
             {

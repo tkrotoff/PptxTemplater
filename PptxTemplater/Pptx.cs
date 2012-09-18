@@ -94,7 +94,7 @@
         /// <param name="slideIndex">Index of the slide.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="newPictureFile">The new picture file.</param>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
         public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile, string contentType)
         {
             using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
@@ -109,7 +109,7 @@
         /// <param name="slideIndex">Index of the slide.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="newPicture">The new picture.</param>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
         public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture, string contentType)
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);

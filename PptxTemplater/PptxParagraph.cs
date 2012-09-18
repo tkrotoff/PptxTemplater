@@ -10,9 +10,9 @@
     /// Represents a paragraph inside a PowerPoint file.
     /// </summary>
     /// <remarks>Could not simply be named Paragraph, conflicts with DocumentFormat.OpenXml.Drawing.Paragraph.</remarks>
-    public static class PptxParagraph
+    internal static class PptxParagraph
     {
-        public static void ReplaceTag(A.Paragraph p, string tag, string newText)
+        internal static void ReplaceTag(A.Paragraph p, string tag, string newText)
         {
             while (true)
             {
@@ -98,7 +98,7 @@
         /// <remarks>
         /// If all A.Text in the given paragraph are empty, returns an empty string.
         /// </remarks>
-        public static string GetAllText(A.Paragraph p)
+        internal static string GetAllText(A.Paragraph p)
         {
             StringBuilder concat = new StringBuilder();
             foreach (A.Text t in p.Descendants<A.Text>())
