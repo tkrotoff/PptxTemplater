@@ -159,6 +159,10 @@
 
         private static int index = 0;
 
+        /// <summary>
+        /// Clones this slide.
+        /// </summary>
+        /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
         internal PptxSlide Clone()
         {
             SlidePart newSlidePart = this.presentationPart.AddNewPart<SlidePart>("newSlide" + index++);
@@ -167,6 +171,11 @@
 
             newSlidePart.AddPart(this.slidePart.SlideLayoutPart);
 
+            return new PptxSlide(this.presentationPart, newSlidePart);
+        }
+
+        internal void InsertAfter(PptxSlide slide)
+        {
             SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
 
             uint maxSlideId = 1;
@@ -176,17 +185,18 @@
                 if (slideId.Id > maxSlideId)
                 {
                     maxSlideId = slideId.Id;
+                }
+
+                // See http://openxmldeveloper.org/discussions/development_tools/f/17/p/5302/158602.aspx
+                if (slideId.RelationshipId == this.presentationPart.GetIdOfPart(this.slidePart))
+                {
                     prevSlideId = slideId;
                 }
             }
-            maxSlideId++;
 
             SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
-
-            newSlideId.Id = maxSlideId;
-            newSlideId.RelationshipId = this.presentationPart.GetIdOfPart(newSlidePart);
-
-            return new PptxSlide(this.presentationPart, newSlidePart);
+            newSlideId.Id = maxSlideId + 1;
+            newSlideId.RelationshipId = this.presentationPart.GetIdOfPart(slide.slidePart);
         }
     }
 }

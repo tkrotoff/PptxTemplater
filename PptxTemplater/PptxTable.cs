@@ -38,6 +38,7 @@
 
             // Create a new slide from the slide templace
             PptxSlide slide = this.slideTemplate.Clone();
+            this.slideTemplate.InsertAfter(slide);
             A.Table tbl = PptxSlide.FindTable(slide, this.tblId);
 
             for (int i = 0, donePerSlide = 0; i < rows.Count();)
@@ -63,6 +64,7 @@
                 {
                     // Create a new slide since the current one is "full"
                     slide = this.slideTemplate.Clone();
+                    this.slideTemplate.InsertAfter(slide);
                     tbl = PptxSlide.FindTable(slide, this.tblId);
 
                     // Not modifying i
