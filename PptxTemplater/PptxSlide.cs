@@ -13,7 +13,7 @@
     /// Represents a slide inside a PowerPoint file.
     /// </summary>
     /// <remarks>Could not simply be named Slide, conflicts with DocumentFormat.OpenXml.Drawing.Slide.</remarks>
-    class PptxSlide
+    internal class PptxSlide
     {
         private readonly SlidePart slidePart;
 
