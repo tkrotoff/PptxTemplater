@@ -36,12 +36,14 @@
         {
             // TODO throw an exception if this method is being called several times for the same table
 
-            // Create a new slide from the slide templace
+            // Create a new slide from the template slide
             PptxSlide slide = this.slideTemplate.Clone();
             this.slideTemplate.InsertAfter(slide);
             A.Table tbl = PptxSlide.FindTable(slide, this.tblId);
 
-            for (int i = 0, donePerSlide = 0; i < rows.Count();)
+            // donePerSlide starts at 1 instead of 0 because we don't care about the first row
+            // The first row contains the titles for the columns
+            for (int i = 0, donePerSlide = 1; i < rows.Count();)
             {
                 Cell[] row = rows[i];
 
@@ -63,16 +65,17 @@
                 else
                 {
                     // Create a new slide since the current one is "full"
-                    slide = this.slideTemplate.Clone();
-                    this.slideTemplate.InsertAfter(slide);
-                    tbl = PptxSlide.FindTable(slide, this.tblId);
+                    PptxSlide newSlide = this.slideTemplate.Clone();
+                    this.slideTemplate.InsertAfter(newSlide);
+                    tbl = PptxSlide.FindTable(newSlide, this.tblId);
 
                     // Not modifying i
-                    donePerSlide = 0;
+                    donePerSlide = 1;
                 }
             }
 
-            // Delete the slide template
+            // Delete the template slide
+            this.slideTemplate.Delete();
         }
 
         private static int RowsCount(A.Table tbl)

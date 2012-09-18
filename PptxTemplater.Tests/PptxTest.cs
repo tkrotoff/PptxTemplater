@@ -126,6 +126,7 @@
 
             Pptx pptx = new Pptx(dstFileName, true);
 
+            PptxTable[] tables = pptx.FindTables("{{table1}}");
             PptxTable.Cell[] row = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Hello, world! 1.1"),
@@ -135,13 +136,13 @@
                     new PptxTable.Cell("{{cell1.5}}", "Hello, world! 1.5"),
                     new PptxTable.Cell("{{cell1.6}}", "Hello, world! 1.6")
                 };
-            PptxTable[] tables = pptx.FindTables("{{table1}}");
             foreach (PptxTable table in tables)
             {
                 table.SetRows(row, row, row, row, row, row, row, row, row, row);
             }
 
-            /*row = new[]
+            tables = pptx.FindTables("{{table2}}");
+            row = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Bonjour 1.1"),
                     new PptxTable.Cell("{{cell1.2}}", "Bonjour 1.2"),
@@ -150,12 +151,12 @@
                     new PptxTable.Cell("{{cell1.5}}", "Bonjour 1.5"),
                     new PptxTable.Cell("{{cell1.6}}", "Bonjour 1.6")
                 };
-            tables = pptx.FindTables("{{table2}}");
             foreach (PptxTable table in tables)
             {
-                table.AppendRows(row);
+                table.SetRows(row);
             }
 
+            tables = pptx.FindTables("{{table3}}");
             row = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Hola! 1.1"),
@@ -165,11 +166,10 @@
                     new PptxTable.Cell("{{cell1.5}}", "Hola! 1.5"),
                     new PptxTable.Cell("{{cell1.6}}", "Hola! 1.6")
                 };
-            tables = pptx.FindTables("{{table3}}");
             foreach (PptxTable table in tables)
             {
-                table.AppendRows(row);
-            }*/
+                table.SetRows(row);
+            }
 
             pptx.Close();
         }

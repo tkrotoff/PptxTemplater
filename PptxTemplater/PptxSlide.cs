@@ -174,6 +174,9 @@
             return new PptxSlide(this.presentationPart, newSlidePart);
         }
 
+        /// <summary>
+        /// Inserts a given slide after this slide.
+        /// </summary>
         internal void InsertAfter(PptxSlide slide)
         {
             SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
@@ -197,6 +200,26 @@
             SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
             newSlideId.Id = maxSlideId + 1;
             newSlideId.RelationshipId = this.presentationPart.GetIdOfPart(slide.slidePart);
+        }
+
+        /// <summary>
+        /// Deletes the slide.
+        /// </summary>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
+        internal void Delete()
+        {
+            SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
+
+            foreach (SlideId slideId in slideIdList.ChildElements)
+            {
+                if (slideId.RelationshipId == this.presentationPart.GetIdOfPart(this.slidePart))
+                {
+                    slideIdList.RemoveChild(slideId);
+                    break;
+                }
+            }
+
+            this.presentationPart.DeletePart(this.slidePart);
         }
     }
 }
