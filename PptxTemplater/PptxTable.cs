@@ -10,11 +10,13 @@
     /// <remarks>Could not simply be named Table, conflicts with DocumentFormat.OpenXml.Drawing.Table.</remarks>
     public class PptxTable
     {
-        private readonly A.Table tbl;
+        private PptxSlide slideTemplate;
+        private readonly int tblId;
 
-        public PptxTable(A.Table tbl)
+        internal PptxTable(PptxSlide slideTemplate, int tblId)
         {
-            this.tbl = tbl;
+            this.slideTemplate = slideTemplate;
+            this.tblId = tblId;
         }
 
         public class Cell
@@ -30,26 +32,55 @@
             }
         }
 
-        public void AppendRow(Cell[] cells)
+        public void SetRows(params Cell[][] rows)
         {
-            A.TableRow tr = (A.TableRow)this.GetSecondRow().CloneNode(true);
+            // TODO throw an exception if this method is being called several times for the same table
 
-            foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
+            // Create a new slide from the slide templace
+            PptxSlide slide = this.slideTemplate.Clone();
+            A.Table tbl = PptxSlide.FindTable(slide, this.tblId);
+
+            for (int i = 0, donePerSlide = 0; i < rows.Count();)
             {
-                foreach (var cell in cells)
+                Cell[] row = rows[i];
+
+                if (donePerSlide < RowsCount(tbl))
                 {
-                    PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                    A.TableRow tr = GetRow(tbl, donePerSlide);
+
+                    foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
+                    {
+                        foreach (Cell cell in row)
+                        {
+                            PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                        }
+                    }
+
+                    i++;
+                    donePerSlide++;
+                }
+                else
+                {
+                    // Create a new slide since the current one is "full"
+                    slide = this.slideTemplate.Clone();
+                    tbl = PptxSlide.FindTable(slide, this.tblId);
+
+                    // Not modifying i
+                    donePerSlide = 0;
                 }
             }
 
-            this.tbl.AppendChild(tr);
+            // Delete the slide template
         }
 
-        private A.TableRow GetSecondRow()
+        private static int RowsCount(A.Table tbl)
         {
-            // TODO check for error and throw an nice exception saying the template table
-            // is erronous and does not contains two rows (titles + first row)
-            A.TableRow tr = this.tbl.Descendants<A.TableRow>().ElementAt(1);
+            return tbl.Descendants<A.TableRow>().Count();
+        }
+
+        private static A.TableRow GetRow(A.Table tbl, int row)
+        {
+            A.TableRow tr = tbl.Descendants<A.TableRow>().ElementAt(row);
             return tr;
         }
     }

@@ -15,10 +15,12 @@
     /// <remarks>Could not simply be named Slide, conflicts with DocumentFormat.OpenXml.Drawing.Slide.</remarks>
     internal class PptxSlide
     {
+        private readonly PresentationPart presentationPart;
         private readonly SlidePart slidePart;
 
-        public PptxSlide(SlidePart slidePart)
+        public PptxSlide(PresentationPart presentationPart, SlidePart slidePart)
         {
+            this.presentationPart = presentationPart;
             this.slidePart = slidePart;
         }
 
@@ -129,22 +131,62 @@
         /// Finds a table given its tag inside the slide.
         /// </summary>
         /// <returns>The table or null.</returns>
-        public PptxTable[] FindTables(string tag)
+        internal PptxTable[] FindTables(string tag)
         {
             List<PptxTable> tables = new List<PptxTable>();
 
+            int tblId = 0;
             foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
             {
                 string xml = graphicFrame.NonVisualGraphicFrameProperties.OuterXml;
-
                 if (xml.Contains(tag))
                 {
-                    A.Table tbl = graphicFrame.Descendants<A.Table>().First();
-                    tables.Add(new PptxTable(tbl));
+                    tables.Add(new PptxTable(this, tblId));
                 }
+
+                tblId++;
             }
 
             return tables.ToArray();
+        }
+
+        internal static A.Table FindTable(PptxSlide slide, int tblId)
+        {
+            GraphicFrame graphicFrame = slide.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
+            A.Table tbl = graphicFrame.Descendants<A.Table>().First();
+            return tbl;
+        }
+
+        private static int index = 0;
+
+        public PptxSlide Clone()
+        {
+            SlidePart newSlidePart = this.presentationPart.AddNewPart<SlidePart>("newSlide" + index++);
+
+            newSlidePart.FeedData(this.slidePart.GetStream(FileMode.Open));
+
+            newSlidePart.AddPart(this.slidePart.SlideLayoutPart);
+
+            SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
+
+            uint maxSlideId = 1;
+            SlideId prevSlideId = null;
+            foreach (SlideId slideId in slideIdList.ChildElements)
+            {
+                if (slideId.Id > maxSlideId)
+                {
+                    maxSlideId = slideId.Id;
+                    prevSlideId = slideId;
+                }
+            }
+            maxSlideId++;
+
+            SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
+
+            newSlideId.Id = maxSlideId;
+            newSlideId.RelationshipId = this.presentationPart.GetIdOfPart(newSlidePart);
+
+            return new PptxSlide(this.presentationPart, newSlidePart);
         }
     }
 }

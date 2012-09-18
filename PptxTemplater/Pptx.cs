@@ -147,7 +147,7 @@
             // Get the specified slide part from the relationship ID
             SlidePart slidePart = (SlidePart)presentationPart.GetPartById(relId);
 
-            return new PptxSlide(slidePart);
+            return new PptxSlide(presentationPart, slidePart);
         }
     }
 }
