@@ -43,7 +43,8 @@
 
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
-            for (int i = 0, donePerSlide = 1; i < rows.Count();)
+            int donePerSlide = 1;
+            for (int i = 0; i < rows.Count();)
             {
                 Cell[] row = rows[i];
 
@@ -59,8 +60,8 @@
                         }
                     }
 
-                    i++;
                     donePerSlide++;
+                    i++;
                 }
                 else
                 {
@@ -69,9 +70,16 @@
                     this.slideTemplate.InsertAfter(newSlide);
                     tbl = PptxSlide.FindTable(newSlide, this.tblId);
 
-                    // Not modifying i
                     donePerSlide = 1;
+                    // Not modifying i => do the replacement with the new slide
                 }
+            }
+
+            // Remove the last remaining rows
+            for (int i = RowsCount(tbl) - 1; i >= donePerSlide; i--)
+            {
+                A.TableRow tr = GetRow(tbl, i);
+                tr.Remove();
             }
 
             // Delete the template slide
