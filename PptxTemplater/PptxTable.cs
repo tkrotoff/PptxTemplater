@@ -2,7 +2,6 @@
 {
     using System.Linq;
 
-    using DocumentFormat.OpenXml.Packaging;
     using A = DocumentFormat.OpenXml.Drawing;
 
     /// <summary>
@@ -39,7 +38,7 @@
             {
                 foreach (var cell in cells)
                 {
-                    PptxSlide.ReplaceTagInParagraph(p, cell.Tag, cell.NewText);
+                    PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
                 }
             }
 

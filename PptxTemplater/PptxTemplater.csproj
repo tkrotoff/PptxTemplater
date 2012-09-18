@@ -39,6 +39,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PptxParagraph.cs" />
     <Compile Include="PptxSlide.cs" />
     <Compile Include="Pptx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
