@@ -13,10 +13,7 @@
     /// </summary>
     public class Pptx
     {
-        /// <summary>
-        /// The presentation document.
-        /// </summary>
-        private PresentationDocument presentationDocument;
+        private readonly PresentationDocument presentationDocument;
 
         #region ctor
 
