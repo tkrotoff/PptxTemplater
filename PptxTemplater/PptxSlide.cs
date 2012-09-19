@@ -221,5 +221,10 @@
 
             this.presentationPart.DeletePart(this.slidePart);
         }
+
+        internal void Save()
+        {
+            this.slidePart.Slide.Save();
+        }
     }
 }

@@ -65,6 +65,9 @@
                 }
                 else
                 {
+                    // Save the previous slide
+                    slide.Save();
+
                     // Create a new slide since the current one is "full"
                     PptxSlide newSlide = this.slideTemplate.Clone();
                     slide.InsertAfter(newSlide);
@@ -82,6 +85,9 @@
                 A.TableRow tr = GetRow(tbl, row);
                 tr.Remove();
             }
+
+            // Save the latest slide
+            slide.Save();
 
             // Delete the template slide
             this.slideTemplate.Delete();
