@@ -150,9 +150,9 @@
             return tables.ToArray();
         }
 
-        internal static A.Table FindTable(PptxSlide slide, int tblId)
+        internal A.Table FindTable(int tblId)
         {
-            GraphicFrame graphicFrame = slide.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
+            GraphicFrame graphicFrame = this.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
             A.Table tbl = graphicFrame.Descendants<A.Table>().First();
             return tbl;
         }

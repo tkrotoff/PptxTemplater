@@ -39,7 +39,7 @@
             // Create a new slide from the template slide
             PptxSlide slide = this.slideTemplate.Clone();
             this.slideTemplate.InsertAfter(slide);
-            A.Table tbl = PptxSlide.FindTable(slide, this.tblId);
+            A.Table tbl = slide.FindTable(this.tblId);
 
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
@@ -68,7 +68,7 @@
                     // Create a new slide since the current one is "full"
                     PptxSlide newSlide = this.slideTemplate.Clone();
                     slide.InsertAfter(newSlide);
-                    tbl = PptxSlide.FindTable(newSlide, this.tblId);
+                    tbl = newSlide.FindTable(this.tblId);
                     slide = newSlide;
 
                     donePerSlide = 1;
