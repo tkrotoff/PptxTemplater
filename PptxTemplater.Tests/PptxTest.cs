@@ -74,6 +74,7 @@
             // Check the replaced texts are here
             pptx = new Pptx(dstFileName, false);
             nbSlides = pptx.CountSlides();
+            Assert.AreEqual(3, nbSlides);
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)
             {
@@ -132,12 +133,12 @@
             tables = pptx.FindTables("{{table1}}");
             row = new[]
                 {
-                    new PptxTable.Cell("{{cell1.1}}", "Hello, world! 1.1"),
-                    new PptxTable.Cell("{{cell1.2}}", "Hello, world! 1.2"),
-                    new PptxTable.Cell("{{cell1.3}}", "Hello, world! 1.3"),
-                    new PptxTable.Cell("{{cell1.4}}", "Hello, world! 1.4"),
-                    new PptxTable.Cell("{{cell1.5}}", "Hello, world! 1.5"),
-                    new PptxTable.Cell("{{cell1.6}}", "Hello, world! 1.6")
+                    new PptxTable.Cell("{{cell1}}", "Hello, world! 1"),
+                    new PptxTable.Cell("{{cell2}}", "Hello, world! 2"),
+                    new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
+                    new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
+                    new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
+                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6")
                 };
             foreach (PptxTable table in tables)
             {
@@ -147,12 +148,12 @@
             tables = pptx.FindTables("{{table2}}");
             row = new[]
                 {
-                    new PptxTable.Cell("{{cell1.1}}", "Bonjour 1.1"),
-                    new PptxTable.Cell("{{cell1.2}}", "Bonjour 1.2"),
-                    new PptxTable.Cell("{{cell1.3}}", "Bonjour 1.3"),
-                    new PptxTable.Cell("{{cell1.4}}", "Bonjour 1.4"),
-                    new PptxTable.Cell("{{cell1.5}}", "Bonjour 1.5"),
-                    new PptxTable.Cell("{{cell1.6}}", "Bonjour 1.6")
+                    new PptxTable.Cell("{{cell1}}", "Bonjour 1"),
+                    new PptxTable.Cell("{{cell2}}", "Bonjour 2"),
+                    new PptxTable.Cell("{{cell3}}", "Bonjour 3"),
+                    new PptxTable.Cell("{{cell4}}", "Bonjour 4"),
+                    new PptxTable.Cell("{{cell5}}", "Bonjour 5"),
+                    new PptxTable.Cell("{{cell6}}", "Bonjour 6")
                 };
             foreach (PptxTable table in tables)
             {
@@ -162,12 +163,12 @@
             tables = pptx.FindTables("{{table3}}");
             row = new[]
                 {
-                    new PptxTable.Cell("{{cell1.1}}", "Hola! 1.1"),
-                    new PptxTable.Cell("{{cell1.2}}", "Hola! 1.2"),
-                    new PptxTable.Cell("{{cell1.3}}", "Hola! 1.3"),
-                    new PptxTable.Cell("{{cell1.4}}", "Hola! 1.4"),
-                    new PptxTable.Cell("{{cell1.5}}", "Hola! 1.5"),
-                    new PptxTable.Cell("{{cell1.6}}", "Hola! 1.6")
+                    new PptxTable.Cell("{{cell1}}", "Hola! 1"),
+                    new PptxTable.Cell("{{cell2}}", "Hola! 2"),
+                    new PptxTable.Cell("{{cell3}}", "Hola! 3"),
+                    new PptxTable.Cell("{{cell4}}", "Hola! 4"),
+                    new PptxTable.Cell("{{cell5}}", "Hola! 5"),
+                    new PptxTable.Cell("{{cell6}}", "Hola! 6")
                 };
             foreach (PptxTable table in tables)
             {
@@ -175,6 +176,21 @@
             }
 
             pptx.Close();
+
+            // Check the tables have been replaced
+            pptx = new Pptx(dstFileName, false);
+            int nbSlides = pptx.CountSlides();
+            Assert.AreEqual(6, nbSlides);
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                string[] texts = pptx.GetAllTextInSlide(i);
+                result.Append(string.Join(" ", texts));
+                result.Append(" ");
+            }
+            pptx.Close();
+            const string expected = "Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 ";
+            Assert.AreEqual(expected, result.ToString());
         }
     }
 }
