@@ -117,10 +117,10 @@
         }
 
         [TestMethod]
-        public void CreateTable()
+        public void ReplaceTablesInAllSlides()
         {
-            const string srcFileName = "../../files/Table5.pptx";
-            const string dstFileName = "../../files/Table5_output.pptx";
+            const string srcFileName = "../../files/ReplaceTablesInAllSlides.pptx";
+            const string dstFileName = "../../files/ReplaceTablesInAllSlides_output.pptx";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
@@ -156,7 +156,7 @@
                 };
             foreach (PptxTable table in tables)
             {
-                table.SetRows(row);
+                table.SetRows(row, row);
             }
 
             tables = pptx.FindTables("{{table3}}");
@@ -171,7 +171,7 @@
                 };
             foreach (PptxTable table in tables)
             {
-                table.SetRows(row);
+                table.SetRows(row, row, row, row, row, row, row, row, row, row);
             }
 
             pptx.Close();
