@@ -14,7 +14,7 @@
             const string file = "../../files/GetAllTextInAllSlides.pptx";
 
             Pptx pptx = new Pptx(file, false);
-            int nbSlides = pptx.CountSlides();
+            int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
             var slidesTexts = new Dictionary<int, string[]>();
@@ -51,7 +51,7 @@
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
-            int nbSlides = pptx.CountSlides();
+            int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
             // First slide
@@ -73,7 +73,7 @@
 
             // Check the replaced texts are here
             pptx = new Pptx(dstFileName, false);
-            nbSlides = pptx.CountSlides();
+            nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)
@@ -96,7 +96,7 @@
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
-            int nbSlides = pptx.CountSlides();
+            int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(2, nbSlides);
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
@@ -179,7 +179,7 @@
 
             // Check the tables have been replaced
             pptx = new Pptx(dstFileName, false);
-            int nbSlides = pptx.CountSlides();
+            int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(6, nbSlides);
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)

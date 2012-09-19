@@ -19,6 +19,9 @@
             this.tblId = tblId;
         }
 
+        /// <summary>
+        /// Represents a cell inside a table.
+        /// </summary>
         public class Cell
         {
             internal string Tag { get; set; }
@@ -32,6 +35,10 @@
             }
         }
 
+        /// <summary>
+        /// Changes the cells from the table.
+        /// </summary>
+        /// <remarks>This method should be called only once.</remarks>
         public void SetRows(params Cell[][] rows)
         {
             // TODO throw an exception if this method is being called several times for the same table
@@ -87,6 +94,8 @@
             }
 
             // Save the latest slide
+            // Mandatory otherwise the next time SetRows() is run (on a different table)
+            // the rows from the previous tables will not contained the right data (from PptxParagraph.ReplaceTag())
             slide.Save();
 
             // Delete the template slide

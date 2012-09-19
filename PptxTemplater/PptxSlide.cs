@@ -130,6 +130,7 @@
         /// <summary>
         /// Finds a table given its tag inside the slide.
         /// </summary>
+        /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
         /// <returns>The table or null.</returns>
         internal PptxTable[] FindTables(string tag)
         {
@@ -150,6 +151,10 @@
             return tables.ToArray();
         }
 
+        /// <summary>
+        /// Finds a table given its "artificial" id (tblId).
+        /// </summary>
+        /// <remarks>The "artificial" id (tblId) is created inside FindTables().</remarks>
         internal A.Table FindTable(int tblId)
         {
             GraphicFrame graphicFrame = this.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
