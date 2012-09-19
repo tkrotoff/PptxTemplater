@@ -67,8 +67,9 @@
                 {
                     // Create a new slide since the current one is "full"
                     PptxSlide newSlide = this.slideTemplate.Clone();
-                    this.slideTemplate.InsertAfter(newSlide);
+                    slide.InsertAfter(newSlide);
                     tbl = PptxSlide.FindTable(newSlide, this.tblId);
+                    slide = newSlide;
 
                     donePerSlide = 1;
                     // Not modifying i => do the replacement with the new slide
