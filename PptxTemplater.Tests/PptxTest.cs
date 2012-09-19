@@ -224,23 +224,45 @@
         [TestMethod]
         public void GetThumbnail()
         {
-            const string file = "../../files/GetAllTextInAllSlides.pptx";
+            string file = "../../files/GetAllTextInAllSlides.pptx";
             const string thumbnail_default_png = "../../files/thumbnail_default.png";
             const string thumbnail_default_output_png = "../../files/thumbnail_default_output.png";
             const string thumbnail_128x96_png = "../../files/thumbnail_128x96.png";
             const string thumbnail_128x96_output_png = "../../files/thumbnail_128x96_output.png";
+            const string thumbnail_512x384_png = "../../files/thumbnail_512x384.png";
+            const string thumbnail_512x384_output_png = "../../files/thumbnail_512x384_output.png";
 
             Pptx pptx = new Pptx(file, false);
             byte[] thumbnail_default_output = pptx.GetThumbnail(); // Default size
             File.WriteAllBytes(thumbnail_default_output_png, thumbnail_default_output);
             byte[] thumbnail_128x96_output = pptx.GetThumbnail(new Size(128, 96));
             File.WriteAllBytes(thumbnail_128x96_output_png, thumbnail_128x96_output);
+            byte[] thumbnail_512x384_output = pptx.GetThumbnail(new Size(512, 384));
+            File.WriteAllBytes(thumbnail_512x384_output_png, thumbnail_512x384_output);
 
             // Check the generated thumbnail are ok
             byte[] thumbnail_default = File.ReadAllBytes(thumbnail_default_png);
             CollectionAssert.AreEqual(thumbnail_default, thumbnail_default_output);
             byte[] thumbnail_128x96 = File.ReadAllBytes(thumbnail_128x96_png);
             CollectionAssert.AreEqual(thumbnail_128x96, thumbnail_128x96_output);
+            byte[] thumbnail_512x384 = File.ReadAllBytes(thumbnail_512x384_png); // Will look blurry
+            CollectionAssert.AreEqual(thumbnail_512x384, thumbnail_512x384_output);
+
+            pptx.Close();
+
+            // Test a 16/10 portrait PowerPoint file
+            file = "../../files/portrait_16_10.pptx";
+            const string thumbnail_portrait_16_10_png = "../../files/thumbnail_portrait_16_10.png";
+            const string thumbnail_portrait_16_10_output_png = "../../files/thumbnail_portrait_16_10_output.png";
+
+            pptx = new Pptx(file, false);
+            byte[] thumbnail_portrait_16_10_output = pptx.GetThumbnail(); // Default size
+            File.WriteAllBytes(thumbnail_portrait_16_10_output_png, thumbnail_portrait_16_10_output);
+
+            byte[] thumbnail_portrait_16_10 = File.ReadAllBytes(thumbnail_portrait_16_10_png);
+            CollectionAssert.AreEqual(thumbnail_portrait_16_10, thumbnail_portrait_16_10_output);
+
+            pptx.Close();
         }
     }
 }

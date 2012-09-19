@@ -94,9 +94,12 @@
         /// <summary>
         /// Gets the thumbnail (PNG format) associated with the PowerPoint file.
         /// </summary>
-        /// <param name="size">The size of the thumbnail to generate, default is 256x192 pixels (ratio 1.33).</param>
+        /// <param name="size">The size of the thumbnail to generate, default is 256x192 pixels in 4:3 (160x256 in 16:10 portrait).</param>
         /// <returns>The thumbnail as a byte array (PNG format).</returns>
-        /// <remarks>Even if the PowerPoint file does not contain any slide, still a thumbnail is generated.</remarks>
+        /// <remarks>
+        /// Even if the PowerPoint file does not contain any slide, still a thumbnail is generated.
+        /// If the given size is superior to the default size then the thumbnail is upscaled and looks blurry so don't do it.
+        /// </remarks>
         public byte[] GetThumbnail(Size size = default(Size))
         {
             byte[] thumbnail;
