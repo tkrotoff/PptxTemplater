@@ -1,6 +1,9 @@
 ﻿namespace PptxTemplater
 {
+    using System;
     using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
 
@@ -86,6 +89,35 @@
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);
             slide.ReplaceTag(tag, newText);
+        }
+
+        /// <summary>
+        /// Gets the thumbnail (PNG format) associated with the PowerPoint file.
+        /// </summary>
+        /// <param name="size">The size of the thumbnail to generate, default is 256x192 pixels (ratio 1.33).</param>
+        /// <returns>The thumbnail as a byte array (PNG format).</returns>
+        /// <remarks>Even if the PowerPoint file does not contain any slide, still a thumbnail is generated.</remarks>
+        public byte[] GetThumbnail(Size size = default(Size))
+        {
+            byte[] thumbnail;
+
+            var thumbnailPart = this.presentationDocument.ThumbnailPart;
+            using (var stream = thumbnailPart.GetStream(FileMode.Open, FileAccess.Read))
+            {
+                var image = Image.FromStream(stream);
+                if (size != default(Size))
+                {
+                    image = image.GetThumbnailImage(size.Width, size.Height, null, IntPtr.Zero);
+                }
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    image.Save(memoryStream, ImageFormat.Png);
+                    thumbnail = memoryStream.ToArray();
+                }
+            }
+
+            return thumbnail;
         }
 
         /// <summary>

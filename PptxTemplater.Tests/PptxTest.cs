@@ -1,6 +1,7 @@
 ﻿namespace PptxTemplater.Tests
 {
     using System.Collections.Generic;
+    using System.Drawing;
     using System.IO;
     using System.Text;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,6 +9,33 @@
     [TestClass]
     public class PptxTest
     {
+        [TestMethod]
+        [ExpectedException(typeof(FileFormatException), "File contains corrupted data.")]
+        public void FileFormatException()
+        {
+            Pptx pptx = new Pptx("../../files/picture1.png", false);
+            pptx.Close();
+        }
+
+        [TestMethod]
+        public void EmptyPowerPoint()
+        {
+            const string file = "../../files/EmptyPowerPoint.pptx";
+            const string thumbnail_empty_png = "../../files/thumbnail_empty.png";
+            const string thumbnail_empty_output_png = "../../files/thumbnail_empty_output.png";
+            
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(0, nbSlides);
+
+            byte[] thumbnail_empty_output = pptx.GetThumbnail();
+            File.WriteAllBytes(thumbnail_empty_output_png, thumbnail_empty_output);
+            byte[] thumbnail_empty = File.ReadAllBytes(thumbnail_empty_png);
+            CollectionAssert.AreEqual(thumbnail_empty, thumbnail_empty_output);
+
+            pptx.Close();
+        }
+
         [TestMethod]
         public void GetAllTextInAllSlides()
         {
@@ -191,6 +219,28 @@
             pptx.Close();
             const string expected = "Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 ";
             Assert.AreEqual(expected, result.ToString());
+        }
+
+        [TestMethod]
+        public void GetThumbnail()
+        {
+            const string file = "../../files/GetAllTextInAllSlides.pptx";
+            const string thumbnail_default_png = "../../files/thumbnail_default.png";
+            const string thumbnail_default_output_png = "../../files/thumbnail_default_output.png";
+            const string thumbnail_128x96_png = "../../files/thumbnail_128x96.png";
+            const string thumbnail_128x96_output_png = "../../files/thumbnail_128x96_output.png";
+
+            Pptx pptx = new Pptx(file, false);
+            byte[] thumbnail_default_output = pptx.GetThumbnail(); // Default size
+            File.WriteAllBytes(thumbnail_default_output_png, thumbnail_default_output);
+            byte[] thumbnail_128x96_output = pptx.GetThumbnail(new Size(128, 96));
+            File.WriteAllBytes(thumbnail_128x96_output_png, thumbnail_128x96_output);
+
+            // Check the generated thumbnail are ok
+            byte[] thumbnail_default = File.ReadAllBytes(thumbnail_default_png);
+            CollectionAssert.AreEqual(thumbnail_default, thumbnail_default_output);
+            byte[] thumbnail_128x96 = File.ReadAllBytes(thumbnail_128x96_png);
+            CollectionAssert.AreEqual(thumbnail_128x96, thumbnail_128x96_output);
         }
     }
 }
