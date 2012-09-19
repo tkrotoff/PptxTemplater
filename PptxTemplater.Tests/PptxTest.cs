@@ -126,8 +126,11 @@
 
             Pptx pptx = new Pptx(dstFileName, true);
 
-            PptxTable[] tables = pptx.FindTables("{{table1}}");
-            PptxTable.Cell[] row = new[]
+            PptxTable[] tables;
+            PptxTable.Cell[] row;
+
+            tables = pptx.FindTables("{{table1}}");
+            row = new[]
                 {
                     new PptxTable.Cell("{{cell1.1}}", "Hello, world! 1.1"),
                     new PptxTable.Cell("{{cell1.2}}", "Hello, world! 1.2"),
