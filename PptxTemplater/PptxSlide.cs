@@ -80,6 +80,8 @@
             {
                 PptxParagraph.ReplaceTag(p, tag, newText);
             }
+
+            this.Save();
         }
 
         /// <summary>
@@ -95,10 +97,40 @@
             // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
             // All files inside the media directory are suffixed with .bin
             // Instead if DocumentFormat.OpenXml.Packaging.ImagePartType is used, files are suffixed with the right extension
-            // but I don't want to expose DocumentFormat.OpenXml.Packaging.ImagePartType to the outside world nor
-            // want to add boilerplate code if ... else if ... else if ...
-            // OpenXML SDK should be fixed and handle "image/png" and friends properly
-            ImagePart imagePart = this.slidePart.AddImagePart(contentType);
+            // I don't want to expose DocumentFormat.OpenXml.Packaging.ImagePartType to the outside world
+            ImagePartType type = 0;
+            switch (contentType)
+            {
+                case "image/bmp":
+                    type = ImagePartType.Bmp;
+                    break;
+                case "image/emf": // TODO
+                    type = ImagePartType.Emf;
+                    break;
+                case "image/gif": // TODO
+                    type = ImagePartType.Gif;
+                    break;
+                case "image/ico": // TODO
+                    type = ImagePartType.Icon;
+                    break;
+                case "image/jpeg":
+                    type = ImagePartType.Jpeg;
+                    break;
+                case "image/pcx": // TODO
+                    type = ImagePartType.Pcx;
+                    break;
+                case "image/png":
+                    type = ImagePartType.Png;
+                    break;
+                case "image/tiff": // TODO
+                    type = ImagePartType.Tiff;
+                    break;
+                case "image/wmf": // TODO
+                    type = ImagePartType.Wmf;
+                    break;
+            }
+
+            ImagePart imagePart = this.slidePart.AddImagePart(type);
 
             // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
             // solution: copy the original stream to a MemoryStream
