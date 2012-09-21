@@ -67,16 +67,27 @@
         }
 
         /// <summary>
-        /// Gets all text found inside the given slide.
+        /// Gets all the texts found inside the given slide.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>The text inside a specific slide.</returns>
+        /// <returns>The texts inside a specific slide.</returns>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278331">How to: Get All the Text in All Slides in a Presentation</see>
-        public string[] GetAllTextInSlide(int slideIndex)
+        public string[] GetTextsInSlide(int slideIndex)
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);
-            return slide.GetAllText();
+            return slide.GetTexts();
+        }
+
+        /// <summary>
+        /// Gets all the notes found inside the given slide.
+        /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <returns>The notes inside a specific slide.</returns>
+        public string[] GetNotesInSlide(int slideIndex)
+        {
+            PptxSlide slide = this.GetPptxSlide(slideIndex);
+            return slide.GetNotes();
         }
 
         /// <summary>

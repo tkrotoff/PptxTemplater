@@ -37,9 +37,9 @@
         }
 
         [TestMethod]
-        public void GetAllTextInAllSlides()
+        public void GetTextsInAllSlides()
         {
-            const string file = "../../files/GetAllTextInAllSlides.pptx";
+            const string file = "../../files/GetTextsInAllSlides.pptx";
 
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.SlidesCount();
@@ -48,12 +48,13 @@
             var slidesTexts = new Dictionary<int, string[]>();
             for (int i = 0; i < nbSlides; i++)
             {
-                string[] texts = pptx.GetAllTextInSlide(i);
+                string[] texts = pptx.GetTextsInSlide(i);
                 slidesTexts.Add(i, texts);
             }
 
             string[] expected = { "test1", "Hello, world!" };
             CollectionAssert.AreEqual(expected, slidesTexts[0]);
+
             expected = new string[]
                            {
                                "Title 1", "Bullet 1", "Bullet 2",
@@ -64,8 +65,41 @@
                                "Line 4", "", "", "", ""
                            };
             CollectionAssert.AreEqual(expected, slidesTexts[1]);
-            expected = new string[] { "Title 2", "Bullet 1", "Bullet 2" };
+
+            expected = new string[] { "Title 2", "Bullet 1", "Bullet 2", "Comment ça va ?" };
             CollectionAssert.AreEqual(expected, slidesTexts[2]);
+
+            pptx.Close();
+        }
+
+        [TestMethod]
+        public void GetNotesInAllSlides()
+        {
+            const string file = "../../files/GetNotesInAllSlides.pptx";
+
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(4, nbSlides);
+
+            var slidesNotes = new Dictionary<int, string[]>();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                string[] notes = pptx.GetNotesInSlide(i);
+                slidesNotes.Add(i, notes);
+            }
+
+            string[] expected = { "Bonjour", "{{comment1}}", "Hello", "1" };
+            CollectionAssert.AreEqual(expected, slidesNotes[0]);
+
+            expected = new string[] { "{{comment2}}", "2" };
+            CollectionAssert.AreEqual(expected, slidesNotes[1]);
+
+            expected = new string[] { };
+            CollectionAssert.AreEqual(expected, slidesNotes[2]);
+
+            // TODO Why "Comment çava ?" instead of "Comment ça va ?"
+            expected = new string[] { "Bonjour {{comment3}} Hello", "Comment çava ?", "", "", "Hola!", "", "4" };
+            CollectionAssert.AreEqual(expected, slidesNotes[3]);
 
             pptx.Close();
         }
@@ -106,7 +140,7 @@
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)
             {
-                string[] texts = pptx.GetAllTextInSlide(i);
+                string[] texts = pptx.GetTextsInSlide(i);
                 result.Append(string.Join(" ", texts));
                 result.Append(" ");
             }
@@ -216,7 +250,7 @@
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)
             {
-                string[] texts = pptx.GetAllTextInSlide(i);
+                string[] texts = pptx.GetTextsInSlide(i);
                 result.Append(string.Join(" ", texts));
                 result.Append(" ");
             }
@@ -228,7 +262,7 @@
         [TestMethod]
         public void GetThumbnail()
         {
-            string file = "../../files/GetAllTextInAllSlides.pptx";
+            string file = "../../files/GetTextsInAllSlides.pptx";
             const string thumbnail_default_png = "../../files/thumbnail_default.png";
             const string thumbnail_default_output_png = "../../files/thumbnail_default_output.png";
             const string thumbnail_128x96_png = "../../files/thumbnail_128x96.png";

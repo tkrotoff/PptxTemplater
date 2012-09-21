@@ -25,20 +25,38 @@
         }
 
         /// <summary>
-        /// Gets all text found inside the slide.
+        /// Gets all the texts found inside the slide.
         /// </summary>
         /// <remarks>
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// </remarks>
-        internal string[] GetAllText()
+        internal string[] GetTexts()
         {
             List<string> texts = new List<string>();
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
-                texts.Add(PptxParagraph.GetAllText(p));
+                texts.Add(PptxParagraph.GetTexts(p));
             }
             return texts.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all the notes associated with the slide.
+        /// </summary>
+        /// <returns>All the notes.</returns>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278319.aspx">Working with Notes Slides</see>
+        internal string[] GetNotes()
+        {
+            List<string> notes = new List<string>();
+            if (this.slidePart.NotesSlidePart != null)
+            {
+                foreach (A.Paragraph p in this.slidePart.NotesSlidePart.NotesSlide.Descendants<A.Paragraph>())
+                {
+                    notes.Add(PptxParagraph.GetTexts(p));
+                }
+            }
+            return notes.ToArray();
         }
 
         /// <summary>
@@ -240,7 +258,7 @@
         }
 
         /// <summary>
-        /// Deletes the slide.
+        /// Removes the slide from the PowerPoint file.
         /// </summary>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
         internal void Delete()
@@ -259,6 +277,14 @@
             this.presentationPart.DeletePart(this.slidePart);
         }
 
+        /// <summary>
+        /// Saves the slide.
+        /// </summary>
+        /// <remarks>
+        /// This is mandatory to save the slides after modifying them otherwise
+        /// the next manipulation that will be performed on the pptx won't
+        /// include the modifications done before.
+        /// </remarks>
         internal void Save()
         {
             this.slidePart.Slide.Save();

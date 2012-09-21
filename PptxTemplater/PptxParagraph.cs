@@ -16,10 +16,8 @@
         {
             while (true)
             {
-                string allText = GetAllText(p);
-
                 // Search for the tag
-                Match match = Regex.Match(allText, tag);
+                Match match = Regex.Match(GetTexts(p), tag);
                 if (!match.Success)
                 {
                     break;
@@ -93,12 +91,12 @@
         }
 
         /// <summary>
-        /// Returns all text found inside a given paragraph.
+        /// Returns all the texts found inside a given paragraph.
         /// </summary>
         /// <remarks>
         /// If all A.Text in the given paragraph are empty, returns an empty string.
         /// </remarks>
-        internal static string GetAllText(A.Paragraph p)
+        internal static string GetTexts(A.Paragraph p)
         {
             StringBuilder concat = new StringBuilder();
             foreach (A.Text t in p.Descendants<A.Text>())
