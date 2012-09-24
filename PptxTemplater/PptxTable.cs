@@ -1,5 +1,6 @@
 ﻿namespace PptxTemplater
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     using A = DocumentFormat.OpenXml.Drawing;
@@ -39,7 +40,7 @@
         /// Changes the cells from the table.
         /// </summary>
         /// <remarks>This method should be called only once.</remarks>
-        public void SetRows(params Cell[][] rows)
+        public void SetRows(IList<Cell[]> rows)
         {
             // TODO throw an exception if this method is being called several times for the same table
 
@@ -51,7 +52,7 @@
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int donePerSlide = 1;
-            for (int i = 0; i < rows.Count();)
+            for (int i = 0; i < rows.Count(); )
             {
                 Cell[] row = rows[i];
 

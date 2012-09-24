@@ -23,7 +23,7 @@
             const string file = "../../files/EmptyPowerPoint.pptx";
             const string thumbnail_empty_png = "../../files/thumbnail_empty.png";
             const string thumbnail_empty_output_png = "../../files/thumbnail_empty_output.png";
-            
+
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(0, nbSlides);
@@ -194,9 +194,11 @@
             pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO!");
 
             PptxTable[] tables;
+            List<PptxTable.Cell[]> rows;
             PptxTable.Cell[] row;
 
             tables = pptx.FindTables("{{table1}}");
+            rows = new List<PptxTable.Cell[]>();
             row = new[]
                 {
                     new PptxTable.Cell("{{cell1}}", "Hello, world! 1"),
@@ -206,12 +208,23 @@
                     new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
                     new PptxTable.Cell("{{cell6}}", "Hello, world! 6")
                 };
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
             foreach (PptxTable table in tables)
             {
-                table.SetRows(row, row, row, row, row, row, row, row, row, row);
+                table.SetRows(rows);
             }
 
             tables = pptx.FindTables("{{table2}}");
+            rows = new List<PptxTable.Cell[]>();
             row = new[]
                 {
                     new PptxTable.Cell("{{cell1}}", "Bonjour 1"),
@@ -221,12 +234,15 @@
                     new PptxTable.Cell("{{cell5}}", "Bonjour 5"),
                     new PptxTable.Cell("{{cell6}}", "Bonjour 6")
                 };
+            rows.Add(row);
+            rows.Add(row);
             foreach (PptxTable table in tables)
             {
-                table.SetRows(row, row);
+                table.SetRows(rows);
             }
 
             tables = pptx.FindTables("{{table3}}");
+            rows = new List<PptxTable.Cell[]>();
             row = new[]
                 {
                     new PptxTable.Cell("{{cell1}}", "Hola! 1"),
@@ -236,9 +252,19 @@
                     new PptxTable.Cell("{{cell5}}", "Hola! 5"),
                     new PptxTable.Cell("{{cell6}}", "Hola! 6")
                 };
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
             foreach (PptxTable table in tables)
             {
-                table.SetRows(row, row, row, row, row, row, row, row, row, row);
+                table.SetRows(rows);
             }
 
             pptx.Close();
