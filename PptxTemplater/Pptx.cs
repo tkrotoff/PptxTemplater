@@ -93,6 +93,7 @@
         /// <summary>
         /// Replaces a text (tag) by another inside the given slide.
         /// </summary>
+        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
         /// <param name="slideIndex">Index of the slide.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="newText">The new text.</param>
@@ -137,6 +138,7 @@
         /// <summary>
         /// Replaces a picture by another from a file inside the given slide.
         /// </summary>
+        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
         /// <param name="slideIndex">Index of the slide.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="newPictureFile">The new picture file.</param>
@@ -152,6 +154,7 @@
         /// <summary>
         /// Replaces a picture by another from a stream inside the given slide.
         /// </summary>
+        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
         /// <param name="slideIndex">Index of the slide.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="newPicture">The new picture.</param>

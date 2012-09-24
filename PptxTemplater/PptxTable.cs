@@ -39,7 +39,11 @@
         /// <summary>
         /// Changes the cells from the table.
         /// </summary>
-        /// <remarks>This method should be called only once.</remarks>
+        /// <remarks>
+        /// This method should be called only once.
+        /// This method can potentially change the number of slides (by inserting new slides) so you are better off
+        /// calling it last.
+        /// </remarks>
         public void SetRows(IList<Cell[]> rows)
         {
             // TODO throw an exception if this method is being called several times for the same table
