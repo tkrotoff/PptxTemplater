@@ -105,6 +105,9 @@
         /// <summary>
         /// Replaces a picture by another inside the slide.
         /// </summary>
+        /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
+        /// <param name="newPicture">The new picture to replace the tag with, if null do nothing.</param>
+        /// <param name="contentType">The picture content type.</param>
         /// <remarks>
         /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
         /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
@@ -112,6 +115,16 @@
         /// </remarks>
         internal void ReplacePicture(string tag, Stream newPicture, string contentType)
         {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return;
+            }
+
+            if (newPicture == null)
+            {
+                return;
+            }
+
             // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
             // All files inside the media directory are suffixed with .bin
             // Instead if DocumentFormat.OpenXml.Packaging.ImagePartType is used, files are suffixed with the right extension

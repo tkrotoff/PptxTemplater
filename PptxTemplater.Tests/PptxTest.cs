@@ -129,7 +129,9 @@
             // Third slide
             pptx.ReplaceTagInSlide(2, "{{hello}}", string.Empty);
             pptx.ReplaceTagInSlide(2, "{{bonjour}}", string.Empty);
-            pptx.ReplaceTagInSlide(2, "{{hola}}", string.Empty);
+            pptx.ReplaceTagInSlide(2, "{{hola}}", null);
+            pptx.ReplaceTagInSlide(2, null, string.Empty);
+            pptx.ReplaceTagInSlide(2, null, null);
 
             pptx.Close();
 
@@ -169,11 +171,17 @@
             const string picture1_replace_bmp_contentType = "image/bmp";
             const string picture1_replace_jpeg = "../../files/picture1_replace.jpeg";
             const string picture1_replace_jpeg_contentType = "image/jpeg";
+            const Stream picture1_replace_null = null;
             for (int i = 0; i < nbSlides; i++)
             {
                 pptx.ReplacePictureInSlide(i, "{{picture1png}}", picture1_replace_png, picture1_replace_png_contentType);
                 pptx.ReplacePictureInSlide(i, "{{picture1bmp}}", picture1_replace_bmp, picture1_replace_bmp_contentType);
                 pptx.ReplacePictureInSlide(i, "{{picture1jpeg}}", picture1_replace_jpeg, picture1_replace_jpeg_contentType);
+
+                pptx.ReplacePictureInSlide(i, null, picture1_replace_png, picture1_replace_png_contentType);
+                pptx.ReplacePictureInSlide(i, "{{picture1null}}", picture1_replace_null, picture1_replace_png_contentType);
+                pptx.ReplacePictureInSlide(i, "{{picture1null}}", picture1_replace_png, null);
+                pptx.ReplacePictureInSlide(i, "{{picture1null}}", picture1_replace_null, null);
             }
 
             pptx.Close();
@@ -218,7 +226,11 @@
                     new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
                     new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
                     new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
-                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6")
+                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6"),
+
+                    new PptxTable.Cell(null, "null"),
+                    new PptxTable.Cell("{{unknown}}", null),
+                    new PptxTable.Cell(null, null)
                 };
             rows.Add(row);
             rows.Add(row);
