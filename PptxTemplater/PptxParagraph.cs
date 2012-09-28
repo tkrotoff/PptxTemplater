@@ -13,6 +13,10 @@
     /// Could not simply be named Paragraph, conflicts with DocumentFormat.OpenXml.Drawing.Paragraph.
     ///
     /// Structure of a paragraph:
+    /// a:p (Paragraph)
+    ///  a:r (Run)
+    ///   a:t (Text)
+    ///
     /// <![CDATA[
     /// <a:p>
     ///  <a:r>

@@ -12,6 +12,22 @@
     /// Could not simply be named Table, conflicts with DocumentFormat.OpenXml.Drawing.Table.
     ///
     /// Structure of a table (3 columns x 2 lines):
+    /// a:graphic
+    ///  a:graphicData
+    ///   a:tbl (Table)
+    ///    a:tblGrid (TableGrid)
+    ///     a:gridCol (GridColumn)
+    ///     a:gridCol
+    ///     a:gridCol
+    ///    a:tr (TableRow)
+    ///     a:tc (TableCell)
+    ///     a:tc
+    ///     a:tc
+    ///    a:tr
+    ///     a:tc
+    ///     a:tc
+    ///     a:tc
+    ///
     /// <![CDATA[
     /// <a:graphic>
     ///   <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
@@ -109,6 +125,39 @@
         }
 
         /// <summary>
+        /// Removes the given columns.
+        /// </summary>
+        /// <param name="columns">Indexes of the columns to remove.</param>
+        public void RemoveColumns(IEnumerable<int> columns)
+        {
+            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
+            A.TableGrid tblGrid = tbl.TableGrid;
+
+            // Remove the latest columns first
+            IEnumerable<int> columnsSorted = from column in columns
+                                             orderby column descending
+                                             select column;
+
+            foreach (int column in columnsSorted)
+            {
+                for (int row = 0; row < RowsCount(tbl); row++)
+                {
+                    A.TableRow tr = GetRow(tbl, row);
+
+                    // Remove the column from the row
+                    A.TableCell tc = GetCell(tr, column);
+                    tc.Remove();
+                }
+
+                // Remove the column from TableGrid
+                A.GridColumn gridCol = tblGrid.Descendants<A.GridColumn>().ElementAt(column);
+                gridCol.Remove();
+            }
+
+            this.slideTemplate.Save();
+        }
+
+        /// <summary>
         /// Changes the cells from the table.
         /// </summary>
         /// <remarks>
@@ -179,15 +228,30 @@
             this.slideTemplate.Delete();
         }
 
+        /// <summary>
+        /// Helper method.
+        /// </summary>
         private static int RowsCount(A.Table tbl)
         {
             return tbl.Descendants<A.TableRow>().Count();
         }
 
+        /// <summary>
+        /// Helper method.
+        /// </summary>
         private static A.TableRow GetRow(A.Table tbl, int row)
         {
             A.TableRow tr = tbl.Descendants<A.TableRow>().ElementAt(row);
             return tr;
+        }
+
+        /// <summary>
+        /// Helper method.
+        /// </summary>
+        private static A.TableCell GetCell(A.TableRow tr, int column)
+        {
+            A.TableCell tc = tr.Descendants<A.TableCell>().ElementAt(column);
+            return tc;
         }
     }
 }
