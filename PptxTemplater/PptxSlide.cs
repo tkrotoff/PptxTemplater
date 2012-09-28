@@ -64,36 +64,6 @@
         /// </summary>
         internal void ReplaceTag(string tag, string newText)
         {
-            /*
-             <a:p>
-              <a:r>
-               <a:rPr lang="en-US" dirty="0" smtClean="0"/>
-               <a:t>
-                Hello this is a tag: {{hello}}
-               </a:t>
-              </a:r>
-              <a:endParaRPr lang="fr-FR" dirty="0"/>
-             </a:p>
-            */
-
-            /*
-             <a:p>
-              <a:r>
-               <a:rPr lang="en-US" dirty="0" smtClean="0"/>
-               <a:t>
-                Another tag: {{bonjour
-               </a:t>
-              </a:r>
-              <a:r>
-               <a:rPr lang="en-US" dirty="0" smtClean="0"/>
-               <a:t>
-                }} le monde !
-               </a:t>
-              </a:r>
-              <a:endParaRPr lang="en-US" dirty="0"/>
-             </a:p>
-            */
-
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
                 PptxParagraph.ReplaceTag(p, tag, newText);
@@ -195,7 +165,7 @@
         /// </summary>
         /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
         /// <returns>The table or null.</returns>
-        internal PptxTable[] FindTables(string tag)
+        internal IEnumerable<PptxTable> FindTables(string tag)
         {
             List<PptxTable> tables = new List<PptxTable>();
 
@@ -211,7 +181,7 @@
                 tblId++;
             }
 
-            return tables.ToArray();
+            return tables;
         }
 
         /// <summary>

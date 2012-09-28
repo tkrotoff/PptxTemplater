@@ -9,7 +9,38 @@
     /// <summary>
     /// Represents a paragraph inside a PowerPoint file.
     /// </summary>
-    /// <remarks>Could not simply be named Paragraph, conflicts with DocumentFormat.OpenXml.Drawing.Paragraph.</remarks>
+    /// <remarks>
+    /// Could not simply be named Paragraph, conflicts with DocumentFormat.OpenXml.Drawing.Paragraph.
+    ///
+    /// Structure of a paragraph:
+    /// <![CDATA[
+    /// <a:p>
+    ///  <a:r>
+    ///   <a:rPr lang="en-US" dirty="0" smtClean="0"/>
+    ///   <a:t>
+    ///    Hello this is a tag: {{hello}}
+    ///   </a:t>
+    ///  </a:r>
+    ///  <a:endParaRPr lang="fr-FR" dirty="0"/>
+    /// </a:p>
+    ///
+    /// <a:p>
+    ///  <a:r>
+    ///   <a:rPr lang="en-US" dirty="0" smtClean="0"/>
+    ///   <a:t>
+    ///    Another tag: {{bonjour
+    ///   </a:t>
+    ///  </a:r>
+    ///  <a:r>
+    ///   <a:rPr lang="en-US" dirty="0" smtClean="0"/>
+    ///   <a:t>
+    ///    }} le monde !
+    ///   </a:t>
+    ///  </a:r>
+    ///  <a:endParaRPr lang="en-US" dirty="0"/>
+    /// </a:p>
+    /// ]]>
+    /// </remarks>
     internal static class PptxParagraph
     {
         /// <summary>

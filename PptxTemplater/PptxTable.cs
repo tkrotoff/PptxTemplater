@@ -8,10 +8,82 @@
     /// <summary>
     /// Represents a table inside a PowerPoint file.
     /// </summary>
-    /// <remarks>Could not simply be named Table, conflicts with DocumentFormat.OpenXml.Drawing.Table.</remarks>
+    /// <remarks>
+    /// Could not simply be named Table, conflicts with DocumentFormat.OpenXml.Drawing.Table.
+    ///
+    /// Structure of a table (3 columns x 2 lines):
+    /// <![CDATA[
+    /// <a:graphic>
+    ///   <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
+    ///     <a:tbl>
+    ///       <a:tblPr firstRow="1" bandRow="1">
+    ///         <a:tableStyleId>{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}</a:tableStyleId>
+    ///       </a:tblPr>
+    ///       <a:tblGrid>
+    ///         <a:gridCol w="2743200" />
+    ///         <a:gridCol w="2743200" />
+    ///         <a:gridCol w="2743200" />
+    ///       </a:tblGrid>
+    ///       <a:tr h="370840">
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///       </a:tr>
+    ///       <a:tr h="370840">
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///         <a:tc>
+    ///           <a:txBody>
+    ///             <a:bodyPr />
+    ///             <a:lstStyle />
+    ///             [PptxParagraph]
+    ///           </a:txBody>
+    ///           <a:tcPr />
+    ///         </a:tc>
+    ///       </a:tr>
+    ///     </a:tbl>
+    ///   </a:graphicData>
+    /// </a:graphic>
+    /// ]]>
+    /// </remarks>
     public class PptxTable
     {
-        private PptxSlide slideTemplate;
+        private readonly PptxSlide slideTemplate;
         private readonly int tblId;
 
         internal PptxTable(PptxSlide slideTemplate, int tblId)
@@ -25,9 +97,9 @@
         /// </summary>
         public class Cell
         {
-            internal string Tag { get; set; }
+            internal string Tag { get; private set; }
 
-            internal string NewText { get; set; }
+            internal string NewText { get; private set; }
 
             public Cell(string tag, string newText)
             {
@@ -56,7 +128,7 @@
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int donePerSlide = 1;
-            for (int i = 0; i < rows.Count(); )
+            for (int i = 0; i < rows.Count();)
             {
                 Cell[] row = rows[i];
 
