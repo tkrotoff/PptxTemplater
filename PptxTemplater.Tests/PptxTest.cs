@@ -120,6 +120,37 @@
         }
 
         [TestMethod]
+        public void GetTablesInAllSlides()
+        {
+            const string file = "../../files/ReplaceTagsInAllSlides.pptx";
+
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(3, nbSlides);
+
+            var slidesTables = new Dictionary<int, PptxTable[]>();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                PptxTable[] tables = pptx.GetTablesInSlide(i);
+                slidesTables.Add(i, tables);
+            }
+
+            /*PptxTable[] expected = { "Bonjour", "{{comment1}}", "Hello", "1" };
+            CollectionAssert.AreEqual(expected, slidesTables[0]);
+
+            expected = new string[] { "{{comment2}}", "2" };
+            CollectionAssert.AreEqual(expected, slidesTables[1]);
+
+            expected = new string[] { };
+            CollectionAssert.AreEqual(expected, slidesTables[2]);
+
+            expected = new string[] { "Bonjour {{comment3}} Hello", "Comment çava ?", "", "", "Hola!", "", "4" };
+            CollectionAssert.AreEqual(expected, slidesTables[3]);*/
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void ReplaceTagsInAllSlides()
         {
             const string srcFileName = "../../files/ReplaceTagsInAllSlides.pptx";

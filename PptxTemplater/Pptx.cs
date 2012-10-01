@@ -91,6 +91,17 @@
         }
 
         /// <summary>
+        /// Gets all the tables found inside the given slide.
+        /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <returns>The notes inside a specific slide.</returns>
+        public PptxTable[] GetTablesInSlide(int slideIndex)
+        {
+            PptxSlide slide = this.GetPptxSlide(slideIndex);
+            return slide.GetTables();
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the given slide.
         /// </summary>
         /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>

@@ -60,6 +60,25 @@
         }
 
         /// <summary>
+        /// Gets all the tables associated with the slide.
+        /// </summary>
+        /// <returns>All the tables.</returns>
+        internal PptxTable[] GetTables()
+        {
+            List<PptxTable> tables = new List<PptxTable>();
+
+            int tblId = 0;
+            foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
+            {
+                string xml = graphicFrame.NonVisualGraphicFrameProperties.OuterXml;
+                tables.Add(new PptxTable(this, tblId));
+                tblId++;
+            }
+
+            return tables.ToArray();
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
         internal void ReplaceTag(string tag, string newText)
