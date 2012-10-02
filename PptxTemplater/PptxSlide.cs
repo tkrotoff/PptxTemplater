@@ -70,9 +70,13 @@
             int tblId = 0;
             foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
             {
-                string xml = graphicFrame.NonVisualGraphicFrameProperties.OuterXml;
-                tables.Add(new PptxTable(this, tblId));
-                tblId++;
+                var cNvPr = graphicFrame.NonVisualGraphicFrameProperties.NonVisualDrawingProperties;
+                if (cNvPr.Title != null)
+                {
+                    string title = cNvPr.Title.Value;
+                    tables.Add(new PptxTable(this, tblId, title));
+                    tblId++;
+                }
             }
 
             return tables.ToArray();
@@ -167,14 +171,17 @@
 
             foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
             {
-                string xml = pic.NonVisualPictureProperties.OuterXml;
-
-                if (xml.Contains(tag))
+                var cNvPr = pic.NonVisualPictureProperties.NonVisualDrawingProperties;
+                if (cNvPr.Title != null)
                 {
-                    // Gets the relationship ID of the part
-                    string rId = this.slidePart.GetIdOfPart(imagePart);
+                    string title = cNvPr.Title.Value;
+                    if (title.Contains(tag))
+                    {
+                        // Gets the relationship ID of the part
+                        string rId = this.slidePart.GetIdOfPart(imagePart);
 
-                    pic.BlipFill.Blip.Embed.Value = rId;
+                        pic.BlipFill.Blip.Embed.Value = rId;
+                    }
                 }
             }
         }

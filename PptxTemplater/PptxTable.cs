@@ -102,10 +102,13 @@
         private readonly PptxSlide slideTemplate;
         private readonly int tblId;
 
-        internal PptxTable(PptxSlide slideTemplate, int tblId)
+        public string Title { get; private set; }
+
+        internal PptxTable(PptxSlide slideTemplate, int tblId, string title)
         {
             this.slideTemplate = slideTemplate;
             this.tblId = tblId;
+            this.Title = title;
         }
 
         /// <summary>
