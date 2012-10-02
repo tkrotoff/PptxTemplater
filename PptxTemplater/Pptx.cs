@@ -177,6 +177,22 @@
         }
 
         /// <summary>
+        /// Finds all the tables that match the given tag.
+        /// </summary>
+        public PptxTable[] FindTables(string tag)
+        {
+            List<PptxTable> tables = new List<PptxTable>();
+
+            for (int i = 0; i < this.SlidesCount(); i++)
+            {
+                PptxSlide slide = this.GetPptxSlide(i);
+                tables.AddRange(slide.FindTables(tag));
+            }
+
+            return tables.ToArray();
+        }
+
+        /// <summary>
         /// Gets the PptxSlide given a slide index.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>

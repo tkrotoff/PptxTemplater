@@ -83,6 +83,24 @@
         }
 
         /// <summary>
+        /// Finds a table given its tag inside the slide.
+        /// </summary>
+        /// <returns>The table or null.</returns>
+        /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
+        internal IEnumerable<PptxTable> FindTables(string tag)
+        {
+            List<PptxTable> tables = new List<PptxTable>();
+            foreach (PptxTable table in this.GetTables())
+            {
+                if (table.Title.Contains(tag))
+                {
+                    tables.Add(table);
+                }
+            }
+            return tables;
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
         internal void ReplaceTag(string tag, string newText)

@@ -268,98 +268,82 @@
             // PptxTable.SetRows() might change the number of slides inside the presentation
             pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO!");
 
-            int nbSlides = pptx.SlidesCount();
-            for (int i = 0; i < nbSlides; i++)
-            {
-                List<PptxTable.Cell[]> rows;
-                PptxTable.Cell[] row;
+            PptxTable[] tables;
+            List<PptxTable.Cell[]> rows;
+            PptxTable.Cell[] row;
 
-                PptxTable[] tables = pptx.GetTablesInSlide(i);
-                foreach (PptxTable table in tables)
+            tables = pptx.FindTables("{{table1}}");
+            rows = new List<PptxTable.Cell[]>();
+            row = new[]
                 {
-                    switch (table.Title)
-                    {
-                        case "{{table1}}":
-                            rows = new List<PptxTable.Cell[]>();
-                            row = new[]
-                                {
-                                    new PptxTable.Cell("{{cell1}}", "Hello, world! 1"),
-                                    new PptxTable.Cell("{{cell2}}", "Hello, world! 2"),
-                                    new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
-                                    new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
-                                    new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
-                                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6"),
+                    new PptxTable.Cell("{{cell1}}", "Hello, world! 1"),
+                    new PptxTable.Cell("{{cell2}}", "Hello, world! 2"),
+                    new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
+                    new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
+                    new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
+                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6"),
 
-                                    new PptxTable.Cell(null, "null"),
-                                    new PptxTable.Cell("{{unknown}}", null),
-                                    new PptxTable.Cell(null, null)
-                                };
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            table.SetRows(rows);
+                    new PptxTable.Cell(null, "null"),
+                    new PptxTable.Cell("{{unknown}}", null),
+                    new PptxTable.Cell(null, null)
+                };
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            foreach (PptxTable table in tables)
+            {
+                table.SetRows(rows);
+            }
 
-                            //i = i + pptx.SlidesCount() - nbSlides;
-                            nbSlides = pptx.SlidesCount();
+            tables = pptx.FindTables("{{table2}}");
+            rows = new List<PptxTable.Cell[]>();
+            row = new[]
+                {
+                    new PptxTable.Cell("{{cell1}}", "Bonjour 1"),
+                    new PptxTable.Cell("{{cell2}}", "Bonjour 2"),
+                    new PptxTable.Cell("{{cell3}}", "Bonjour 3"),
+                    new PptxTable.Cell("{{cell4}}", "Bonjour 4"),
+                    new PptxTable.Cell("{{cell5}}", "Bonjour 5"),
+                    new PptxTable.Cell("{{cell6}}", "Bonjour 6")
+                };
+            rows.Add(row);
+            rows.Add(row);
+            foreach (PptxTable table in tables)
+            {
+                table.SetRows(rows);
+            }
 
-                            break;
-
-                        case "{{table2}}":
-                            rows = new List<PptxTable.Cell[]>();
-                            row = new[]
-                                {
-                                    new PptxTable.Cell("{{cell1}}", "Bonjour 1"),
-                                    new PptxTable.Cell("{{cell2}}", "Bonjour 2"),
-                                    new PptxTable.Cell("{{cell3}}", "Bonjour 3"),
-                                    new PptxTable.Cell("{{cell4}}", "Bonjour 4"),
-                                    new PptxTable.Cell("{{cell5}}", "Bonjour 5"),
-                                    new PptxTable.Cell("{{cell6}}", "Bonjour 6")
-                                };
-                            rows.Add(row);
-                            rows.Add(row);
-                            table.SetRows(rows);
-                            
-                            //i = i + pptx.SlidesCount() - nbSlides;
-                            nbSlides = pptx.SlidesCount();
-
-                            break;
-
-                        case "{{table3}}":
-                            rows = new List<PptxTable.Cell[]>();
-                            row = new[]
-                                {
-                                    new PptxTable.Cell("{{cell1}}", "Hola! 1"),
-                                    new PptxTable.Cell("{{cell2}}", "Hola! 2"),
-                                    new PptxTable.Cell("{{cell3}}", "Hola! 3"),
-                                    new PptxTable.Cell("{{cell4}}", "Hola! 4"),
-                                    new PptxTable.Cell("{{cell5}}", "Hola! 5"),
-                                    new PptxTable.Cell("{{cell6}}", "Hola! 6")
-                                };
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            rows.Add(row);
-                            table.SetRows(rows);
-
-                            //i = i + pptx.SlidesCount() - nbSlides;
-                            nbSlides = pptx.SlidesCount();
-
-                            break;
-                    }
-                }
+            tables = pptx.FindTables("{{table3}}");
+            rows = new List<PptxTable.Cell[]>();
+            row = new[]
+                {
+                    new PptxTable.Cell("{{cell1}}", "Hola! 1"),
+                    new PptxTable.Cell("{{cell2}}", "Hola! 2"),
+                    new PptxTable.Cell("{{cell3}}", "Hola! 3"),
+                    new PptxTable.Cell("{{cell4}}", "Hola! 4"),
+                    new PptxTable.Cell("{{cell5}}", "Hola! 5"),
+                    new PptxTable.Cell("{{cell6}}", "Hola! 6")
+                };
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            rows.Add(row);
+            foreach (PptxTable table in tables)
+            {
+                table.SetRows(rows);
             }
 
             pptx.Close();
