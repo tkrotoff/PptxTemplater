@@ -229,18 +229,11 @@
 
             Pptx pptx = new Pptx(dstFileName, true);
 
-            int nbSlides = pptx.SlidesCount();
-            for (int i = 0; i < nbSlides; i++)
+            PptxTable[] tables = pptx.FindTables("{{table1}}");
+            foreach (PptxTable table in tables)
             {
-                PptxTable[] tables = pptx.GetTablesInSlide(i);
-                foreach (PptxTable table in tables)
-                {
-                    if (table.Title == "{{table1}}")
-                    {
-                        int[] columns = new int[] { 1, 3 };
-                        table.RemoveColumns(columns);
-                    }
-                }
+                int[] columns = new int[] { 1, 3 };
+                table.RemoveColumns(columns);
             }
 
             pptx.Close();
@@ -258,15 +251,15 @@
 
             Pptx pptx = new Pptx(dstFileName, true);
 
+            // Change the tags before to insert rows
+            // PptxTable.SetRows() might change the number of slides inside the presentation
+            pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO!");
+
             // Change the pictures before to insert rows
             // PptxTable.SetRows() might change the number of slides inside the presentation
             const string picture1_replace_png = "../../files/picture1_replace.png";
             const string picture1_replace_png_contentType = "image/png";
             pptx.ReplacePictureInSlide(2, "{{picture1png}}", picture1_replace_png, picture1_replace_png_contentType);
-
-            // Change the tags before to insert rows
-            // PptxTable.SetRows() might change the number of slides inside the presentation
-            pptx.ReplaceTagInSlide(0, "{{hello}}", "HELLO!");
 
             PptxTable[] tables;
             List<PptxTable.Cell[]> rows;

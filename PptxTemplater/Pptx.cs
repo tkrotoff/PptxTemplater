@@ -102,6 +102,22 @@
         }
 
         /// <summary>
+        /// Finds all the tables that match the given tag.
+        /// </summary>
+        public PptxTable[] FindTables(string tag)
+        {
+            List<PptxTable> tables = new List<PptxTable>();
+
+            for (int i = 0; i < this.SlidesCount(); i++)
+            {
+                PptxSlide slide = this.GetPptxSlide(i);
+                tables.AddRange(slide.FindTables(tag));
+            }
+
+            return tables.ToArray();
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the given slide.
         /// </summary>
         /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
@@ -174,22 +190,6 @@
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);
             slide.ReplacePicture(tag, newPicture, contentType);
-        }
-
-        /// <summary>
-        /// Finds all the tables that match the given tag.
-        /// </summary>
-        public PptxTable[] FindTables(string tag)
-        {
-            List<PptxTable> tables = new List<PptxTable>();
-
-            for (int i = 0; i < this.SlidesCount(); i++)
-            {
-                PptxSlide slide = this.GetPptxSlide(i);
-                tables.AddRange(slide.FindTables(tag));
-            }
-
-            return tables.ToArray();
         }
 
         /// <summary>

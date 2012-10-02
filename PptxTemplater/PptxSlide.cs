@@ -293,6 +293,9 @@
             this.slidePart.Slide.Save();
         }
 
+        /// <summary>
+        /// Removes the title associated with a table.
+        /// </summary>
         internal void RemoveTableTitle(int tblId)
         {
             GraphicFrame graphicFrame = this.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
