@@ -187,30 +187,6 @@
         }
 
         /// <summary>
-        /// Finds a table given its tag inside the slide.
-        /// </summary>
-        /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
-        /// <returns>The table or null.</returns>
-        internal IEnumerable<PptxTable> FindTables(string tag)
-        {
-            List<PptxTable> tables = new List<PptxTable>();
-
-            int tblId = 0;
-            foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
-            {
-                string xml = graphicFrame.NonVisualGraphicFrameProperties.OuterXml;
-                if (xml.Contains(tag))
-                {
-                    tables.Add(new PptxTable(this, tblId));
-                }
-
-                tblId++;
-            }
-
-            return tables;
-        }
-
-        /// <summary>
         /// Finds a table given its "artificial" id (tblId).
         /// </summary>
         /// <remarks>The "artificial" id (tblId) is created inside FindTables().</remarks>
@@ -297,6 +273,12 @@
         internal void Save()
         {
             this.slidePart.Slide.Save();
+        }
+
+        internal void RemoveTableTitle(int tblId)
+        {
+            GraphicFrame graphicFrame = this.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
+            graphicFrame.NonVisualGraphicFrameProperties.NonVisualDrawingProperties.Title.Value = string.Empty;
         }
     }
 }
