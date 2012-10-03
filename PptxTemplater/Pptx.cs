@@ -94,7 +94,7 @@
         /// Gets all the tables found inside the given slide.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>The notes inside a specific slide.</returns>
+        /// <returns>The tables inside a specific slide.</returns>
         public PptxTable[] GetTablesInSlide(int slideIndex)
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);
@@ -115,6 +115,17 @@
             }
 
             return tables.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all the pictures found inside the given slide.
+        /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        /// <returns>The pictures inside a specific slide.</returns>
+        public string[] GetPicturesInSlide(int slideIndex)
+        {
+            PptxSlide slide = this.GetPptxSlide(slideIndex);
+            return slide.GetPictures();
         }
 
         /// <summary>

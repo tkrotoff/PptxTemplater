@@ -101,6 +101,27 @@
         }
 
         /// <summary>
+        /// Get all the pictures associated with the slide.
+        /// </summary>
+        /// <returns>All the pictures.</returns>
+        internal string[] GetPictures()
+        {
+            List<string> pictures = new List<string>();
+
+            foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
+            {
+                var cNvPr = pic.NonVisualPictureProperties.NonVisualDrawingProperties;
+                if (cNvPr.Title != null)
+                {
+                    string title = cNvPr.Title.Value;
+                    pictures.Add(title);
+                }
+            }
+
+            return pictures.ToArray();
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
         internal void ReplaceTag(string tag, string newText)

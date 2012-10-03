@@ -148,6 +148,36 @@
         }
 
         [TestMethod]
+        public void GetPicturesInAllSlides()
+        {
+            const string file = "../../files/ReplacePicturesInAllSlides.pptx";
+
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(2, nbSlides);
+
+            var slidesPictures = new Dictionary<int, string[]>();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                string[] pictures = pptx.GetPicturesInSlide(i);
+                slidesPictures.Add(i, pictures);
+            }
+
+            string[] expected =
+                                {
+                                    "{{picture1null}}", "{{picture1jpeg}}", "{{picture1bmp}}", "{{picture1png}}",
+                                                        "{{picture1jpeg}}", "{{picture1bmp}}", "{{picture1png}}",
+                                                        "{{picture1jpeg}}", "{{picture1bmp}}", "{{picture1png}}",
+                                                        "{{picture1jpeg}}", "{{picture1bmp}}", "{{picture1png}}"
+                                };
+            CollectionAssert.AreEqual(expected, slidesPictures[0]);
+
+            CollectionAssert.AreEqual(expected, slidesPictures[1]);
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void ReplaceTagsInAllSlides()
         {
             const string srcFileName = "../../files/ReplaceTagsInAllSlides.pptx";
