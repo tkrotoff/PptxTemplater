@@ -134,7 +134,6 @@
         public void RemoveColumns(IEnumerable<int> columns)
         {
             A.Table tbl = this.slideTemplate.FindTable(this.tblId);
-            this.slideTemplate.RemoveTableTitle(this.tblId);
             A.TableGrid tblGrid = tbl.TableGrid;
 
             // Remove the latest columns first
@@ -177,7 +176,6 @@
             PptxSlide slide = this.slideTemplate.Clone();
             this.slideTemplate.InsertAfter(slide);
             A.Table tbl = slide.FindTable(this.tblId);
-            slide.RemoveTableTitle(this.tblId);
 
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
@@ -210,7 +208,6 @@
                     PptxSlide newSlide = this.slideTemplate.Clone();
                     slide.InsertAfter(newSlide);
                     tbl = newSlide.FindTable(this.tblId);
-                    newSlide.RemoveTableTitle(this.tblId);
                     slide = newSlide;
 
                     donePerSlide = 1;
