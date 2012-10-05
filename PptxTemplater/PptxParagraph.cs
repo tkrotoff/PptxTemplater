@@ -51,7 +51,7 @@
         /// Replaces a tag inside a paragraph (a:p).
         /// </summary>
         /// <param name="p">The paragraph (a:p).</param>
-        /// <param name="tag">The tag to replace by newText, if null or empty do nothing.</param>
+        /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
         /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
         internal static void ReplaceTag(A.Paragraph p, string tag, string newText)
         {

@@ -123,8 +123,8 @@
         /// </summary>
         /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
         /// <param name="slideIndex">Index of the slide.</param>
-        /// <param name="tag">The tag.</param>
-        /// <param name="newText">The new text.</param>
+        /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
+        /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
         public void ReplaceTagInSlide(int slideIndex, string tag, string newText)
         {
             PptxSlide slide = this.GetPptxSlide(slideIndex);

@@ -103,6 +103,8 @@
         /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
+        /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
+        /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
         internal void ReplaceTag(string tag, string newText)
         {
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
