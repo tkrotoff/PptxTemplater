@@ -194,6 +194,16 @@
         }
 
         /// <summary>
+        /// Removes the given slide from the final PowerPoint file.
+        /// </summary>
+        /// <param name="slideIndex">Index of the slide.</param>
+        public void RemoveSlide(int slideIndex)
+        {
+            PptxSlide slide = this.GetPptxSlide(slideIndex);
+            slide.Remove();
+        }
+
+        /// <summary>
         /// Gets the PptxSlide given a slide index.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>

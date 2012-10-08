@@ -227,8 +227,8 @@
             // the rows from the previous tables will not contained the right data (from PptxParagraph.ReplaceTag())
             slide.Save();
 
-            // Delete the template slide
-            this.slideTemplate.Delete();
+            // Remove the template slide
+            this.slideTemplate.Remove();
         }
 
         /// <summary>

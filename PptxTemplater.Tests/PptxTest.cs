@@ -387,5 +387,31 @@
 
             pptx.Close();
         }
+
+        [TestMethod]
+        public void RemoveSlides()
+        {
+            const string srcFileName = "../../files/RemoveSlides.pptx";
+            const string dstFileName = "../../files/RemoveSlides_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(5, nbSlides);
+            pptx.RemoveSlide(1);
+            pptx.Close();
+
+            pptx = new Pptx(dstFileName, true);
+            nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(4, nbSlides);
+            pptx.RemoveSlide(0);
+            pptx.RemoveSlide(2); // 2 = 3 - the first slide removed
+            pptx.Close();
+
+            pptx = new Pptx(dstFileName, true);
+            nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(2, nbSlides);
+        }
     }
 }

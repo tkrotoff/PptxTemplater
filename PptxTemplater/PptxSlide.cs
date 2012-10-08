@@ -266,7 +266,7 @@
         /// Removes the slide from the PowerPoint file.
         /// </summary>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
-        internal void Delete()
+        internal void Remove()
         {
             SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
 
