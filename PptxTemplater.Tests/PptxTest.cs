@@ -397,21 +397,32 @@
             File.Copy(srcFileName, dstFileName);
 
             Pptx pptx = new Pptx(dstFileName, true);
-            int nbSlides = pptx.SlidesCount();
-            Assert.AreEqual(5, nbSlides);
+            Assert.AreEqual(5, pptx.SlidesCount());
             pptx.RemoveSlide(1);
+            Assert.AreEqual(4, pptx.SlidesCount());
             pptx.Close();
 
             pptx = new Pptx(dstFileName, true);
-            nbSlides = pptx.SlidesCount();
-            Assert.AreEqual(4, nbSlides);
+            Assert.AreEqual(4, pptx.SlidesCount());
             pptx.RemoveSlide(0);
             pptx.RemoveSlide(2); // 2 = 3 - the first slide removed
+            Assert.AreEqual(2, pptx.SlidesCount());
             pptx.Close();
 
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
             pptx = new Pptx(dstFileName, true);
-            nbSlides = pptx.SlidesCount();
-            Assert.AreEqual(2, nbSlides);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(5, nbSlides);
+            for (int i = nbSlides - 1; i >= 0; i--)
+            {
+                if (i == 0 || i == 2)
+                {
+                    pptx.RemoveSlide(i);
+                }
+            }
+            Assert.AreEqual(3, pptx.SlidesCount());
+            pptx.Close();
         }
     }
 }
