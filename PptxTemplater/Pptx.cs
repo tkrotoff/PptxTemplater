@@ -14,6 +14,7 @@
     /// <summary>
     /// Represents a PowerPoint file.
     /// </summary>
+    /// <returns>Follows the facade pattern.</returns>
     public class Pptx
     {
         private readonly PresentationDocument presentationDocument;
@@ -207,7 +208,7 @@
         /// Gets the PptxSlide given a slide index.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>A PptxSlide</returns>
+        /// <returns>A PptxSlide.</returns>
         private PptxSlide GetPptxSlide(int slideIndex)
         {
             PresentationPart presentationPart = this.presentationDocument.PresentationPart;

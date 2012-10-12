@@ -1,8 +1,10 @@
 ﻿namespace PptxTemplater.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -74,10 +76,10 @@
                            {
                                "Title 1", "Bullet 1", "Bullet 2",
                                "Column 1", "Column 2", "Column 3", "Column 4", "Column 5",
-                               "Line 1", "", "", "", "",
-                               "Line 2", "", "", "", "",
-                               "Line 3", "", "", "", "",
-                               "Line 4", "", "", "", ""
+                               "Line 1", string.Empty, string.Empty, string.Empty, string.Empty,
+                               "Line 2", string.Empty, string.Empty, string.Empty, string.Empty,
+                               "Line 3", string.Empty, string.Empty, string.Empty, string.Empty,
+                               "Line 4", string.Empty, string.Empty, string.Empty, string.Empty
                            };
             CollectionAssert.AreEqual(expected, slidesTexts[1]);
 
@@ -113,7 +115,7 @@
             CollectionAssert.AreEqual(expected, slidesNotes[2]);
 
             // TODO Why "Comment çava ?" instead of "Comment ça va ?"
-            expected = new string[] { "Bonjour {{comment3}} Hello", "Comment çava ?", "", "", "Hola!", "", "4" };
+            expected = new string[] { "Bonjour {{comment3}} Hello", "Comment çava ?", string.Empty, string.Empty, "Hola!", string.Empty, "4" };
             CollectionAssert.AreEqual(expected, slidesNotes[3]);
 
             pptx.Close();
@@ -342,6 +344,123 @@
             pptx.Close();
 
             this.AssertPptxEquals(dstFileName, 7, "Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO! Table1 Col2 Col3 Col4 Col5 Col6 HELLO Hello, world! 1  Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 Hello, world! 1 Hello, world! 2 Hello, world! 3 Hello, world! 4 Hello, world! 5 Hello, world! 6 HELLO! Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Table2 Col2 Col3 Col4 Col5 Col6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Bonjour 1 Bonjour 2 Bonjour 3 Bonjour 4 Bonjour 5 Bonjour 6 Table3 Col2 Col3 Col4 Col5 Col6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6 Hola! 1 Hola! 2 Hola! 3 Hola! 4 Hola! 5 Hola! 6  ");
+        }
+
+        [TestMethod]
+        public void ReplaceTableMultipleTimes()
+        {
+            const string srcFileName = "../../files/ReplaceTableMultipleTimes.pptx";
+            const string dstFileName = "../../files/ReplaceTableMultipleTimes_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+
+            // Après la bataille (Victor Hugo)
+            // http://fr.wikisource.org/wiki/Apr%C3%A8s_la_bataille_(Hugo)
+            const string apresLaBataille =
+                @"Mon père, ce héros au sourire si doux,
+Suivi d’un seul housard qu’il aimait entre tous
+Pour sa grande bravoure et pour sa haute taille,
+Parcourait à cheval, le soir d’une bataille,
+Le champ couvert de morts sur qui tombait la nuit.
+Il lui sembla dans l’ombre entendre un faible bruit.
+C’était un Espagnol de l’armée en déroute
+Qui se traînait sanglant sur le bord de la route,
+Râlant, brisé, livide, et mort plus qu’à moitié,
+Et qui disait : « À boire ! à boire par pitié ! »
+Mon père, ému, tendit à son housard fidèle
+Une gourde de rhum qui pendait à sa selle,
+Et dit : « Tiens, donne à boire à ce pauvre blessé. »
+Tout à coup, au moment où le housard baissé
+Se penchait vers lui, l’homme, une espèce de Maure,
+Saisit un pistolet qu’il étreignait encore,
+Et vise au front mon père en criant : « Caramba ! »
+Le coup passa si près, que le chapeau tomba
+Et que le cheval fit un écart en arrière.
+« Donne-lui tout de même à boire », dit mon père.";
+
+            // Le Dormeur du val (Arthur Rimbaud)
+            // http://fr.wikisource.org/wiki/Le_Dormeur_du_val
+            const string dormeurDuVal =
+                @"C’est un trou de verdure où chante une rivière
+Accrochant follement aux herbes des haillons
+D’argent ; où le soleil, de la montagne fière,
+Luit : c’est un petit val qui mousse de rayons.
+
+Un soldat jeune, bouche ouverte, tête nue,
+Et la nuque baignant dans le frais cresson bleu,
+Dort ; il est étendu dans l’herbe, sous la nue,
+Pâle dans son lit vert où la lumière pleut.
+
+Les pieds dans les glaïeuls, il dort. Souriant comme
+Sourirait un enfant malade, il fait un somme :
+Nature, berce-le chaudement : il a froid.
+
+Les parfums ne font pas frissonner sa narine ;
+Il dort dans le soleil, la main sur sa poitrine
+Tranquille. Il a deux trous rouges au côté droit.";
+
+            List<List<string[]>> poems = new List<List<string[]>>();
+
+            {
+                string[] apresLaBatailleLines = apresLaBataille.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                List<string[]> lines = new List<string[]>();
+                foreach (string line in apresLaBatailleLines)
+                {
+                    lines.Add(line.Split(new string[] { " " }, StringSplitOptions.None));
+                }
+                poems.Add(lines);
+            }
+
+            {
+                string[] dormeurDuValLines = dormeurDuVal.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                List<string[]> lines = new List<string[]>();
+                foreach (string line in dormeurDuValLines)
+                {
+                    lines.Add(line.Split(new string[] { " " }, StringSplitOptions.None));
+                }
+                poems.Add(lines);
+            }
+
+            PptxTable[] tables = pptx.FindTables("{{table1}}");
+            foreach (PptxTable table in tables)
+            {
+                int rowsCount = table.ColumnTitles().Length;
+
+                PptxSlide slideTemplate = table.SlideTemplate;
+                PptxSlide prevSlide = slideTemplate;
+                for (int i = 0; i < poems.Count; i++)
+                {
+                    PptxSlide slide = slideTemplate.Clone();
+                    PptxSlide.InsertAfter(slide, prevSlide);
+                    slide.ReplaceTag("{{title}}", i.ToString());
+
+                    List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>();
+
+                    List<string[]> poem = poems[i];
+                    foreach (string[] line in poem)
+                    {
+                        List<PptxTable.Cell> row = new List<PptxTable.Cell>();
+                        for (int j = 0; j < rowsCount; j++)
+                        {
+                            PptxTable.Cell cell = new PptxTable.Cell("{{cell" + j + "}}", j < line.Length ? line[j] : string.Empty);
+                            row.Add(cell);
+                        }
+                        rows.Add(row.ToArray());
+                    }
+
+                    table.SlideTemplate = slide;
+                    List<PptxSlide> insertedSlides = table.SetRows(rows); // Warning: delete table.SlideTemplate
+                    PptxSlide lastInsertedSlide = insertedSlides.Last();
+                    prevSlide = lastInsertedSlide;
+                }
+                slideTemplate.Remove();
+            }
+
+            pptx.Close();
+
+            this.AssertPptxEquals(dstFileName, 6, "Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 Mon père, ce héros au sourire si doux,       Suivi d’un seul housard qu’il aimait entre tous       Pour sa grande bravoure et pour sa haute taille,      Parcourait à cheval, le soir d’une bataille,        Le champ couvert de morts sur qui tombait la nuit.     Il lui sembla dans l’ombre entendre un faible bruit.      C’était un Espagnol de l’armée en déroute        0 Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 Qui se traînait sanglant sur le bord de la route,     Râlant, brisé, livide, et mort plus qu’à moitié,       Et qui disait : « À boire ! à boire par pitié ! » Mon père, ému, tendit à son housard fidèle       Une gourde de rhum qui pendait à sa selle,      Et dit : « Tiens, donne à boire à ce pauvre blessé. »  Tout à coup, au moment où le housard baissé      0 Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 Se penchait vers lui, l’homme, une espèce de Maure,      Saisit un pistolet qu’il étreignait encore,         Et vise au front mon père en criant : « Caramba ! »  Le coup passa si près, que le chapeau tomba      Et que le cheval fit un écart en arrière.      « Donne-lui tout de même à boire », dit mon père.    0 Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 C’est un trou de verdure où chante une rivière      Accrochant follement aux herbes des haillons         D’argent ; où le soleil, de la montagne fière,      Luit : c’est un petit val qui mousse de rayons.                   Un soldat jeune, bouche ouverte, tête nue,        Et la nuque baignant dans le frais cresson bleu,      1 Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 Dort ; il est étendu dans l’herbe, sous la nue,     Pâle dans son lit vert où la lumière pleut.                    Les pieds dans les glaïeuls, il dort. Souriant comme      Sourirait un enfant malade, il fait un somme :      Nature, berce-le chaudement : il a froid.                      1 Col0 Col1 Col2 Col3 Col4 Col5 Col6 Col7 Col8 Col9 Col10 Col11 Col12 Col13 Les parfums ne font pas frissonner sa narine ;      Il dort dans le soleil, la main sur sa poitrine     Tranquille. Il a deux trous rouges au côté droit.      1 ");
         }
 
         [TestMethod]

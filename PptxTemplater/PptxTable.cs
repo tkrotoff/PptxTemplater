@@ -99,14 +99,15 @@
     /// </remarks>
     public class PptxTable
     {
-        private readonly PptxSlide slideTemplate;
+        public PptxSlide SlideTemplate { get; set; }
+
         private readonly int tblId;
 
         public string Title { get; private set; }
 
         internal PptxTable(PptxSlide slideTemplate, int tblId, string title)
         {
-            this.slideTemplate = slideTemplate;
+            this.SlideTemplate = slideTemplate;
             this.tblId = tblId;
             this.Title = title;
         }
@@ -133,7 +134,7 @@
         /// <param name="columns">Indexes of the columns to remove.</param>
         public void RemoveColumns(IEnumerable<int> columns)
         {
-            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
+            A.Table tbl = this.SlideTemplate.FindTable(this.tblId);
             A.TableGrid tblGrid = tbl.TableGrid;
 
             // Remove the latest columns first
@@ -157,24 +158,26 @@
                 gridCol.Remove();
             }
 
-            this.slideTemplate.Save();
+            this.SlideTemplate.Save();
         }
 
         /// <summary>
         /// Changes the cells from the table.
         /// </summary>
         /// <remarks>
-        /// This method should be called only once.
+        /// Be careful when calling this method multiple times.
         /// This method can potentially change the number of slides (by inserting new slides) so you are better off
         /// calling it last.
         /// </remarks>
-        public void SetRows(IList<Cell[]> rows)
+        /// <returns>The list of inserted (new) slides.</returns>
+        public List<PptxSlide> SetRows(IList<Cell[]> rows)
         {
-            // TODO throw an exception if this method is being called several times for the same table
+            List<PptxSlide> insertedSlides = new List<PptxSlide>();
 
             // Create a new slide from the template slide
-            PptxSlide slide = this.slideTemplate.Clone();
-            this.slideTemplate.InsertAfter(slide);
+            PptxSlide slide = this.SlideTemplate.Clone();
+            insertedSlides.Add(slide);
+            PptxSlide.InsertAfter(slide, this.SlideTemplate);
             A.Table tbl = slide.FindTable(this.tblId);
 
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
@@ -205,8 +208,9 @@
                     slide.Save();
 
                     // Create a new slide since the current one is "full"
-                    PptxSlide newSlide = this.slideTemplate.Clone();
-                    slide.InsertAfter(newSlide);
+                    PptxSlide newSlide = this.SlideTemplate.Clone();
+                    insertedSlides.Add(newSlide);
+                    PptxSlide.InsertAfter(newSlide, slide);
                     tbl = newSlide.FindTable(this.tblId);
                     slide = newSlide;
 
@@ -228,7 +232,9 @@
             slide.Save();
 
             // Remove the template slide
-            this.slideTemplate.Remove();
+            this.SlideTemplate.Remove();
+
+            return insertedSlides;
         }
 
         /// <summary>
@@ -238,7 +244,7 @@
         {
             List<string> titles = new List<string>();
 
-            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
+            A.Table tbl = this.SlideTemplate.FindTable(this.tblId);
             A.TableRow tr = GetRow(tbl, 0); // The first table row == the columns
             foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
             {

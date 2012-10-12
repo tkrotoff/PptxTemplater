@@ -13,7 +13,7 @@
     /// Represents a slide inside a PowerPoint file.
     /// </summary>
     /// <remarks>Could not simply be named Slide, conflicts with DocumentFormat.OpenXml.Drawing.Slide.</remarks>
-    internal class PptxSlide
+    public class PptxSlide
     {
         private readonly PresentationPart presentationPart;
         private readonly SlidePart slidePart;
@@ -63,6 +63,7 @@
         /// Gets all the tables associated with the slide.
         /// </summary>
         /// <returns>All the tables.</returns>
+        /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
         internal PptxTable[] GetTables()
         {
             List<PptxTable> tables = new List<PptxTable>();
@@ -105,7 +106,7 @@
         /// </summary>
         /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
         /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
-        internal void ReplaceTag(string tag, string newText)
+        public void ReplaceTag(string tag, string newText)
         {
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
@@ -217,56 +218,64 @@
             return tbl;
         }
 
-        private static int index = 0;
-
         /// <summary>
         /// Clones this slide.
         /// </summary>
+        /// <returns>The clone.</returns>
         /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
-        internal PptxSlide Clone()
+        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
+        public PptxSlide Clone()
         {
-            SlidePart newSlidePart = this.presentationPart.AddNewPart<SlidePart>("newSlide" + index++);
+            // Clone slide contents
+            SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
+            Slide slideClone = (Slide)this.slidePart.Slide.CloneNode(true);
+            slideClone.Save(slidePartClone);
 
-            newSlidePart.FeedData(this.slidePart.GetStream(FileMode.Open));
+            // Copy layout part
+            slidePartClone.AddPart(this.slidePart.SlideLayoutPart);
 
-            newSlidePart.AddPart(this.slidePart.SlideLayoutPart);
-
-            return new PptxSlide(this.presentationPart, newSlidePart);
+            return new PptxSlide(this.presentationPart, slidePartClone);
         }
 
         /// <summary>
-        /// Inserts a given slide after this slide.
+        /// Inserts this slide after a given target slide.
         /// </summary>
-        internal void InsertAfter(PptxSlide slide)
+        /// <remarks>This slide will be inserted after the slide specified as a parameter.</remarks>
+        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
+        public static void InsertAfter(PptxSlide newSlide, PptxSlide prevSlide)
         {
-            SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
+            // Find the presentationPart
+            var presentationPart = prevSlide.presentationPart;
 
-            uint maxSlideId = 1;
+            SlideIdList slideIdList = presentationPart.Presentation.SlideIdList;
+
+            // Find the slide id where to insert our slide
             SlideId prevSlideId = null;
             foreach (SlideId slideId in slideIdList.ChildElements)
             {
-                if (slideId.Id > maxSlideId)
-                {
-                    maxSlideId = slideId.Id;
-                }
-
                 // See http://openxmldeveloper.org/discussions/development_tools/f/17/p/5302/158602.aspx
-                if (slideId.RelationshipId == this.presentationPart.GetIdOfPart(this.slidePart))
+                if (slideId.RelationshipId == presentationPart.GetIdOfPart(prevSlide.slidePart))
                 {
                     prevSlideId = slideId;
+                    break;
                 }
             }
 
+            // Find the highest id
+            uint maxSlideId = slideIdList.ChildElements.Cast<SlideId>().Max(x => x.Id.Value);
+
+            // public override T InsertAfter<T>(T newChild, DocumentFormat.OpenXml.OpenXmlElement refChild)
+            // Inserts the specified element immediately after the specified reference element.
             SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
             newSlideId.Id = maxSlideId + 1;
-            newSlideId.RelationshipId = this.presentationPart.GetIdOfPart(slide.slidePart);
+            newSlideId.RelationshipId = presentationPart.GetIdOfPart(newSlide.slidePart);
         }
 
         /// <summary>
         /// Removes the slide from the PowerPoint file.
         /// </summary>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
-        internal void Remove()
+        public void Remove()
         {
             SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
 
