@@ -256,10 +256,14 @@
             const string icon_png = "../../files/icon.png";
             const string icon_png_contentType = "image/png";
             FileStream iconFile = new FileStream(icon_png, FileMode.Open, FileAccess.Read);
-            PptxTable.Cell.BackgroundPicture backgroundPicture = new PptxTable.Cell.BackgroundPicture
+            PptxTable.Cell.BackgroundPicture backgroundPicture = new PptxTable.Cell.BackgroundPicture()
             {
                 Picture = iconFile,
-                ContentType = icon_png_contentType
+                ContentType = icon_png_contentType,
+                Top = 14000,
+                Right = 90000,
+                Bottom = 12000,
+                Left = 0
             };
 
             PptxTable[] tables;

@@ -128,6 +128,10 @@
             {
                 public Stream Picture { get; set; }
                 public string ContentType { get; set; }
+                public int Top { get; set; }
+                public int Right { get; set; }
+                public int Bottom { get; set; }
+                public int Left { get; set; }
             }
 
             internal BackgroundPicture Picture { get; private set; }
@@ -208,11 +212,17 @@
         {
             ImagePart imagePart = slide.AddPicture(backgroundPicture.Picture, backgroundPicture.ContentType);
 
-            A.BlipFill blipFill = new A.BlipFill() { Dpi = (UInt32Value)0U, RotateWithShape = true };
+            A.BlipFill blipFill = new A.BlipFill();
             A.Blip blip = new A.Blip() { Embed = slide.GetIdOfImagePart(imagePart) };
             A.SourceRectangle srcRect = new A.SourceRectangle();
             A.Stretch stretch = new A.Stretch();
-            A.FillRectangle fillRect = new A.FillRectangle() { Top = 14000, Right = 90000, Bottom = 12000 };
+            A.FillRectangle fillRect = new A.FillRectangle()
+                {
+                    Top = backgroundPicture.Top,
+                    Right = backgroundPicture.Right,
+                    Bottom = backgroundPicture.Bottom,
+                    Left = backgroundPicture.Left
+                };
             stretch.AppendChild(fillRect);
             blipFill.AppendChild(blip);
             blipFill.AppendChild(srcRect);
@@ -263,7 +273,7 @@
                         {
                             A.TableCell tc = tr.GetFirstChild<A.TableCell>();
                             A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
-                            PptxTable.SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                            SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
                         }
                     }
 
