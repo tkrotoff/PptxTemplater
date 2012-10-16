@@ -53,11 +53,14 @@
         /// <param name="p">The paragraph (a:p).</param>
         /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
         /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
-        internal static void ReplaceTag(A.Paragraph p, string tag, string newText)
+        /// <returns>True if a tag has been replaced; false otherwise.</returns>
+        internal static bool ReplaceTag(A.Paragraph p, string tag, string newText)
         {
+            bool replaced = false;
+
             if (string.IsNullOrEmpty(tag))
             {
-                return;
+                return replaced;
             }
 
             if (newText == null)
@@ -73,6 +76,8 @@
                 {
                     break;
                 }
+
+                replaced = true;
 
                 List<TextIndex> texts = GetTextIndexList(p);
 
@@ -139,6 +144,8 @@
                     }
                 }
             }
+
+            return replaced;
         }
 
         /// <summary>

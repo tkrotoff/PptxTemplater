@@ -252,31 +252,34 @@
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int donePerSlide = 1;
-            for (int i = 0; i < rows.Count();)
+            for (int i = 0; i < rows.Count(); )
             {
                 Cell[] row = rows[i];
 
                 if (donePerSlide < RowsCount(tbl))
                 {
                     A.TableRow tr = GetRow(tbl, donePerSlide);
+
                     List<A.TableCell> tcs = tr.Descendants<A.TableCell>().ToList();
                     for (int j = 0; j < tcs.Count(); j++)
                     {
                         A.TableCell tc = tcs[j];
-                        Cell cell = row.ElementAtOrDefault(j);
-                        if (cell != null)
-                        {
-                            // a:p
-                            foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
-                            {
-                                PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
-                            }
 
-                            // a:tcPr
-                            if (cell.Picture != null)
+                        // a:p
+                        foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+                        {
+                            foreach (Cell cell in row)
                             {
-                                A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
-                                SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                                bool replaced = PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                                if (replaced)
+                                {
+                                    // a:tcPr
+                                    if (cell.Picture != null)
+                                    {
+                                        A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
+                                        SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                                    }
+                                }
                             }
                         }
                     }
