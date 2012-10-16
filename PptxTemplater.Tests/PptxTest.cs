@@ -244,6 +244,49 @@
         }
 
         [TestMethod]
+        public void SetTableCellBackgroundPicture()
+        {
+            const string srcFileName = "../../files/SetTableCellBackgroundPicture.pptx";
+            const string dstFileName = "../../files/SetTableCellBackgroundPicture_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+
+            const string icon_png = "../../files/icon.png";
+            const string icon_png_contentType = "image/png";
+            FileStream iconFile = new FileStream(icon_png, FileMode.Open, FileAccess.Read);
+            PptxTable.Cell.BackgroundPicture backgroundPicture = new PptxTable.Cell.BackgroundPicture
+            {
+                Picture = iconFile,
+                ContentType = icon_png_contentType
+            };
+
+            PptxTable[] tables;
+            List<PptxTable.Cell[]> rows;
+            PptxTable.Cell[] row;
+
+            tables = pptx.FindTables("{{table1}}");
+            rows = new List<PptxTable.Cell[]>();
+            row = new[]
+                {
+                    new PptxTable.Cell("{{cell1}}", "Hello, world! 1", backgroundPicture),
+                    new PptxTable.Cell("{{cell2}}", "Hello, world! 2"),
+                    new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
+                    new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
+                    new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
+                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6")
+                };
+            rows.Add(row);
+            foreach (PptxTable table in tables)
+            {
+                table.SetRows(rows);
+            }
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void ReplaceTablesInAllSlides()
         {
             const string srcFileName = "../../files/ReplaceTablesInAllSlides.pptx";

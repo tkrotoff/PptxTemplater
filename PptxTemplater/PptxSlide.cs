@@ -117,28 +117,10 @@
         }
 
         /// <summary>
-        /// Replaces a picture by another inside the slide.
+        /// Adds a new picture to the slide in order to re-use the picture later on.
         /// </summary>
-        /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
-        /// <param name="newPicture">The new picture to replace the tag with, if null do nothing.</param>
-        /// <param name="contentType">The picture content type.</param>
-        /// <remarks>
-        /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
-        /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
-        /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
-        /// </remarks>
-        internal void ReplacePicture(string tag, Stream newPicture, string contentType)
+        internal ImagePart AddPicture(Stream picture, string contentType)
         {
-            if (string.IsNullOrEmpty(tag))
-            {
-                return;
-            }
-
-            if (newPicture == null)
-            {
-                return;
-            }
-
             // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
             // All files inside the media directory are suffixed with .bin
             // Instead if DocumentFormat.OpenXml.Packaging.ImagePartType is used, files are suffixed with the right extension
@@ -181,14 +163,52 @@
             // solution: copy the original stream to a MemoryStream
             using (MemoryStream stream = new MemoryStream())
             {
-                newPicture.Position = 0;
-                newPicture.CopyTo(stream);
+                picture.Position = 0;
+                picture.CopyTo(stream);
                 stream.Position = 0;
                 imagePart.FeedData(stream);
             }
 
             // No need to detect duplicated images
             // PowerPoint do it for us on the next manual save
+
+            return imagePart;
+        }
+
+        /// <summary>
+        /// Gets the relationship ID of a given image part.
+        /// </summary>
+        /// <param name="imagePart">The image part.</param>
+        /// <returns>The relationship ID of the image part.</returns>
+        internal string GetIdOfImagePart(ImagePart imagePart)
+        {
+            return this.slidePart.GetIdOfPart(imagePart);
+        }
+
+        /// <summary>
+        /// Replaces a picture by another inside the slide.
+        /// </summary>
+        /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
+        /// <param name="newPicture">The new picture to replace the tag with, if null do nothing.</param>
+        /// <param name="contentType">The picture content type.</param>
+        /// <remarks>
+        /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
+        /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
+        /// </remarks>
+        internal void ReplacePicture(string tag, Stream newPicture, string contentType)
+        {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return;
+            }
+
+            if (newPicture == null)
+            {
+                return;
+            }
+
+            ImagePart imagePart = this.AddPicture(newPicture, contentType);
 
             foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
             {

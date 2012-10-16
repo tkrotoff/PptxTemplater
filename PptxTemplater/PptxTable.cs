@@ -1,8 +1,11 @@
 ﻿namespace PptxTemplater
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
+    using DocumentFormat.OpenXml.Packaging;
+    using DocumentFormat.OpenXml;
     using A = DocumentFormat.OpenXml.Drawing;
 
     /// <summary>
@@ -121,10 +124,25 @@
 
             internal string NewText { get; private set; }
 
+            public class BackgroundPicture
+            {
+                public Stream Picture { get; set; }
+                public string ContentType { get; set; }
+            }
+
+            internal BackgroundPicture Picture { get; private set; }
+
             public Cell(string tag, string newText)
             {
                 this.Tag = tag;
                 this.NewText = newText;
+            }
+
+            public Cell(string tag, string newText, BackgroundPicture backgroundPicture)
+            {
+                this.Tag = tag;
+                this.NewText = newText;
+                this.Picture = backgroundPicture;
             }
         }
 
@@ -162,6 +180,47 @@
         }
 
         /// <summary>
+        /// </summary>
+        /// Table Cell Properties
+        /// <remarks>
+        /// <![CDATA[
+        /// <a:tc>
+        ///  <a:txBody>
+        ///   <a:bodyPr/>
+        ///   <a:lstStyle/>
+        ///   <a:p>
+        ///    <a:endParaRPr lang="fr-FR" dirty="0"/>
+        ///   </a:p>
+        ///  </a:txBody>
+        ///  <a:tcPr>
+        ///   <a:blipFill dpi="0" rotWithShape="1">
+        ///    <a:blip r:embed="rId2"/>
+        ///    <a:srcRect/>
+        ///    <a:stretch>
+        ///     <a:fillRect b="12000" r="90000" t="14000"/>
+        ///    </a:stretch>
+        ///   </a:blipFill>
+        ///  </a:tcPr>
+        /// </a:tc>
+        /// ]]>
+        /// </remarks>
+        private static void SetTableCellPropertiesWithBackgroundPicture(PptxSlide slide, A.TableCellProperties tcPr, Cell.BackgroundPicture backgroundPicture)
+        {
+            ImagePart imagePart = slide.AddPicture(backgroundPicture.Picture, backgroundPicture.ContentType);
+
+            A.BlipFill blipFill = new A.BlipFill() { Dpi = (UInt32Value)0U, RotateWithShape = true };
+            A.Blip blip = new A.Blip() { Embed = slide.GetIdOfImagePart(imagePart) };
+            A.SourceRectangle srcRect = new A.SourceRectangle();
+            A.Stretch stretch = new A.Stretch();
+            A.FillRectangle fillRect = new A.FillRectangle() { Top = 14000, Right = 90000, Bottom = 12000 };
+            stretch.AppendChild(fillRect);
+            blipFill.AppendChild(blip);
+            blipFill.AppendChild(srcRect);
+            blipFill.AppendChild(stretch);
+            tcPr.AppendChild(blipFill);
+        }
+
+        /// <summary>
         /// Changes the cells from the table.
         /// </summary>
         /// <remarks>
@@ -191,11 +250,20 @@
                 {
                     A.TableRow tr = GetRow(tbl, donePerSlide);
 
-                    foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
+                    foreach (Cell cell in row)
                     {
-                        foreach (Cell cell in row)
+                        // a:p
+                        foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
                         {
                             PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                        }
+
+                        // a:tcPr
+                        if (cell.Picture != null)
+                        {
+                            A.TableCell tc = tr.GetFirstChild<A.TableCell>();
+                            A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
+                            PptxTable.SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
                         }
                     }
 
