@@ -184,8 +184,8 @@
         }
 
         /// <summary>
+        /// Sets a background picture for a table cell.
         /// </summary>
-        /// Table Cell Properties
         /// <remarks>
         /// <![CDATA[
         /// <a:tc>
@@ -196,7 +196,7 @@
         ///    <a:endParaRPr lang="fr-FR" dirty="0"/>
         ///   </a:p>
         ///  </a:txBody>
-        ///  <a:tcPr>
+        ///  <a:tcPr> (TableCellProperties)
         ///   <a:blipFill dpi="0" rotWithShape="1">
         ///    <a:blip r:embed="rId2"/>
         ///    <a:srcRect/>
@@ -259,21 +259,25 @@
                 if (donePerSlide < RowsCount(tbl))
                 {
                     A.TableRow tr = GetRow(tbl, donePerSlide);
-
-                    foreach (Cell cell in row)
+                    List<A.TableCell> tcs = tr.Descendants<A.TableCell>().ToList();
+                    for (int j = 0; j < tcs.Count(); j++)
                     {
-                        // a:p
-                        foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
+                        A.TableCell tc = tcs[j];
+                        Cell cell = row.ElementAtOrDefault(j);
+                        if (cell != null)
                         {
-                            PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
-                        }
+                            // a:p
+                            foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+                            {
+                                PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                            }
 
-                        // a:tcPr
-                        if (cell.Picture != null)
-                        {
-                            A.TableCell tc = tr.GetFirstChild<A.TableCell>();
-                            A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
-                            SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                            // a:tcPr
+                            if (cell.Picture != null)
+                            {
+                                A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
+                                SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                            }
                         }
                     }
 

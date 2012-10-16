@@ -256,38 +256,112 @@
             const string icon_png = "../../files/icon.png";
             const string icon_png_contentType = "image/png";
             FileStream iconFile = new FileStream(icon_png, FileMode.Open, FileAccess.Read);
-            PptxTable.Cell.BackgroundPicture backgroundPicture = new PptxTable.Cell.BackgroundPicture()
-            {
-                Picture = iconFile,
-                ContentType = icon_png_contentType,
-                Top = 14000,
-                Right = 90000,
-                Bottom = 12000,
-                Left = 0
-            };
 
-            PptxTable[] tables;
-            List<PptxTable.Cell[]> rows;
-            PptxTable.Cell[] row;
-
-            tables = pptx.FindTables("{{table1}}");
-            rows = new List<PptxTable.Cell[]>();
-            row = new[]
+            List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>
                 {
-                    new PptxTable.Cell("{{cell1}}", "Hello, world! 1", backgroundPicture),
-                    new PptxTable.Cell("{{cell2}}", "Hello, world! 2"),
-                    new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
-                    new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
-                    new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
-                    new PptxTable.Cell("{{cell6}}", "Hello, world! 6")
+                    new[]
+                        {
+                            new PptxTable.Cell(
+                                "{{cell0.0}}",
+                                "Hello, world! 0.0",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType,
+                                        Top = 14000,
+                                        Right = 90000,
+                                        Bottom = 12000,
+                                        Left = 0
+                                    }),
+                            null,
+                            null,
+                            new PptxTable.Cell(
+                                "{{cell3.0}}",
+                                "Hello, world! 3.0",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType,
+                                        Top = 14000,
+                                        Right = 90000,
+                                        Bottom = 12000,
+                                        Left = 0
+                                    })
+                        },
+                    new[]
+                        {
+                            new PptxTable.Cell(
+                                "{{cell0.1}}",
+                                "Hello, world! 0.1",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType,
+                                        Top = 14000,
+                                        Right = 90000,
+                                        Bottom = 0,
+                                        Left = 0
+                                    })
+                        },
+                    new[]
+                        {
+                            new PptxTable.Cell(
+                                "{{cell0.2}}",
+                                "Hello, world! 0.2",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType,
+                                        Top = 14000,
+                                        Right = 0,
+                                        Bottom = 0,
+                                        Left = 0
+                                    })
+                        },
+                    new[]
+                        {
+                            new PptxTable.Cell(
+                                "{{cell0.3}}",
+                                "Hello, world! 0.3",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType,
+                                        Top = 0,
+                                        Right = 0,
+                                        Bottom = 0,
+                                        Left = 0
+                                    })
+                        },
+                    new[]
+                        {
+                            new PptxTable.Cell(
+                                "{{cell0.4}}",
+                                "Hello, world! 0.4",
+                                new PptxTable.Cell.BackgroundPicture()
+                                    {
+                                        Picture = iconFile,
+                                        ContentType = icon_png_contentType
+                                    })
+                        },
+                    new[]
+                        {
+                            new PptxTable.Cell("{{cell0.5}}", "Hello, world! 0.5"),
+                            null,
+                            null,
+                            new PptxTable.Cell("{{cell3.5}}", "Hello, world! 3.5")
+                        }
                 };
-            rows.Add(row);
+
+            PptxTable[] tables = pptx.FindTables("{{table1}}");
             foreach (PptxTable table in tables)
             {
                 table.SetRows(rows);
             }
 
             pptx.Close();
+
+            // Sorry, you will have to manually check the background pictures
         }
 
         [TestMethod]
