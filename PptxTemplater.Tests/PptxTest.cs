@@ -355,9 +355,17 @@
                 table.SetRows(rows);
             }
 
+            // Force a slide duplication using another table
+            // This is to test that PptxSlide.Clone() works with background images
+            tables = pptx.FindTables("{{table2}}");
+            foreach (PptxTable table in tables)
+            {
+                table.SetRows(new List<PptxTable.Cell[]>());
+            }
+
             pptx.Close();
 
-            this.AssertPptxEquals(dstFileName, 1, "Col0 Col1 Col2 Col3 Col4 Hello, world! 0.0 Hello {{cell2.0}} Hello, world! 3.0 {{cell4.0}} Hello, world! 0.1 Hello {{cell2.1}} {{cell3.1}} {{cell4.1}} Hello, world! 0.2 Hello {{cell2.2}} {{cell3.2}} {{cell4.2}} Hello, world! 0.3 Hello {{cell2.3}} {{cell3.3}} {{cell4.3}} Hello, world! 0.4 Hello {{cell2.4}} {{cell3.4}} {{cell4.4}} Hello, world! 0.5 Hello {{cell2.5}} Hello, world! 3.5 {{cell4.5}} ");
+            this.AssertPptxEquals(dstFileName, 1, "Col0 Col1 Col2 Col3 Col4 Hello, world! 0.0 Hello {{cell2.0}} Hello, world! 3.0 {{cell4.0}} Hello, world! 0.1 Hello {{cell2.1}} {{cell3.1}} {{cell4.1}} Hello, world! 0.2 Hello {{cell2.2}} {{cell3.2}} {{cell4.2}} Hello, world! 0.3 Hello {{cell2.3}} {{cell3.3}} {{cell4.3}} Hello, world! 0.4 Hello {{cell2.4}} {{cell3.4}} {{cell4.4}} Hello, world! 0.5 Hello {{cell2.5}} Hello, world! 3.5 {{cell4.5}}   ");
             // Sorry, you will have to manually check the background pictures
         }
 

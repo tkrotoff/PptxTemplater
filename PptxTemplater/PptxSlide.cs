@@ -244,15 +244,24 @@
         /// <returns>The clone.</returns>
         /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
         /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
+        /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations & Using Open XML SDK 2.0 Productivity Tool</see>
         public PptxSlide Clone()
         {
+            SlidePart template = this.slidePart;
+
             // Clone slide contents
             SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
-            Slide slideClone = (Slide)this.slidePart.Slide.CloneNode(true);
-            slideClone.Save(slidePartClone);
+            slidePartClone.FeedData(template.GetStream(FileMode.Open));
 
             // Copy layout part
-            slidePartClone.AddPart(this.slidePart.SlideLayoutPart);
+            slidePartClone.AddPart(template.SlideLayoutPart);
+
+            // Copy the image parts
+            foreach (ImagePart image in template.ImageParts)
+            {
+                ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, template.GetIdOfPart(image));
+                imageClone.FeedData(image.GetStream());
+            }
 
             return new PptxSlide(this.presentationPart, slidePartClone);
         }
