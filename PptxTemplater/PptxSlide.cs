@@ -121,10 +121,6 @@
         /// </summary>
         internal ImagePart AddPicture(Stream picture, string contentType)
         {
-            // FIXME The content type ("image/png", "image/bmp" or "image/jpeg") does not work
-            // All files inside the media directory are suffixed with .bin
-            // Instead if DocumentFormat.OpenXml.Packaging.ImagePartType is used, files are suffixed with the right extension
-            // I don't want to expose DocumentFormat.OpenXml.Packaging.ImagePartType to the outside world
             ImagePartType type = 0;
             switch (contentType)
             {
