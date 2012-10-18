@@ -88,7 +88,7 @@
         /// </summary>
         /// <returns>The table or null.</returns>
         /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
-        internal IEnumerable<PptxTable> FindTables(string tag)
+        public IEnumerable<PptxTable> FindTables(string tag)
         {
             List<PptxTable> tables = new List<PptxTable>();
             foreach (PptxTable table in this.GetTables())

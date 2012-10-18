@@ -93,6 +93,28 @@
         }
 
         /// <summary>
+        /// Finds the slides matching a given note.
+        /// </summary>
+        /// <param name="note">Note to match the slide with.</param>
+        /// <returns>The matching slides.</returns>
+        public PptxSlide[] FindSlides(string note)
+        {
+            List<PptxSlide> slides = new List<PptxSlide>();
+
+            for (int i = 0; i < this.SlidesCount(); i++)
+            {
+                PptxSlide slide = this.GetPptxSlide(i);
+                string[] notes = slide.GetNotes();
+                if (notes.Contains(note))
+                {
+                    slides.Add(slide);
+                }
+            }
+
+            return slides.ToArray();
+        }
+
+        /// <summary>
         /// Gets all the tables found inside the given slide.
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
