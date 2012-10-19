@@ -221,6 +221,11 @@
                     }
                 }
             }
+
+            // Need to save the slide otherwise the relashionship is not saved.
+            // Example: <a:blip r:embed="rId2">
+            // r:embed is not updated with the right rId
+            this.Save();
         }
 
         /// <summary>

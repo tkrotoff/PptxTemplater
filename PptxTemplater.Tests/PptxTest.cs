@@ -452,8 +452,10 @@
                         new PptxTable.Cell("{{cell3}}", "Hello, world! 3"),
                         new PptxTable.Cell("{{cell4}}", "Hello, world! 4"),
                         new PptxTable.Cell("{{cell5}}", "Hello, world! 5"),
-                        new PptxTable.Cell("{{cell6}}", "Hello, world! 6"), new PptxTable.Cell(null, "null"),
-                        new PptxTable.Cell("{{unknown}}", null), new PptxTable.Cell(null, null)
+                        new PptxTable.Cell("{{cell6}}", "Hello, world! 6"),
+                        new PptxTable.Cell(null, "null"),
+                        new PptxTable.Cell("{{unknown}}", null),
+                        new PptxTable.Cell(null, null)
                     };
                 rows.Add(row);
                 rows.Add(row);
@@ -479,9 +481,12 @@
                     List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>();
                     PptxTable.Cell[] row = new[]
                         {
-                            new PptxTable.Cell("{{cell1}}", "Bonjour 1"), new PptxTable.Cell("{{cell2}}", "Bonjour 2"),
-                            new PptxTable.Cell("{{cell3}}", "Bonjour 3"), new PptxTable.Cell("{{cell4}}", "Bonjour 4"),
-                            new PptxTable.Cell("{{cell5}}", "Bonjour 5"), new PptxTable.Cell("{{cell6}}", "Bonjour 6")
+                            new PptxTable.Cell("{{cell1}}", "Bonjour 1"),
+                            new PptxTable.Cell("{{cell2}}", "Bonjour 2"),
+                            new PptxTable.Cell("{{cell3}}", "Bonjour 3"),
+                            new PptxTable.Cell("{{cell4}}", "Bonjour 4"),
+                            new PptxTable.Cell("{{cell5}}", "Bonjour 5"),
+                            new PptxTable.Cell("{{cell6}}", "Bonjour 6")
                         };
                     rows.Add(row);
                     rows.Add(row);
@@ -497,9 +502,12 @@
                     List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>();
                     PptxTable.Cell[] row = new[]
                         {
-                            new PptxTable.Cell("{{cell1}}", "Hola! 1"), new PptxTable.Cell("{{cell2}}", "Hola! 2"),
-                            new PptxTable.Cell("{{cell3}}", "Hola! 3"), new PptxTable.Cell("{{cell4}}", "Hola! 4"),
-                            new PptxTable.Cell("{{cell5}}", "Hola! 5"), new PptxTable.Cell("{{cell6}}", "Hola! 6")
+                            new PptxTable.Cell("{{cell1}}", "Hola! 1"),
+                            new PptxTable.Cell("{{cell2}}", "Hola! 2"),
+                            new PptxTable.Cell("{{cell3}}", "Hola! 3"),
+                            new PptxTable.Cell("{{cell4}}", "Hola! 4"),
+                            new PptxTable.Cell("{{cell5}}", "Hola! 5"),
+                            new PptxTable.Cell("{{cell6}}", "Hola! 6")
                         };
                     rows.Add(row);
                     rows.Add(row);
@@ -716,6 +724,52 @@ Tranquille. Il a deux trous rouges au côté droit.";
             }
             Assert.AreEqual(3, pptx.SlidesCount());
             pptx.Close();
+        }
+
+        [TestMethod]
+        public void ReplaceTablesAndPictures()
+        {
+            const string srcFileName = "../../files/ReplaceTablesAndPictures.pptx";
+            const string dstFileName = "../../files/ReplaceTablesAndPictures_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+
+            List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>
+                {
+                    new[] { new PptxTable.Cell("{{cell}}", "1") },
+                    new[] { new PptxTable.Cell("{{cell}}", "2") },
+                    new[] { new PptxTable.Cell("{{cell}}", "3") },
+                    new[] { new PptxTable.Cell("{{cell}}", "4") },
+                    new[] { new PptxTable.Cell("{{cell}}", "5") },
+                    new[] { new PptxTable.Cell("{{cell}}", "6") }
+                };
+
+            PptxSlide slideTemplate = pptx.GetSlide(0);
+            PptxSlide slide = slideTemplate.Clone();
+            PptxSlide.InsertAfter(slide, slideTemplate);
+
+            slide.ReplaceTag("{{hello}}", "Bonjour");
+
+            const string picture1_replace_png = "../../files/picture1_replace.png";
+            const string picture1_replace_png_contentType = "image/png";
+            slide.ReplacePicture("{{picture1}}", picture1_replace_png, picture1_replace_png_contentType);
+
+            PptxTable table1 = slide.FindTables("{{table1}}").First();
+            List<PptxSlide> insertedSlides = table1.SetRows(rows);
+
+            foreach (PptxSlide insertedSlide in insertedSlides)
+            {
+                PptxTable table2 = insertedSlide.FindTables("{{table2}}").First();
+                table2.SetRows(rows);
+            }
+
+            slideTemplate.Remove();
+
+            pptx.Close();
+
+            this.AssertPptxEquals(dstFileName, 4, "Table1 1 2 3 4 Table2 1 2 3 4 Bonjour Table1 1 2 3 4 Table2 5 6 Bonjour Table1 5 6 Table2 1 2 3 4 Bonjour Table1 5 6 Table2 5 6 Bonjour ");
         }
     }
 }
