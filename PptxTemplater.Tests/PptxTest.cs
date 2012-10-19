@@ -568,10 +568,10 @@ Tranquille. Il a deux trous rouges au côté droit.";
             }
 
             {
-                PptxTable table = pptx.GetSlide(0).FindTables("{{table1}}").First();
-                int rowsCount = table.ColumnTitles().Length;
+                PptxSlide slideTemplate = pptx.GetSlide(0);
+                PptxTable tableTemplate = slideTemplate.FindTables("{{table1}}").First();
+                int rowsCountTemplate = tableTemplate.ColumnTitles().Length;
 
-                PptxSlide slideTemplate = table.SlideTemplate;
                 PptxSlide prevSlide = slideTemplate;
                 for (int i = 0; i < poems.Count; i++)
                 {
@@ -585,20 +585,20 @@ Tranquille. Il a deux trous rouges au côté droit.";
                     foreach (string[] line in poem)
                     {
                         List<PptxTable.Cell> row = new List<PptxTable.Cell>();
-                        for (int j = 0; j < rowsCount; j++)
+                        for (int j = 0; j < rowsCountTemplate; j++)
                         {
-                            PptxTable.Cell cell = new PptxTable.Cell(
-                                "{{cell" + j + "}}", j < line.Length ? line[j] : string.Empty);
+                            PptxTable.Cell cell = new PptxTable.Cell("{{cell" + j + "}}", j < line.Length ? line[j] : string.Empty);
                             row.Add(cell);
                         }
                         rows.Add(row.ToArray());
                     }
 
-                    table.SlideTemplate = slide;
-                    List<PptxSlide> insertedSlides = table.SetRows(rows); // Warning: delete table.SlideTemplate
+                    PptxTable table = slide.FindTables("{{table1}}").First();
+                    List<PptxSlide> insertedSlides = table.SetRows(rows);
                     PptxSlide lastInsertedSlide = insertedSlides.Last();
                     prevSlide = lastInsertedSlide;
                 }
+
                 slideTemplate.Remove();
             }
 

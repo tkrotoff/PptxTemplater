@@ -102,7 +102,7 @@
     /// </remarks>
     public class PptxTable
     {
-        public PptxSlide SlideTemplate { get; set; }
+        private PptxSlide slideTemplate;
 
         private readonly int tblId;
 
@@ -110,7 +110,7 @@
 
         internal PptxTable(PptxSlide slideTemplate, int tblId, string title)
         {
-            this.SlideTemplate = slideTemplate;
+            this.slideTemplate = slideTemplate;
             this.tblId = tblId;
             this.Title = title;
         }
@@ -156,7 +156,7 @@
         /// <param name="columns">Indexes of the columns to remove.</param>
         public void RemoveColumns(IEnumerable<int> columns)
         {
-            A.Table tbl = this.SlideTemplate.FindTable(this.tblId);
+            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
             A.TableGrid tblGrid = tbl.TableGrid;
 
             // Remove the latest columns first
@@ -180,7 +180,7 @@
                 gridCol.Remove();
             }
 
-            this.SlideTemplate.Save();
+            this.slideTemplate.Save();
         }
 
         /// <summary>
@@ -244,15 +244,15 @@
             List<PptxSlide> insertedSlides = new List<PptxSlide>();
 
             // Create a new slide from the template slide
-            PptxSlide slide = this.SlideTemplate.Clone();
+            PptxSlide slide = this.slideTemplate.Clone();
             insertedSlides.Add(slide);
-            PptxSlide.InsertAfter(slide, this.SlideTemplate);
+            PptxSlide.InsertAfter(slide, this.slideTemplate);
             A.Table tbl = slide.FindTable(this.tblId);
 
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int donePerSlide = 1;
-            for (int i = 0; i < rows.Count(); )
+            for (int i = 0; i < rows.Count();)
             {
                 Cell[] row = rows[i];
 
@@ -293,7 +293,7 @@
                     slide.Save();
 
                     // Create a new slide since the current one is "full"
-                    PptxSlide newSlide = this.SlideTemplate.Clone();
+                    PptxSlide newSlide = this.slideTemplate.Clone();
                     insertedSlides.Add(newSlide);
                     PptxSlide.InsertAfter(newSlide, slide);
                     tbl = newSlide.FindTable(this.tblId);
@@ -317,7 +317,7 @@
             slide.Save();
 
             // Remove the template slide
-            this.SlideTemplate.Remove();
+            this.slideTemplate.Remove();
 
             return insertedSlides;
         }
@@ -329,7 +329,7 @@
         {
             List<string> titles = new List<string>();
 
-            A.Table tbl = this.SlideTemplate.FindTable(this.tblId);
+            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
             A.TableRow tr = GetRow(tbl, 0); // The first table row == the columns
             foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
             {
