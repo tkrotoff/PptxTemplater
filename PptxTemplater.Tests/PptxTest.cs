@@ -92,6 +92,21 @@
         }
 
         [TestMethod]
+        public void GetSlides()
+        {
+            const string file = "../../files/GetTextsInAllSlides.pptx";
+
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(3, nbSlides);
+
+            IEnumerable<PptxSlide> slides = pptx.GetSlides();
+            Assert.AreEqual(3, slides.Count());
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void GetNotesInAllSlides()
         {
             const string file = "../../files/GetNotesInAllSlides.pptx";

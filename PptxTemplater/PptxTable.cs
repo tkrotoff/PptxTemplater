@@ -5,7 +5,6 @@
     using System.Linq;
 
     using DocumentFormat.OpenXml.Packaging;
-    using DocumentFormat.OpenXml;
     using A = DocumentFormat.OpenXml.Drawing;
 
     /// <summary>
