@@ -68,42 +68,17 @@
         }
 
         /// <summary>
-        /// Gets all the texts found inside the given slide.
-        /// </summary>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>The texts inside a specific slide.</returns>
-        /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
-        /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278331">How to: Get All the Text in All Slides in a Presentation</see>
-        /// <remarks>Internal method: needed for the unit tests only.</remarks>
-        public string[] GetTextsInSlide(int slideIndex)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            return slide.GetTexts();
-        }
-
-        /// <summary>
-        /// Gets all the notes found inside the given slide.
-        /// </summary>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>The notes inside a specific slide.</returns>
-        public string[] GetNotesInSlide(int slideIndex)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            return slide.GetNotes();
-        }
-
-        /// <summary>
         /// Finds the slides matching a given note.
         /// </summary>
         /// <param name="note">Note to match the slide with.</param>
         /// <returns>The matching slides.</returns>
-        public PptxSlide[] FindSlides(string note)
+        public IEnumerable<PptxSlide> FindSlides(string note)
         {
             List<PptxSlide> slides = new List<PptxSlide>();
 
             for (int i = 0; i < this.SlidesCount(); i++)
             {
-                PptxSlide slide = this.GetPptxSlide(i);
+                PptxSlide slide = this.GetSlide(i);
                 string[] notes = slide.GetNotes();
                 if (notes.Contains(note))
                 {
@@ -111,47 +86,7 @@
                 }
             }
 
-            return slides.ToArray();
-        }
-
-        /// <summary>
-        /// Gets all the tables found inside the given slide.
-        /// </summary>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <returns>The tables inside a specific slide.</returns>
-        public PptxTable[] GetTablesInSlide(int slideIndex)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            return slide.GetTables();
-        }
-
-        /// <summary>
-        /// Finds all the tables that match the given tag.
-        /// </summary>
-        public PptxTable[] FindTables(string tag)
-        {
-            List<PptxTable> tables = new List<PptxTable>();
-
-            for (int i = 0; i < this.SlidesCount(); i++)
-            {
-                PptxSlide slide = this.GetPptxSlide(i);
-                tables.AddRange(slide.FindTables(tag));
-            }
-
-            return tables.ToArray();
-        }
-
-        /// <summary>
-        /// Replaces a text (tag) by another inside the given slide.
-        /// </summary>
-        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
-        /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
-        public void ReplaceTagInSlide(int slideIndex, string tag, string newText)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            slide.ReplaceTag(tag, newText);
+            return slides;
         }
 
         /// <summary>
@@ -187,43 +122,18 @@
         }
 
         /// <summary>
-        /// Replaces a picture by another from a file inside the given slide.
+        /// Gets all the slides inside PowerPoint file.
         /// </summary>
-        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <param name="tag">The tag.</param>
-        /// <param name="newPictureFile">The new picture file.</param>
-        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
-        public void ReplacePictureInSlide(int slideIndex, string tag, string newPictureFile, string contentType)
+        /// <returns>All the slides.</returns>
+        public IEnumerable<PptxSlide> GetAllSlides()
         {
-            using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
+            List<PptxSlide> slides = new List<PptxSlide>();
+            int nbSlides = this.SlidesCount();
+            for (int i = 0; i < nbSlides; i++)
             {
-                this.ReplacePictureInSlide(slideIndex, tag, stream, contentType);
+                slides.Add(this.GetSlide(i));
             }
-        }
-
-        /// <summary>
-        /// Replaces a picture by another from a stream inside the given slide.
-        /// </summary>
-        /// <remarks>Always call this method before PptxTable.SetRows() otherwise the number of slides might change.</remarks>
-        /// <param name="slideIndex">Index of the slide.</param>
-        /// <param name="tag">The tag.</param>
-        /// <param name="newPicture">The new picture.</param>
-        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
-        public void ReplacePictureInSlide(int slideIndex, string tag, Stream newPicture, string contentType)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            slide.ReplacePicture(tag, newPicture, contentType);
-        }
-
-        /// <summary>
-        /// Removes the given slide from the final PowerPoint file.
-        /// </summary>
-        /// <param name="slideIndex">Index of the slide.</param>
-        public void RemoveSlide(int slideIndex)
-        {
-            PptxSlide slide = this.GetPptxSlide(slideIndex);
-            slide.Remove();
+            return slides;
         }
 
         /// <summary>
@@ -231,7 +141,7 @@
         /// </summary>
         /// <param name="slideIndex">Index of the slide.</param>
         /// <returns>A PptxSlide.</returns>
-        private PptxSlide GetPptxSlide(int slideIndex)
+        public PptxSlide GetSlide(int slideIndex)
         {
             PresentationPart presentationPart = this.presentationDocument.PresentationPart;
 

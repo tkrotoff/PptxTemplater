@@ -46,7 +46,7 @@
         /// </summary>
         /// <returns>All the notes.</returns>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278319.aspx">Working with Notes Slides</see>
-        internal string[] GetNotes()
+        public string[] GetNotes()
         {
             List<string> notes = new List<string>();
             if (this.slidePart.NotesSlidePart != null)
@@ -64,7 +64,7 @@
         /// </summary>
         /// <returns>All the tables.</returns>
         /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
-        internal PptxTable[] GetTables()
+        public PptxTable[] GetTables()
         {
             List<PptxTable> tables = new List<PptxTable>();
 
@@ -192,7 +192,7 @@
         /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
         /// </remarks>
-        internal void ReplacePicture(string tag, Stream newPicture, string contentType)
+        public void ReplacePicture(string tag, Stream newPicture, string contentType)
         {
             if (string.IsNullOrEmpty(tag))
             {
@@ -240,7 +240,7 @@
         /// <returns>The clone.</returns>
         /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
         /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
-        /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations & Using Open XML SDK 2.0 Productivity Tool</see>
+        /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations and Using Open XML SDK 2.0 Productivity Tool</see>
         public PptxSlide Clone()
         {
             SlidePart template = this.slidePart;
