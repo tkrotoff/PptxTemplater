@@ -31,7 +31,7 @@
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// </remarks>
-        internal string[] GetTexts()
+        public string[] GetTexts()
         {
             List<string> texts = new List<string>();
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
@@ -186,7 +186,7 @@
         /// </summary>
         /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
         /// <param name="newPicture">The new picture to replace the tag with, if null do nothing.</param>
-        /// <param name="contentType">The picture content type.</param>
+        /// <param name="contentType">The picture content type (image/png, image/jpeg...).</param>
         /// <remarks>
         /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
         /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
@@ -220,6 +220,20 @@
                         pic.BlipFill.Blip.Embed.Value = rId;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Replaces a picture by another from a file inside the slide.
+        /// </summary>
+        /// <param name="tag">The tag.</param>
+        /// <param name="newPictureFile">The new picture file.</param>
+        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
+        public void ReplacePicture(string tag, string newPictureFile, string contentType)
+        {
+            using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
+            {
+                this.ReplacePicture(tag, stream, contentType);
             }
         }
 

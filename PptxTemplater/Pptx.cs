@@ -125,7 +125,7 @@
         /// Gets all the slides inside PowerPoint file.
         /// </summary>
         /// <returns>All the slides.</returns>
-        public IEnumerable<PptxSlide> GetAllSlides()
+        public IEnumerable<PptxSlide> GetSlides()
         {
             List<PptxSlide> slides = new List<PptxSlide>();
             int nbSlides = this.SlidesCount();
