@@ -249,7 +249,7 @@
             const string picture1_replace_bmp_contentType = "image/bmp";
             const string picture1_replace_jpeg = "../../files/picture1_replace.jpeg";
             const string picture1_replace_jpeg_contentType = "image/jpeg";
-            const Stream picture1_replace_null = null;
+            byte[] picture1_replace_empty = new byte[] { };
             for (int i = 0; i < nbSlides; i++)
             {
                 PptxSlide slide = pptx.GetSlide(i);
@@ -259,9 +259,9 @@
                 slide.ReplacePicture("{{picture1jpeg}}", picture1_replace_jpeg, picture1_replace_jpeg_contentType);
 
                 slide.ReplacePicture(null, picture1_replace_png, picture1_replace_png_contentType);
-                slide.ReplacePicture("{{picture1null}}", picture1_replace_null, picture1_replace_png_contentType);
+                slide.ReplacePicture("{{picture1null}}", picture1_replace_empty, picture1_replace_png_contentType);
                 slide.ReplacePicture("{{picture1null}}", picture1_replace_png, null);
-                slide.ReplacePicture("{{picture1null}}", picture1_replace_null, null);
+                slide.ReplacePicture("{{picture1null}}", picture1_replace_empty, null);
             }
 
             pptx.Close();
