@@ -125,7 +125,7 @@
 
             public class BackgroundPicture
             {
-                public Stream Picture { get; set; }
+                public byte[] Picture { get; set; }
                 public string ContentType { get; set; }
                 public int Top { get; set; }
                 public int Right { get; set; }

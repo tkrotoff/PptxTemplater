@@ -119,7 +119,7 @@
         /// <summary>
         /// Adds a new picture to the slide in order to re-use the picture later on.
         /// </summary>
-        internal ImagePart AddPicture(Stream picture, string contentType)
+        internal ImagePart AddPicture(byte[] picture, string contentType)
         {
             ImagePartType type = 0;
             switch (contentType)
@@ -157,11 +157,8 @@
 
             // FeedData() closes the stream and we cannot reuse it (ObjectDisposedException)
             // solution: copy the original stream to a MemoryStream
-            using (MemoryStream stream = new MemoryStream())
+            using (MemoryStream stream = new MemoryStream(picture))
             {
-                picture.Position = 0;
-                picture.CopyTo(stream);
-                stream.Position = 0;
                 imagePart.FeedData(stream);
             }
 
@@ -185,14 +182,14 @@
         /// Replaces a picture by another inside the slide.
         /// </summary>
         /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
-        /// <param name="newPicture">The new picture (as a stream) to replace the tag with, if null do nothing.</param>
+        /// <param name="newPicture">The new picture (as a byte array) to replace the tag with, if null do nothing.</param>
         /// <param name="contentType">The picture content type (image/png, image/jpeg...).</param>
         /// <remarks>
         /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
         /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
         /// </remarks>
-        private void ReplacePicture(string tag, Stream newPicture, string contentType)
+        public void ReplacePicture(string tag, byte[] newPicture, string contentType)
         {
             if (string.IsNullOrEmpty(tag))
             {
@@ -231,29 +228,13 @@
         /// <summary>
         /// Replaces a picture by another inside the slide.
         /// </summary>
-        /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
-        /// <param name="newPicture">The new picture (as a byte array) to replace the tag with.</param>
-        /// <param name="contentType">The picture content type (image/png, image/jpeg...).</param>
-        public void ReplacePicture(string tag, byte[] newPicture, string contentType)
-        {
-            using (MemoryStream stream = new MemoryStream(newPicture))
-            {
-                this.ReplacePicture(tag, stream, contentType);
-            }
-        }
-
-        /// <summary>
-        /// Replaces a picture by another inside the slide.
-        /// </summary>
         /// <param name="tag">The tag.</param>
         /// <param name="newPictureFile">The new picture (as a file path) to replace the tag with.</param>
         /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
         public void ReplacePicture(string tag, string newPictureFile, string contentType)
         {
-            using (FileStream stream = new FileStream(newPictureFile, FileMode.Open, FileAccess.Read))
-            {
-                this.ReplacePicture(tag, stream, contentType);
-            }
+            byte[] bytes = File.ReadAllBytes(newPictureFile);
+            this.ReplacePicture(tag, bytes, contentType);
         }
 
         /// <summary>
