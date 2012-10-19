@@ -125,6 +125,21 @@
         }
 
         [TestMethod]
+        public void FindSlides()
+        {
+            const string file = "../../files/GetNotesInAllSlides.pptx";
+
+            Pptx pptx = new Pptx(file, false);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(4, nbSlides);
+
+            IEnumerable<PptxSlide> slides = pptx.FindSlides("{{comment2}}");
+            Assert.AreEqual(1, slides.Count());
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void GetTablesInAllSlides()
         {
             const string file = "../../files/ReplaceTablesInAllSlides.pptx";
