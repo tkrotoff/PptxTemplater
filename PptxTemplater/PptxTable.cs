@@ -237,6 +237,81 @@
         /// <summary>
         /// Changes the cells from the table.
         /// </summary>
+        /// <returns>The list of remaining rows that could not be inserted, you will have to create a new slide.</returns>
+        public List<Cell[]> SetRowsNoInsert(IList<Cell[]> rows)
+        {
+            PptxSlide slide = this.slideTemplate;
+
+            A.Table tbl = slide.FindTable(this.tblId);
+
+            // done starts at 1 instead of 0 because we don't care about the first row
+            // The first row contains the titles for the columns
+            int done = 1;
+            for (int i = 0; i < rows.Count(); i++)
+            {
+                Cell[] row = rows[i];
+
+                if (done < RowsCount(tbl))
+                {
+                    A.TableRow tr = GetRow(tbl, done);
+
+                    List<A.TableCell> tcs = tr.Descendants<A.TableCell>().ToList();
+                    for (int j = 0; j < tcs.Count(); j++)
+                    {
+                        A.TableCell tc = tcs[j];
+
+                        // a:p
+                        foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+                        {
+                            foreach (Cell cell in row)
+                            {
+                                bool replaced = PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                                if (replaced)
+                                {
+                                    // a:tcPr
+                                    if (cell.Picture != null)
+                                    {
+                                        A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
+                                        SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    done++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Remove the last remaining rows if any
+            for (int row = RowsCount(tbl) - 1; row >= done; row--)
+            {
+                A.TableRow tr = GetRow(tbl, row);
+                tr.Remove();
+            }
+
+            // Save the latest slide
+            // Mandatory otherwise the next time SetRows() is run (on a different table)
+            // the rows from the previous tables will not contained the right data (from PptxParagraph.ReplaceTag())
+            slide.Save();
+
+            // Computes the remaining rows if any
+            List<Cell[]> remainingRows = new List<Cell[]>();
+            for (int row = done - 1; row < rows.Count; row++)
+            {
+                remainingRows.Add(rows[row]);
+            }
+
+            return remainingRows;
+        }
+
+        /// <summary>
+        /// Changes the cells from the table.
+        /// </summary>
         /// <remarks>
         /// Be careful when calling this method multiple times.
         /// This method can potentially change the number of slides (by inserting new slides) so you are better off
