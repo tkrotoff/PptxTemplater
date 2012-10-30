@@ -209,6 +209,11 @@
         /// </remarks>
         private static void SetTableCellPropertiesWithBackgroundPicture(PptxSlide slide, A.TableCellProperties tcPr, Cell.BackgroundPicture backgroundPicture)
         {
+            if (backgroundPicture.Picture == null)
+            {
+                return;
+            }
+
             ImagePart imagePart = slide.AddPicture(backgroundPicture.Picture, backgroundPicture.ContentType);
 
             A.BlipFill blipFill = new A.BlipFill();
