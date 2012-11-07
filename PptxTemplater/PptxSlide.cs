@@ -117,6 +117,16 @@
         }
 
         /// <summary>
+        /// Replaces a text (tag) by another inside the slide given a PptxTable.Cell.
+        /// This is a convenient method that overloads the original ReplaceTag() method.
+        /// </summary>
+        /// <param name="tagPair">The tag/new text, BackgroundPicture is ignored.</param>
+        public void ReplaceTag(PptxTable.Cell tagPair)
+        {
+            this.ReplaceTag(tagPair.Tag, tagPair.NewText);
+        }
+
+        /// <summary>
         /// Adds a new picture to the slide in order to re-use the picture later on.
         /// </summary>
         internal ImagePart AddPicture(byte[] picture, string contentType)
