@@ -1,7 +1,6 @@
 ﻿namespace PptxTemplater
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
 
     using DocumentFormat.OpenXml.Packaging;
