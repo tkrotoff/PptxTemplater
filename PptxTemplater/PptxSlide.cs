@@ -271,7 +271,10 @@
 
             // Clone slide contents
             SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
-            slidePartClone.FeedData(template.GetStream(FileMode.Open));
+            using (var templateStream = template.GetStream(FileMode.Open))
+            {
+                slidePartClone.FeedData(templateStream);
+            }
 
             // Copy layout part
             slidePartClone.AddPart(template.SlideLayoutPart);
@@ -280,7 +283,10 @@
             foreach (ImagePart image in template.ImageParts)
             {
                 ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, template.GetIdOfPart(image));
-                imageClone.FeedData(image.GetStream());
+                using (var imageStream = image.GetStream())
+                {
+                    imageClone.FeedData(imageStream);
+                }
             }
 
             return new PptxSlide(this.presentationPart, slidePartClone);
