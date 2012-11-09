@@ -114,7 +114,7 @@
         }
 
         /// <summary>
-        /// Represents a cell inside a table.
+        /// Represents a cell inside a table (a:tbl).
         /// </summary>
         public class Cell
         {
@@ -182,7 +182,7 @@
         }
 
         /// <summary>
-        /// Sets a background picture for a table cell.
+        /// Sets a background picture for a table cell (a:tc).
         /// </summary>
         /// <remarks>
         /// <![CDATA[
@@ -234,13 +234,72 @@
         }
 
         /// <summary>
-        /// Changes the cells from the table.
+        /// Replaces a tag inside the table (a:tbl).
+        /// </summary>
+        /// <param name="cell">Contains the tag, the new text and a pciture.</param>
+        /// <returns>True if a tag has been found and replaced; false otherwise.</returns>
+        public bool ReplaceTag(Cell cell)
+        {
+            bool replacedAtLeastOnce = false;
+
+            PptxSlide slide = this.slideTemplate;
+            A.Table tbl = slide.FindTable(this.tblId);
+
+            // a:tr
+            foreach (A.TableRow tr in tbl.Descendants<A.TableRow>())
+            {
+                // a:tc
+                foreach (A.TableCell tc in tr.Descendants<A.TableCell>())
+                {
+                    bool replaced = ReplaceTag(slide, tc, cell);
+                    if (replaced)
+                    {
+                        replacedAtLeastOnce = true;
+                    }
+                }
+            }
+
+            return replacedAtLeastOnce;
+        }
+
+        /// <summary>
+        /// Replaces a tag inside a given table cell (a:tc).
+        /// </summary>
+        /// <param name="slide">The PptxSlide.</param>
+        /// <param name="tc">The table cell (a:tc).</param>
+        /// <param name="cell">Contains the tag, the new text and a picture.</param>
+        /// <returns>True if a tag has been found and replaced; false otherwise.</returns>
+        private static bool ReplaceTag(PptxSlide slide, A.TableCell tc, Cell cell)
+        {
+            bool replacedAtLeastOnce = false;
+
+            // a:p
+            foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+            {
+                bool replaced = PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
+                if (replaced)
+                {
+                    replacedAtLeastOnce = true;
+
+                    // a:tcPr
+                    if (cell.Picture != null)
+                    {
+                        A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
+                        SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
+                    }
+                }
+            }
+
+            return replacedAtLeastOnce;
+        }
+
+        /// <summary>
+        /// Changes the cells from the table (tbl).
         /// </summary>
         /// <returns>The list of remaining rows that could not be inserted, you will have to create a new slide.</returns>
         public List<Cell[]> SetRowsNoInsert(IList<Cell[]> rows)
         {
             PptxSlide slide = this.slideTemplate;
-
             A.Table tbl = slide.FindTable(this.tblId);
 
             // done starts at 1 instead of 0 because we don't care about the first row
@@ -252,29 +311,15 @@
 
                 if (done < RowsCount(tbl))
                 {
+                    // a:tr
                     A.TableRow tr = GetRow(tbl, done);
 
-                    List<A.TableCell> tcs = tr.Descendants<A.TableCell>().ToList();
-                    for (int j = 0; j < tcs.Count(); j++)
+                    // a:tc
+                    foreach (A.TableCell tc in tr.Descendants<A.TableCell>())
                     {
-                        A.TableCell tc = tcs[j];
-
-                        // a:p
-                        foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+                        foreach (Cell cell in row)
                         {
-                            foreach (Cell cell in row)
-                            {
-                                bool replaced = PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
-                                if (replaced)
-                                {
-                                    // a:tcPr
-                                    if (cell.Picture != null)
-                                    {
-                                        A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
-                                        SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
-                                    }
-                                }
-                            }
+                            ReplaceTag(slide, tc, cell);
                         }
                     }
 
@@ -309,7 +354,7 @@
         }
 
         /// <summary>
-        /// Changes the cells from the table.
+        /// Changes the cells from the table (tbl).
         /// </summary>
         /// <remarks>
         /// Be careful when calling this method multiple times.
@@ -336,29 +381,15 @@
 
                 if (donePerSlide < RowsCount(tbl))
                 {
+                    // a:tr
                     A.TableRow tr = GetRow(tbl, donePerSlide);
 
-                    List<A.TableCell> tcs = tr.Descendants<A.TableCell>().ToList();
-                    for (int j = 0; j < tcs.Count(); j++)
+                    // a:tc
+                    foreach (A.TableCell tc in tr.Descendants<A.TableCell>())
                     {
-                        A.TableCell tc = tcs[j];
-
-                        // a:p
-                        foreach (A.Paragraph p in tc.Descendants<A.Paragraph>())
+                        foreach (Cell cell in row)
                         {
-                            foreach (Cell cell in row)
-                            {
-                                bool replaced = PptxParagraph.ReplaceTag(p, cell.Tag, cell.NewText);
-                                if (replaced)
-                                {
-                                    // a:tcPr
-                                    if (cell.Picture != null)
-                                    {
-                                        A.TableCellProperties tcPr = tc.GetFirstChild<A.TableCellProperties>();
-                                        SetTableCellPropertiesWithBackgroundPicture(slide, tcPr, cell.Picture);
-                                    }
-                                }
-                            }
+                            ReplaceTag(slide, tc, cell);
                         }
                     }
 
