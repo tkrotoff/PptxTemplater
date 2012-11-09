@@ -15,7 +15,7 @@
     /// Represents a PowerPoint file.
     /// </summary>
     /// <returns>Follows the facade pattern.</returns>
-    public class Pptx
+    public sealed class Pptx : IDisposable
     {
         private readonly PresentationDocument presentationDocument;
 
@@ -44,6 +44,11 @@
         }
 
         #endregion ctor
+
+        public void Dispose()
+        {
+            this.Close();
+        }
 
         /// <summary>
         /// Closes the PowerPoint file.
