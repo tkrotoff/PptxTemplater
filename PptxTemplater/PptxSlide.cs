@@ -31,14 +31,14 @@
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// </remarks>
-        public string[] GetTexts()
+        public IEnumerable<string> GetTexts()
         {
             List<string> texts = new List<string>();
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
                 texts.Add(PptxParagraph.GetTexts(p));
             }
-            return texts.ToArray();
+            return texts;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@
         /// </summary>
         /// <returns>All the notes.</returns>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278319.aspx">Working with Notes Slides</see>
-        public string[] GetNotes()
+        public IEnumerable<string> GetNotes()
         {
             List<string> notes = new List<string>();
             if (this.slidePart.NotesSlidePart != null)
@@ -56,7 +56,7 @@
                     notes.Add(PptxParagraph.GetTexts(p));
                 }
             }
-            return notes.ToArray();
+            return notes;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         /// </summary>
         /// <returns>All the tables.</returns>
         /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
-        public PptxTable[] GetTables()
+        public IEnumerable<PptxTable> GetTables()
         {
             List<PptxTable> tables = new List<PptxTable>();
 
@@ -80,7 +80,7 @@
                 }
             }
 
-            return tables.ToArray();
+            return tables;
         }
 
         /// <summary>

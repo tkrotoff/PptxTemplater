@@ -19,7 +19,7 @@
             for (int i = 0; i < nbSlides; i++)
             {
                 PptxSlide slide = pptx.GetSlide(i);
-                string[] texts = slide.GetTexts();
+                IEnumerable<string> texts = slide.GetTexts();
                 result.Append(string.Join(" ", texts));
                 result.Append(" ");
             }
@@ -67,8 +67,8 @@
             for (int i = 0; i < nbSlides; i++)
             {
                 PptxSlide slide = pptx.GetSlide(i);
-                string[] texts = slide.GetTexts();
-                slidesTexts.Add(i, texts);
+                IEnumerable<string> texts = slide.GetTexts();
+                slidesTexts.Add(i, texts.ToArray());
             }
 
             string[] expected = { "test1", "Hello, world!" };
@@ -119,8 +119,8 @@
             for (int i = 0; i < nbSlides; i++)
             {
                 PptxSlide slide = pptx.GetSlide(i);
-                string[] notes = slide.GetNotes();
-                slidesNotes.Add(i, notes);
+                IEnumerable<string> notes = slide.GetNotes();
+                slidesNotes.Add(i, notes.ToArray());
             }
 
             string[] expected = { "Bonjour", "{{comment1}}", "Hello", "1" };
@@ -167,18 +167,18 @@
             for (int i = 0; i < nbSlides; i++)
             {
                 PptxSlide slide = pptx.GetSlide(i);
-                PptxTable[] tables = slide.GetTables();
-                slidesTables.Add(i, tables);
+                IEnumerable<PptxTable> tables = slide.GetTables();
+                slidesTables.Add(i, tables.ToArray());
             }
 
             string[] expected = { "Table1", "Col2", "Col3", "Col4", "Col5", "Col6" };
-            CollectionAssert.AreEqual(expected, slidesTables[1][0].ColumnTitles());
+            CollectionAssert.AreEqual(expected, slidesTables[1][0].ColumnTitles().ToArray());
 
             expected = new string[] { "Table2", "Col2", "Col3", "Col4", "Col5", "Col6" };
-            CollectionAssert.AreEqual(expected, slidesTables[1][1].ColumnTitles());
+            CollectionAssert.AreEqual(expected, slidesTables[1][1].ColumnTitles().ToArray());
 
             expected = new string[] { "Table3", "Col2", "Col3", "Col4", "Col5", "Col6" };
-            CollectionAssert.AreEqual(expected, slidesTables[1][2].ColumnTitles());
+            CollectionAssert.AreEqual(expected, slidesTables[1][2].ColumnTitles().ToArray());
 
             pptx.Close();
         }
@@ -693,7 +693,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             {
                 PptxSlide slideTemplate = pptx.GetSlide(0);
                 PptxTable tableTemplate = slideTemplate.FindTables("{{table1}}").First();
-                int rowsCountTemplate = tableTemplate.ColumnTitles().Length;
+                int rowsCountTemplate = tableTemplate.ColumnTitles().Count();
 
                 PptxSlide prevSlide = slideTemplate;
                 for (int i = 0; i < poems.Count; i++)

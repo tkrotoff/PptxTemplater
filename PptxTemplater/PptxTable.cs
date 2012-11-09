@@ -434,7 +434,7 @@
         /// <summary>
         /// Gets the columns titles as an array of strings.
         /// </summary>
-        public string[] ColumnTitles()
+        public IEnumerable<string> ColumnTitles()
         {
             List<string> titles = new List<string>();
 
@@ -446,7 +446,7 @@
                 titles.Add(columnTitle);
             }
 
-            return titles.ToArray();
+            return titles;
         }
 
         /// <summary>
