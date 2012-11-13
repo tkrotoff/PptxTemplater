@@ -4,8 +4,8 @@
     using System.IO;
     using System.Linq;
 
-    using DocumentFormat.OpenXml.Presentation;
     using DocumentFormat.OpenXml.Packaging;
+    using DocumentFormat.OpenXml.Presentation;
 
     using A = DocumentFormat.OpenXml.Drawing;
     using Picture = DocumentFormat.OpenXml.Presentation.Picture;
