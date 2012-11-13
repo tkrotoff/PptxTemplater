@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using DocumentFormat.OpenXml.Presentation;
     using DocumentFormat.OpenXml.Packaging;
+
     using A = DocumentFormat.OpenXml.Drawing;
 
     /// <summary>
@@ -13,89 +15,109 @@
     /// Could not simply be named Table, conflicts with DocumentFormat.OpenXml.Drawing.Table.
     ///
     /// Structure of a table (3 columns x 2 lines):
-    /// a:graphic
-    ///  a:graphicData
-    ///   a:tbl (Table)
-    ///    a:tblGrid (TableGrid)
-    ///     a:gridCol (GridColumn)
-    ///     a:gridCol
-    ///     a:gridCol
-    ///    a:tr (TableRow)
-    ///     a:tc (TableCell)
-    ///     a:tc
-    ///     a:tc
-    ///    a:tr
-    ///     a:tc
-    ///     a:tc
-    ///     a:tc
+    /// p:graphicFrame
+    ///  a:graphic
+    ///   a:graphicData
+    ///    a:tbl (Table)
+    ///     a:tblGrid (TableGrid)
+    ///      a:gridCol (GridColumn)
+    ///      a:gridCol
+    ///      a:gridCol
+    ///     a:tr (TableRow)
+    ///      a:tc (TableCell)
+    ///      a:tc
+    ///      a:tc
+    ///     a:tr
+    ///      a:tc
+    ///      a:tc
+    ///      a:tc
     ///
     /// <![CDATA[
-    /// <a:graphic>
-    ///   <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
-    ///     <a:tbl>
-    ///       <a:tblPr firstRow="1" bandRow="1">
-    ///         <a:tableStyleId>{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}</a:tableStyleId>
-    ///       </a:tblPr>
-    ///       <a:tblGrid>
-    ///         <a:gridCol w="2743200" />
-    ///         <a:gridCol w="2743200" />
-    ///         <a:gridCol w="2743200" />
-    ///       </a:tblGrid>
-    ///       <a:tr h="370840">
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///       </a:tr>
-    ///       <a:tr h="370840">
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///         <a:tc>
-    ///           <a:txBody>
-    ///             <a:bodyPr />
-    ///             <a:lstStyle />
-    ///             [PptxParagraph]
-    ///           </a:txBody>
-    ///           <a:tcPr />
-    ///         </a:tc>
-    ///       </a:tr>
-    ///     </a:tbl>
-    ///   </a:graphicData>
-    /// </a:graphic>
+    /// <p:graphicFrame>
+    ///   <p:nvGraphicFramePr>
+    ///     <p:cNvPr id="22" name="Tableau 13" title="TableTitle"/>
+    ///     <p:cNvGraphicFramePr>
+    ///       <a:graphicFrameLocks noGrp="1"/>
+    ///     </p:cNvGraphicFramePr>
+    ///     <p:nvPr>
+    ///       <p:extLst>
+    ///       <p:ext uri="{D42A27DB-BD31-4B8C-83A1-F6EECF244321}">
+    ///         <p14:modId xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" val="1057920305"/>
+    ///       </p:ext>
+    ///       </p:extLst>
+    ///     </p:nvPr>
+    ///   </p:nvGraphicFramePr>
+    ///   <p:xfrm>
+    ///     <a:off x="4139952" y="836712"/>
+    ///     <a:ext cx="4621104" cy="1538368"/>
+    ///   </p:xfrm>
+    ///   <a:graphic>
+    ///     <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
+    ///       <a:tbl>
+    ///         <a:tblPr firstRow="1" bandRow="1">
+    ///           <a:tableStyleId>{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}</a:tableStyleId>
+    ///         </a:tblPr>
+    ///         <a:tblGrid>
+    ///           <a:gridCol w="2743200" />
+    ///           <a:gridCol w="2743200" />
+    ///           <a:gridCol w="2743200" />
+    ///         </a:tblGrid>
+    ///         <a:tr h="370840">
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///         </a:tr>
+    ///         <a:tr h="370840">
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///           <a:tc>
+    ///             <a:txBody>
+    ///               <a:bodyPr />
+    ///               <a:lstStyle />
+    ///               [PptxParagraph]
+    ///             </a:txBody>
+    ///             <a:tcPr />
+    ///           </a:tc>
+    ///         </a:tr>
+    ///       </a:tbl>
+    ///     </a:graphicData>
+    ///   </a:graphic>
+    /// </p:graphicFrame>
     /// ]]>
     /// </remarks>
     public class PptxTable
@@ -146,6 +168,15 @@
                 this.NewText = newText;
                 this.Picture = backgroundPicture;
             }
+        }
+
+        /// <summary>
+        /// Removes the table from the slide.
+        /// </summary>
+        /// <returns>True if the table has been removed; false otherwise.</returns>
+        public bool Remove()
+        {
+            return this.slideTemplate.RemoveTable(this.tblId);
         }
 
         /// <summary>

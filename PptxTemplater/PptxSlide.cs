@@ -4,8 +4,9 @@
     using System.IO;
     using System.Linq;
 
-    using DocumentFormat.OpenXml.Packaging;
     using DocumentFormat.OpenXml.Presentation;
+    using DocumentFormat.OpenXml.Packaging;
+
     using A = DocumentFormat.OpenXml.Drawing;
     using Picture = DocumentFormat.OpenXml.Presentation.Picture;
 
@@ -248,14 +249,51 @@
         }
 
         /// <summary>
-        /// Finds a table given its "artificial" id (tblId).
+        /// Finds a table (a:tbl) given its "artificial" id (tblId).
         /// </summary>
+        /// <param name="tblId">The table id.</param>
+        /// <returns>The table or null if not found.</returns>
         /// <remarks>The "artificial" id (tblId) is created inside FindTables().</remarks>
         internal A.Table FindTable(int tblId)
         {
-            GraphicFrame graphicFrame = this.slidePart.Slide.Descendants<GraphicFrame>().ElementAt(tblId);
-            A.Table tbl = graphicFrame.Descendants<A.Table>().First();
+            A.Table tbl = null;
+
+            IEnumerable<GraphicFrame> graphicFrames = this.slidePart.Slide.Descendants<GraphicFrame>();
+            GraphicFrame graphicFrame = graphicFrames.ElementAt(tblId);
+            if (graphicFrame != null)
+            {
+                tbl = graphicFrame.Descendants<A.Table>().First();
+            }
+
             return tbl;
+        }
+
+        /// <summary>
+        /// Removes a table (a:tbl) given its "artificial" id (tblId).
+        /// </summary>
+        /// <param name="tblId">The table id.</param>
+        /// <returns>True if the table has been removed; false otherwise.</returns>
+        /// <remarks>
+        /// <![CDATA[
+        /// p:graphicFrame
+        ///  a:graphic
+        ///   a:graphicData
+        ///    a:tbl (Table)
+        /// ]]>
+        /// </remarks>
+        internal bool RemoveTable(int tblId)
+        {
+            bool removed = false;
+
+            IEnumerable<GraphicFrame> graphicFrames = this.slidePart.Slide.Descendants<GraphicFrame>();
+            GraphicFrame graphicFrame = graphicFrames.ElementAt(tblId);
+            if (graphicFrame != null)
+            {
+                graphicFrame.Remove();
+                removed = true;
+            }
+
+            return removed;
         }
 
         /// <summary>
