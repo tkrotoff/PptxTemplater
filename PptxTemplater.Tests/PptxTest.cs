@@ -148,8 +148,20 @@
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(4, nbSlides);
 
-            IEnumerable<PptxSlide> slides = pptx.FindSlides("{{comment2}}");
-            Assert.AreEqual(1, slides.Count());
+            {
+                IEnumerable<PptxSlide> slides = pptx.FindSlides("{{comment1}}");
+                Assert.AreEqual(1, slides.Count());
+            }
+
+            {
+                IEnumerable<PptxSlide> slides = pptx.FindSlides("{{comment2}}");
+                Assert.AreEqual(1, slides.Count());
+            }
+
+            {
+                IEnumerable<PptxSlide> slides = pptx.FindSlides("{{comment3}}");
+                Assert.AreEqual(1, slides.Count());
+            }
 
             pptx.Close();
         }

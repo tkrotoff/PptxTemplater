@@ -85,9 +85,13 @@
             {
                 PptxSlide slide = this.GetSlide(i);
                 IEnumerable<string> notes = slide.GetNotes();
-                if (notes.Contains(note))
+                foreach (string tmp in notes)
                 {
-                    slides.Add(slide);
+                    if (tmp.Contains(note))
+                    {
+                        slides.Add(slide);
+                        break;
+                    }
                 }
             }
 
