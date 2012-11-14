@@ -480,6 +480,34 @@
         }
 
         /// <summary>
+        /// Gets the number of columns inside the table (tbl).
+        /// </summary>
+        /// <returns>The number of columns.</returns>
+        public int ColumnsCount()
+        {
+            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
+            return CellsCount(tbl) / RowsCount(tbl);
+        }
+
+        /// <summary>
+        /// Gets the number of cells inside the table (tbl).
+        /// </summary>
+        /// <returns>The number of cells.</returns>
+        public int CellsCount()
+        {
+            A.Table tbl = this.slideTemplate.FindTable(this.tblId);
+            return CellsCount(tbl);
+        }
+
+        /// <summary>
+        /// Helper method.
+        /// </summary>
+        private static int CellsCount(A.Table tbl)
+        {
+            return tbl.Descendants<A.TableCell>().Count();
+        }
+
+        /// <summary>
         /// Helper method.
         /// </summary>
         private static int RowsCount(A.Table tbl)

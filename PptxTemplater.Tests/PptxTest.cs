@@ -274,19 +274,48 @@
         {
             const string srcFileName = "../../files/RemoveColumns.pptx";
             const string dstFileName = "../../files/RemoveColumns_output.pptx";
-            File.Delete(dstFileName);
-            File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            // Remove some columns
+            {
+                File.Delete(dstFileName);
+                File.Copy(srcFileName, dstFileName);
+                Pptx pptx = new Pptx(dstFileName, true);
 
-            PptxSlide slide = pptx.GetSlide(0);
-            PptxTable table = slide.FindTables("{{table1}}").First();
-            int[] columns = new int[] { 1, 3 };
-            table.RemoveColumns(columns);
+                PptxSlide slide = pptx.GetSlide(0);
+                PptxTable table = slide.FindTables("{{table1}}").First();
 
-            pptx.Close();
+                Assert.AreEqual(5, table.ColumnsCount());
+                Assert.AreEqual(30, table.CellsCount());
+                int[] columns = new int[] { 1, 3 };
+                table.RemoveColumns(columns);
+                Assert.AreEqual(3, table.ColumnsCount());
+                Assert.AreEqual(18, table.CellsCount());
 
-            this.AssertPptxEquals(dstFileName, 1, "Column 0 Column2 Column 4 Cell 1.0 Cell 1.2 Cell 1.4 Cell 2.0 Cell 2.2 Cell 2.4 Cell 3.0 Cell 3.2 Cell 3.4 Cell 4.0 Cell 4.2 Cell 4.4 Cell 5.0 Cell 5.2 Cell 5.4 ");
+                pptx.Close();
+
+                this.AssertPptxEquals(dstFileName, 1, "Column 0 Column2 Column 4 Cell 1.0 Cell 1.2 Cell 1.4 Cell 2.0 Cell 2.2 Cell 2.4 Cell 3.0 Cell 3.2 Cell 3.4 Cell 4.0 Cell 4.2 Cell 4.4 Cell 5.0 Cell 5.2 Cell 5.4 ");
+            }
+
+            // Remove all the columns
+            {
+                File.Delete(dstFileName);
+                File.Copy(srcFileName, dstFileName);
+                Pptx pptx = new Pptx(dstFileName, true);
+
+                PptxSlide slide = pptx.GetSlide(0);
+                PptxTable table = slide.FindTables("{{table1}}").First();
+
+                Assert.AreEqual(5, table.ColumnsCount());
+                Assert.AreEqual(30, table.CellsCount());
+                int[] columns = new int[] { 0, 1, 2, 3, 4 };
+                table.RemoveColumns(columns);
+                Assert.AreEqual(0, table.ColumnsCount());
+                Assert.AreEqual(0, table.CellsCount());
+
+                pptx.Close();
+
+                this.AssertPptxEquals(dstFileName, 1, " ");
+            }
         }
 
         [TestMethod]
