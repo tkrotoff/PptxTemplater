@@ -192,9 +192,11 @@
                                              orderby column descending
                                              select column;
 
+            int tblRowsCount = RowsCount(tbl);
+
             foreach (int column in columnsSorted)
             {
-                for (int row = 0; row < RowsCount(tbl); row++)
+                for (int row = 0; row < tblRowsCount; row++)
                 {
                     A.TableRow tr = GetRow(tbl, row);
 
@@ -332,6 +334,8 @@
             PptxSlide slide = this.slideTemplate;
             A.Table tbl = slide.FindTable(this.tblId);
 
+            int tblRowsCount = RowsCount(tbl);
+
             // done starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int done = 1;
@@ -339,7 +343,7 @@
             {
                 Cell[] row = rows[i];
 
-                if (done < RowsCount(tbl))
+                if (done < tblRowsCount)
                 {
                     // a:tr
                     A.TableRow tr = GetRow(tbl, done);
@@ -362,7 +366,7 @@
             }
 
             // Remove the last remaining rows if any
-            for (int row = RowsCount(tbl) - 1; row >= done; row--)
+            for (int row = tblRowsCount - 1; row >= done; row--)
             {
                 A.TableRow tr = GetRow(tbl, row);
                 tr.Remove();
@@ -402,6 +406,8 @@
             PptxSlide.InsertAfter(slide, this.slideTemplate);
             A.Table tbl = slide.FindTable(this.tblId);
 
+            int tblRowsCount = RowsCount(tbl);
+
             // donePerSlide starts at 1 instead of 0 because we don't care about the first row
             // The first row contains the titles for the columns
             int donePerSlide = 1;
@@ -409,7 +415,7 @@
             {
                 Cell[] row = rows[i];
 
-                if (donePerSlide < RowsCount(tbl))
+                if (donePerSlide < tblRowsCount)
                 {
                     // a:tr
                     A.TableRow tr = GetRow(tbl, donePerSlide);
@@ -444,7 +450,7 @@
             }
 
             // Remove the last remaining rows if any
-            for (int row = RowsCount(tbl) - 1; row >= donePerSlide; row--)
+            for (int row = tblRowsCount - 1; row >= donePerSlide; row--)
             {
                 A.TableRow tr = GetRow(tbl, row);
                 tr.Remove();
