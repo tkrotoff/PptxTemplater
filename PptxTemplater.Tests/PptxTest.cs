@@ -353,7 +353,7 @@
                                 "Hello, world! 0.0",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType,
                                         Top = 14000,
                                         Right = 90000,
@@ -365,7 +365,7 @@
                                 "Hello, world! 3.0",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType,
                                         Top = 14000,
                                         Right = 90000,
@@ -380,7 +380,7 @@
                                 "Hello, world! 0.1",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType,
                                         Top = 14000,
                                         Right = 90000,
@@ -395,7 +395,7 @@
                                 "Hello, world! 0.2",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType,
                                         Top = 14000,
                                         Right = 0,
@@ -410,7 +410,7 @@
                                 "Hello, world! 0.3",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType,
                                         Top = 0,
                                         Right = 0,
@@ -425,7 +425,7 @@
                                 "Hello, world! 0.4",
                                 new PptxTable.Cell.BackgroundPicture()
                                     {
-                                        Picture = icon,
+                                        Content = icon,
                                         ContentType = icon_png_contentType
                                     })
                         },

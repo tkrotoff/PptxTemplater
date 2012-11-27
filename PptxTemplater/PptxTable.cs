@@ -145,7 +145,7 @@
 
             public class BackgroundPicture
             {
-                public byte[] Picture { get; set; }
+                public byte[] Content { get; set; }
                 public string ContentType { get; set; }
                 public int Top { get; set; }
                 public int Right { get; set; }
@@ -240,12 +240,12 @@
         /// </remarks>
         private static void SetTableCellPropertiesWithBackgroundPicture(PptxSlide slide, A.TableCellProperties tcPr, Cell.BackgroundPicture backgroundPicture)
         {
-            if (backgroundPicture.Picture == null)
+            if (backgroundPicture.Content == null)
             {
                 return;
             }
 
-            ImagePart imagePart = slide.AddPicture(backgroundPicture.Picture, backgroundPicture.ContentType);
+            ImagePart imagePart = slide.AddPicture(backgroundPicture.Content, backgroundPicture.ContentType);
 
             A.BlipFill blipFill = new A.BlipFill();
             A.Blip blip = new A.Blip() { Embed = slide.GetIdOfImagePart(imagePart) };
