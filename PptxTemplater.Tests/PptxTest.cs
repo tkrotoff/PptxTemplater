@@ -898,5 +898,49 @@ Tranquille. Il a deux trous rouges au côté droit.";
 
             this.AssertPptxEquals(dstFileName, 4, "Table1 1 2 3 4 Table2 1 2 3 4 Bonjour Table1 1 2 3 4 Table2 5 6 Bonjour Table1 5 6 Table2 1 2 3 4 Bonjour Table1 5 6 Table2 5 6 Bonjour ");
         }
+
+        [TestMethod]
+        public void ReplaceLotsOfPicturesAndSlides()
+        {
+            const string srcFileName = "../../files/ReplaceLotsOfPicturesAndSlides.pptx";
+            const string dstFileName = "../../files/ReplaceLotsOfPicturesAndSlides_output.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, true);
+
+            const string picture1_replace_png = "../../files/picture1_replace.png";
+            const string picture1_replace_png_contentType = "image/png";
+            const string picture1_replace_bmp = "../../files/picture1_replace.bmp";
+            const string picture1_replace_bmp_contentType = "image/bmp";
+            const string picture1_replace_jpeg = "../../files/picture1_replace.jpeg";
+            const string picture1_replace_jpeg_contentType = "image/jpeg";
+            byte[] picture1_replace_empty = new byte[] { };
+
+            PptxSlide slideTemplate = pptx.FindSlides("{{LotsOfPictures}}").FirstOrDefault();
+
+            int nbSlidesToGenerate = 10000;
+
+            for (int i = 0; i < nbSlidesToGenerate; i++)
+            {
+                PptxSlide slide = slideTemplate.Clone();
+                PptxSlide.InsertAfter(slide, slideTemplate);
+
+                slide.ReplacePicture("{{picture1png}}", picture1_replace_png, picture1_replace_png_contentType);
+                slide.ReplacePicture("{{picture1bmp}}", picture1_replace_bmp, picture1_replace_bmp_contentType);
+                slide.ReplacePicture("{{picture1jpeg}}", picture1_replace_jpeg, picture1_replace_jpeg_contentType);
+
+                slide.ReplacePicture(null, picture1_replace_png, picture1_replace_png_contentType);
+                slide.ReplacePicture("{{picture1null}}", picture1_replace_empty, picture1_replace_png_contentType);
+                slide.ReplacePicture("{{picture1null}}", picture1_replace_png, null);
+                slide.ReplacePicture("{{picture1null}}", picture1_replace_empty, null);
+            }
+
+            slideTemplate.Remove();
+
+            pptx.Close();
+
+            // Sorry, you will have to manually check that the pictures have been replaced
+        }
     }
 }
