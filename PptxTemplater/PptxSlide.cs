@@ -68,7 +68,7 @@
             bool isShape = false;
 
             var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
-            if (placeholderShape != null && placeholderShape.Type.HasValue)
+            if (placeholderShape != null && placeholderShape.Type != null && placeholderShape.Type.HasValue)
             {
                 switch ((PlaceholderValues)placeholderShape.Type)
                 {
