@@ -877,7 +877,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             PptxSlide slide = slideTemplate.Clone();
             PptxSlide.InsertAfter(slide, slideTemplate);
 
-            slide.ReplaceTag("{{hello}}", "Bonjour", PptxSlide.ReplacementType.NoTable);
+            slide.ReplaceTag("{{cell}}", "Bonjour", PptxSlide.ReplacementType.NoTable);
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
             const string picture1_replace_png_contentType = "image/png";
