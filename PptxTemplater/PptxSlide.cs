@@ -65,26 +65,26 @@
         /// </summary>
         private static bool IsShapeATitle(Shape shape)
         {
-            bool isShape = false;
+            bool isTitle = false;
 
-            var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
-            if (placeholderShape != null && placeholderShape.Type != null && placeholderShape.Type.HasValue)
+            var ph = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
+            if (ph != null && ph.Type != null && ph.Type.HasValue)
             {
-                switch ((PlaceholderValues)placeholderShape.Type)
+                switch ((PlaceholderValues)ph.Type)
                 {
                     // Any title shape
                     case PlaceholderValues.Title:
-                        isShape = true;
+                        isTitle = true;
                         break;
 
                     // A centered title
                     case PlaceholderValues.CenteredTitle:
-                        isShape = true;
+                        isTitle = true;
                         break;
                 }
             }
 
-            return isShape;
+            return isTitle;
         }
 
         /// <summary>
