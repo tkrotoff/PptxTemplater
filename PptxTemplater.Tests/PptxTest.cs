@@ -919,7 +919,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
 
             PptxSlide slideTemplate = pptx.FindSlides("{{LotsOfPictures}}").FirstOrDefault();
 
-            int nbSlidesToGenerate = 10000;
+            int nbSlidesToGenerate = 100;
 
             for (int i = 0; i < nbSlidesToGenerate; i++)
             {
