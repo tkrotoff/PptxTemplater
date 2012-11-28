@@ -72,12 +72,7 @@
             {
                 switch ((PlaceholderValues)ph.Type)
                 {
-                    // Any title shape
                     case PlaceholderValues.Title:
-                        isTitle = true;
-                        break;
-
-                    // A centered title
                     case PlaceholderValues.CenteredTitle:
                         isTitle = true;
                         break;
