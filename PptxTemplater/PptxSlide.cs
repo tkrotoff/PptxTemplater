@@ -103,15 +103,46 @@
         }
 
         /// <summary>
+        /// Type of replacement to perform inside ReplaceTag().
+        /// </summary>
+        public enum ReplacementType
+        {
+            /// <summary>
+            /// Replaces the tags everywhere.
+            /// </summary>
+            Global,
+
+            /// <summary>
+            /// Does not replace tags that are inside a table.
+            /// </summary>
+            NoTable
+        }
+
+        /// <summary>
         /// Replaces a text (tag) by another inside the slide.
         /// </summary>
         /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
         /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
-        public void ReplaceTag(string tag, string newText)
+        /// <param name="replacementType">The type of replacement to perform.</param>
+        public void ReplaceTag(string tag, string newText, ReplacementType replacementType)
         {
             foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
             {
-                PptxParagraph.ReplaceTag(p, tag, newText);
+                switch (replacementType)
+                {
+                    case ReplacementType.Global:
+                        PptxParagraph.ReplaceTag(p, tag, newText);
+                        break;
+
+                    case ReplacementType.NoTable:
+                        var tables = p.Ancestors<A.Table>();
+                        if (!tables.Any())
+                        {
+                            // If the paragraph has no table ancestor
+                            PptxParagraph.ReplaceTag(p, tag, newText);
+                        }
+                        break;
+                }
             }
 
             this.Save();
@@ -122,9 +153,10 @@
         /// This is a convenient method that overloads the original ReplaceTag() method.
         /// </summary>
         /// <param name="tagPair">The tag/new text, BackgroundPicture is ignored.</param>
-        public void ReplaceTag(PptxTable.Cell tagPair)
+        /// <param name="replacementType">The type of replacement to perform.</param>
+        public void ReplaceTag(PptxTable.Cell tagPair, ReplacementType replacementType)
         {
-            this.ReplaceTag(tagPair.Tag, tagPair.NewText);
+            this.ReplaceTag(tagPair.Tag, tagPair.NewText, replacementType);
         }
 
         /// <summary>

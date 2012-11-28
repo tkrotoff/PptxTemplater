@@ -210,27 +210,27 @@
             // First slide
             {
                 PptxSlide slide = pptx.GetSlide(0);
-                slide.ReplaceTag("{{hello}}", "HELLO HOW ARE YOU?");
-                slide.ReplaceTag("{{bonjour}}", "BONJOUR TOUT LE MONDE");
-                slide.ReplaceTag("{{hola}}", "HOLA MAMA QUE TAL?");
+                slide.ReplaceTag("{{hello}}", "HELLO HOW ARE YOU?", PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{bonjour}}", "BONJOUR TOUT LE MONDE", PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{hola}}", "HOLA MAMA QUE TAL?", PptxSlide.ReplacementType.Global);
             }
 
             // Second slide
             {
                 PptxSlide slide = pptx.GetSlide(1);
-                slide.ReplaceTag("{{hello}}", "H");
-                slide.ReplaceTag("{{bonjour}}", "B");
-                slide.ReplaceTag("{{hola}}", "H");
+                slide.ReplaceTag("{{hello}}", "H", PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{bonjour}}", "B", PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{hola}}", "H", PptxSlide.ReplacementType.Global);
             }
 
             // Third slide
             {
                 PptxSlide slide = pptx.GetSlide(2);
-                slide.ReplaceTag("{{hello}}", string.Empty);
-                slide.ReplaceTag("{{bonjour}}", string.Empty);
-                slide.ReplaceTag("{{hola}}", null);
-                slide.ReplaceTag(null, string.Empty);
-                slide.ReplaceTag(null, null);
+                slide.ReplaceTag("{{hello}}", string.Empty, PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{bonjour}}", string.Empty, PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag("{{hola}}", null, PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag(null, string.Empty, PptxSlide.ReplacementType.Global);
+                slide.ReplaceTag(null, null, PptxSlide.ReplacementType.Global);
             }
 
             pptx.Close();
@@ -252,7 +252,7 @@
 
             {
                 PptxSlide slide = pptx.GetSlide(0);
-                slide.ReplaceTag("{{hello}}", "HELLO!");
+                slide.ReplaceTag("{{hello}}", "HELLO!", PptxSlide.ReplacementType.Global);
             }
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
@@ -492,7 +492,7 @@
             // Change the tags before to insert rows
             {
                 PptxSlide slide = pptx.GetSlide(0);
-                slide.ReplaceTag("{{hello}}", "HELLO!");
+                slide.ReplaceTag("{{hello}}", "HELLO!", PptxSlide.ReplacementType.NoTable);
             }
 
             // Change the pictures before to insert rows
@@ -741,7 +741,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
                 {
                     PptxSlide slide = slideTemplate.Clone();
                     PptxSlide.InsertAfter(slide, prevSlide);
-                    slide.ReplaceTag("{{title}}", i.ToString());
+                    slide.ReplaceTag("{{title}}", i.ToString(), PptxSlide.ReplacementType.NoTable);
 
                     List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>();
 
@@ -877,7 +877,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             PptxSlide slide = slideTemplate.Clone();
             PptxSlide.InsertAfter(slide, slideTemplate);
 
-            slide.ReplaceTag("{{hello}}", "Bonjour");
+            slide.ReplaceTag("{{hello}}", "Bonjour", PptxSlide.ReplacementType.NoTable);
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
             const string picture1_replace_png_contentType = "image/png";
