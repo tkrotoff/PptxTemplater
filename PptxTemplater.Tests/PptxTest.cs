@@ -63,6 +63,10 @@
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
+            Assert.AreEqual("test1", pptx.GetSlide(0).GetTitle());
+            Assert.AreEqual("Title 1", pptx.GetSlide(1).GetTitle());
+            Assert.AreEqual("Title 2", pptx.GetSlide(2).GetTitle());
+
             var slidesTexts = new Dictionary<int, string[]>();
             for (int i = 0; i < nbSlides; i++)
             {
@@ -114,6 +118,11 @@
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(4, nbSlides);
+
+            Assert.AreEqual(string.Empty, pptx.GetSlide(0).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(1).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(2).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(3).GetTitle());
 
             var slidesNotes = new Dictionary<int, string[]>();
             for (int i = 0; i < nbSlides; i++)
@@ -174,6 +183,10 @@
             Pptx pptx = new Pptx(file, false);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
+
+            Assert.AreEqual(string.Empty, pptx.GetSlide(0).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(1).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(2).GetTitle());
 
             var slidesTables = new Dictionary<int, PptxTable[]>();
             for (int i = 0; i < nbSlides; i++)
@@ -249,6 +262,9 @@
             Pptx pptx = new Pptx(dstFileName, true);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(2, nbSlides);
+
+            Assert.AreEqual(string.Empty, pptx.GetSlide(0).GetTitle());
+            Assert.AreEqual(string.Empty, pptx.GetSlide(1).GetTitle());
 
             {
                 PptxSlide slide = pptx.GetSlide(0);

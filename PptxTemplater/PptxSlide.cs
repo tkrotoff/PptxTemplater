@@ -43,6 +43,51 @@
         }
 
         /// <summary>
+        /// Gets the slide title if any.
+        /// </summary>
+        /// <returns>The title or an empty string.</returns>
+        public string GetTitle()
+        {
+            string title = string.Empty;
+
+            // Find the title if any
+            Shape titleShape = this.slidePart.Slide.Descendants<Shape>().FirstOrDefault(shape => IsShapeATitle(shape));
+            if (titleShape != null)
+            {
+                title = string.Join(" ", titleShape.Descendants<A.Paragraph>().Select(paragraph => PptxParagraph.GetTexts(paragraph)));
+            }
+
+            return title;
+        }
+
+        /// <summary>
+        /// Determines whether the given shape is a title.
+        /// </summary>
+        private static bool IsShapeATitle(Shape shape)
+        {
+            bool isShape = false;
+
+            var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
+            if (placeholderShape != null && placeholderShape.Type.HasValue)
+            {
+                switch ((PlaceholderValues)placeholderShape.Type)
+                {
+                    // Any title shape
+                    case PlaceholderValues.Title:
+                        isShape = true;
+                        break;
+
+                    // A centered title
+                    case PlaceholderValues.CenteredTitle:
+                        isShape = true;
+                        break;
+                }
+            }
+
+            return isShape;
+        }
+
+        /// <summary>
         /// Gets all the notes associated with the slide.
         /// </summary>
         /// <returns>All the notes.</returns>
