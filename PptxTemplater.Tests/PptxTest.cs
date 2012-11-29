@@ -452,23 +452,22 @@
                         }
                 };
 
-            {
-                PptxSlide slide = pptx.GetSlide(0);
-                PptxTable table = slide.FindTables("{{table1}}").First();
-                table.SetRows(rows);
-            }
+            PptxSlide slideTemplate = pptx.GetSlide(0);
 
-            // Force a slide duplication using another table
+            var slidesCreated = Pptx.ReplaceTable_One(slideTemplate, "{{table1}}", rows);
+            Assert.AreEqual(1, slidesCreated.Count());
+
+            // Force a slide duplication
             // This is to test that PptxSlide.Clone() works with background images
-            {
-                PptxSlide slide = pptx.GetSlide(0);
-                PptxTable table = slide.FindTables("{{table2}}").First();
-                table.SetRows(new List<PptxTable.Cell[]>());
-            }
+            var slide = slidesCreated.First();
+            var slideClone = slide.Clone();
+            PptxSlide.InsertAfter(slideClone, slide);
+
+            slideTemplate.Remove();
 
             pptx.Close();
 
-            this.AssertPptxEquals(dstFileName, 1, "Col0 Col1 Col2 Col3 Col4 Hello, world! 0.0 Hello {{cell2.0}} Hello, world! 3.0 {{cell4.0}} Hello, world! 0.1 Hello {{cell2.1}} {{cell3.1}} {{cell4.1}} Hello, world! 0.2 Hello {{cell2.2}} {{cell3.2}} {{cell4.2}} Hello, world! 0.3 Hello {{cell2.3}} {{cell3.3}} {{cell4.3}} Hello, world! 0.4 Hello {{cell2.4}} {{cell3.4}} {{cell4.4}} Hello, world! 0.5 Hello {{cell2.5}} Hello, world! 3.5 {{cell4.5}}   ");
+            this.AssertPptxEquals(dstFileName, 2, "Col0 Col1 Col2 Col3 Col4 Hello, world! 0.0 Hello {{cell2.0}} Hello, world! 3.0 {{cell4.0}} Hello, world! 0.1 Hello {{cell2.1}} {{cell3.1}} {{cell4.1}} Hello, world! 0.2 Hello {{cell2.2}} {{cell3.2}} {{cell4.2}} Hello, world! 0.3 Hello {{cell2.3}} {{cell3.3}} {{cell4.3}} Hello, world! 0.4 Hello {{cell2.4}} {{cell3.4}} {{cell4.4}} Hello, world! 0.5 Hello {{cell2.5}} Hello, world! 3.5 {{cell4.5}} Col0 Col1 Col2 Col3 Col4 Hello, world! 0.0 Hello {{cell2.0}} Hello, world! 3.0 {{cell4.0}} Hello, world! 0.1 Hello {{cell2.1}} {{cell3.1}} {{cell4.1}} Hello, world! 0.2 Hello {{cell2.2}} {{cell3.2}} {{cell4.2}} Hello, world! 0.3 Hello {{cell2.3}} {{cell3.3}} {{cell4.3}} Hello, world! 0.4 Hello {{cell2.4}} {{cell3.4}} {{cell4.4}} Hello, world! 0.5 Hello {{cell2.5}} Hello, world! 3.5 {{cell4.5}} ");
             // Sorry, you will have to manually check the background pictures
         }
 
@@ -519,6 +518,7 @@
                 slide.ReplacePicture("{{picture1png}}", picture1_replace_png, picture1_replace_png_contentType);
             }
 
+            PptxSlide slideTemplate = pptx.GetSlide(1);
             List<PptxSlide> existingSlides = new List<PptxSlide>();
 
             {
@@ -537,36 +537,8 @@
                     rows.Add(row);
                 }
 
-                PptxSlide lastSlide = pptx.GetSlide(1);
-                if (existingSlides.Count > 0)
-                {
-                    lastSlide = existingSlides.Last();
-                }
-                PptxSlide slideTemplate = lastSlide.Clone();
-                foreach (PptxSlide slide in existingSlides)
-                {
-                    PptxTable table = slide.FindTables("{{table1}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-                }
-                while (rows.Count > 0)
-                {
-                    PptxSlide newSlide = slideTemplate.Clone();
-                    PptxTable table = newSlide.FindTables("{{table1}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-
-                    PptxSlide.InsertAfter(newSlide, lastSlide);
-                    lastSlide = newSlide;
-                    existingSlides.Add(newSlide);
-                }
-                slideTemplate.Remove();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table1}}", rows, existingSlides);
+                existingSlides.AddRange(slidesCreated);
             }
 
             {
@@ -585,36 +557,8 @@
                     rows.Add(row);
                 }
 
-                PptxSlide lastSlide = pptx.GetSlide(1);
-                if (existingSlides.Count > 0)
-                {
-                    lastSlide = existingSlides.Last();
-                }
-                PptxSlide slideTemplate = lastSlide.Clone();
-                foreach (PptxSlide slide in existingSlides)
-                {
-                    PptxTable table = slide.FindTables("{{table2}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-                }
-                while (rows.Count > 0)
-                {
-                    PptxSlide newSlide = slideTemplate.Clone();
-                    PptxTable table = newSlide.FindTables("{{table2}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-
-                    PptxSlide.InsertAfter(newSlide, lastSlide);
-                    lastSlide = newSlide;
-                    existingSlides.Add(newSlide);
-                }
-                slideTemplate.Remove();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table2}}", rows, existingSlides);
+                existingSlides.AddRange(slidesCreated);
             }
 
             {
@@ -633,39 +577,11 @@
                     rows.Add(row);
                 }
 
-                PptxSlide lastSlide = pptx.GetSlide(1);
-                if (existingSlides.Count > 0)
-                {
-                    lastSlide = existingSlides.Last();
-                }
-                PptxSlide slideTemplate = lastSlide.Clone();
-                foreach (PptxSlide slide in existingSlides)
-                {
-                    PptxTable table = slide.FindTables("{{table3}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-                }
-                while (rows.Count > 0)
-                {
-                    PptxSlide newSlide = slideTemplate.Clone();
-                    PptxTable table = newSlide.FindTables("{{table3}}").FirstOrDefault();
-                    if (table != null)
-                    {
-                        List<PptxTable.Cell[]> remainingRows = table.SetRowsNoInsert(rows);
-                        rows = remainingRows;
-                    }
-
-                    PptxSlide.InsertAfter(newSlide, lastSlide);
-                    lastSlide = newSlide;
-                    existingSlides.Add(newSlide);
-                }
-                slideTemplate.Remove();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table3}}", rows, existingSlides);
+                existingSlides.AddRange(slidesCreated);
             }
 
-            pptx.GetSlide(1).Remove();
+            slideTemplate.Remove();
 
             pptx.Close();
         }
@@ -749,15 +665,17 @@ Tranquille. Il a deux trous rouges au côté droit.";
 
             {
                 PptxSlide slideTemplate = pptx.GetSlide(0);
+                List<PptxSlide> existingSlides = new List<PptxSlide>();
+
                 PptxTable tableTemplate = slideTemplate.FindTables("{{table1}}").First();
                 int rowsCountTemplate = tableTemplate.ColumnTitles().Count();
 
                 PptxSlide prevSlide = slideTemplate;
                 for (int i = 0; i < poems.Count; i++)
                 {
-                    PptxSlide slide = slideTemplate.Clone();
-                    PptxSlide.InsertAfter(slide, prevSlide);
-                    slide.ReplaceTag("{{title}}", i.ToString(), PptxSlide.ReplacementType.NoTable);
+                    PptxSlide slideTemplate2 = slideTemplate.Clone();
+                    PptxSlide.InsertAfter(slideTemplate2, prevSlide);
+                    slideTemplate2.ReplaceTag("{{title}}", i.ToString(), PptxSlide.ReplacementType.NoTable);
 
                     List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>();
 
@@ -773,11 +691,13 @@ Tranquille. Il a deux trous rouges au côté droit.";
                         rows.Add(row.ToArray());
                     }
 
-                    PptxTable table = slide.FindTables("{{table1}}").First();
-                    List<PptxSlide> insertedSlides = table.SetRows(rows);
+                    var slidesCreated = Pptx.ReplaceTable_One(slideTemplate2, "{{table1}}", rows);
+                    existingSlides.AddRange(slidesCreated);
 
-                    PptxSlide lastInsertedSlide = insertedSlides.Last();
+                    PptxSlide lastInsertedSlide = existingSlides.Last();
                     prevSlide = lastInsertedSlide;
+
+                    slideTemplate2.Remove();
                 }
 
                 slideTemplate.Remove();
@@ -890,29 +810,30 @@ Tranquille. Il a deux trous rouges au côté droit.";
                 };
 
             PptxSlide slideTemplate = pptx.GetSlide(0);
-            PptxSlide slide = slideTemplate.Clone();
-            PptxSlide.InsertAfter(slide, slideTemplate);
 
-            slide.ReplaceTag("{{cell}}", "Bonjour", PptxSlide.ReplacementType.NoTable);
+            slideTemplate.ReplaceTag("{{cell}}", "Bonjour", PptxSlide.ReplacementType.NoTable);
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
             const string picture1_replace_png_contentType = "image/png";
-            slide.ReplacePicture("{{picture1}}", picture1_replace_png, picture1_replace_png_contentType);
+            slideTemplate.ReplacePicture("{{picture1}}", picture1_replace_png, picture1_replace_png_contentType);
 
-            PptxTable table1 = slide.FindTables("{{table1}}").First();
-            List<PptxSlide> insertedSlides = table1.SetRows(rows);
+            List<PptxSlide> existingSlides = new List<PptxSlide>();
 
-            foreach (PptxSlide insertedSlide in insertedSlides)
             {
-                PptxTable table2 = insertedSlide.FindTables("{{table2}}").First();
-                table2.SetRows(rows);
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table1}}", rows, existingSlides);
+                existingSlides.AddRange(slidesCreated);
+            }
+
+            {
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table2}}", rows, existingSlides);
+                existingSlides.AddRange(slidesCreated);
             }
 
             slideTemplate.Remove();
 
             pptx.Close();
 
-            this.AssertPptxEquals(dstFileName, 4, "Table1 1 2 3 4 Table2 1 2 3 4 Bonjour Table1 1 2 3 4 Table2 5 6 Bonjour Table1 5 6 Table2 1 2 3 4 Bonjour Table1 5 6 Table2 5 6 Bonjour ");
+            this.AssertPptxEquals(dstFileName, 2, "Table1 1 2 3 4 Table2 1 2 3 4 Bonjour Table1 5 6 Table2 5 6 Bonjour ");
         }
 
         [TestMethod]

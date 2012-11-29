@@ -377,22 +377,22 @@
         /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations and Using Open XML SDK 2.0 Productivity Tool</see>
         public PptxSlide Clone()
         {
-            SlidePart template = this.slidePart;
+            SlidePart slideTemplate = this.slidePart;
 
             // Clone slide contents
             SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
-            using (var templateStream = template.GetStream(FileMode.Open))
+            using (var templateStream = slideTemplate.GetStream(FileMode.Open))
             {
                 slidePartClone.FeedData(templateStream);
             }
 
             // Copy layout part
-            slidePartClone.AddPart(template.SlideLayoutPart);
+            slidePartClone.AddPart(slideTemplate.SlideLayoutPart);
 
             // Copy the image parts
-            foreach (ImagePart image in template.ImageParts)
+            foreach (ImagePart image in slideTemplate.ImageParts)
             {
-                ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, template.GetIdOfPart(image));
+                ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, slideTemplate.GetIdOfPart(image));
                 using (var imageStream = image.GetStream())
                 {
                     imageClone.FeedData(imageStream);

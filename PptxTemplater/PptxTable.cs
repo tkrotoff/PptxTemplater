@@ -326,10 +326,10 @@
         }
 
         /// <summary>
-        /// Changes the cells from the table (tbl).
+        /// Replaces the cells from the table (tbl).
         /// </summary>
         /// <returns>The list of remaining rows that could not be inserted, you will have to create a new slide.</returns>
-        public List<Cell[]> SetRowsNoInsert(IList<Cell[]> rows)
+        public List<Cell[]> SetRows(IList<Cell[]> rows)
         {
             PptxSlide slide = this.slideTemplate;
             A.Table tbl = slide.FindTable(this.tblId);
@@ -385,86 +385,6 @@
             }
 
             return remainingRows;
-        }
-
-        /// <summary>
-        /// Changes the cells from the table (tbl).
-        /// </summary>
-        /// <remarks>
-        /// Be careful when calling this method multiple times.
-        /// This method can potentially change the number of slides (by inserting new slides) so you are better off
-        /// calling it last.
-        /// </remarks>
-        /// <returns>The list of inserted (new) slides.</returns>
-        public List<PptxSlide> SetRows(IList<Cell[]> rows)
-        {
-            List<PptxSlide> insertedSlides = new List<PptxSlide>();
-
-            // Create a new slide from the template slide
-            PptxSlide slide = this.slideTemplate.Clone();
-            insertedSlides.Add(slide);
-            PptxSlide.InsertAfter(slide, this.slideTemplate);
-            A.Table tbl = slide.FindTable(this.tblId);
-
-            int tblRowsCount = RowsCount(tbl);
-
-            // donePerSlide starts at 1 instead of 0 because we don't care about the first row
-            // The first row contains the titles for the columns
-            int donePerSlide = 1;
-            for (int i = 0; i < rows.Count();)
-            {
-                Cell[] row = rows[i];
-
-                if (donePerSlide < tblRowsCount)
-                {
-                    // a:tr
-                    A.TableRow tr = GetRow(tbl, donePerSlide);
-
-                    // a:tc
-                    foreach (A.TableCell tc in tr.Descendants<A.TableCell>())
-                    {
-                        foreach (Cell cell in row)
-                        {
-                            ReplaceTag(slide, tc, cell);
-                        }
-                    }
-
-                    donePerSlide++;
-                    i++;
-                }
-                else
-                {
-                    // Save the previous slide
-                    slide.Save();
-
-                    // Create a new slide since the current one is "full"
-                    PptxSlide newSlide = this.slideTemplate.Clone();
-                    insertedSlides.Add(newSlide);
-                    PptxSlide.InsertAfter(newSlide, slide);
-                    tbl = newSlide.FindTable(this.tblId);
-                    slide = newSlide;
-
-                    donePerSlide = 1;
-                    // Not modifying i => do the replacement with the new slide
-                }
-            }
-
-            // Remove the last remaining rows if any
-            for (int row = tblRowsCount - 1; row >= donePerSlide; row--)
-            {
-                A.TableRow tr = GetRow(tbl, row);
-                tr.Remove();
-            }
-
-            // Save the latest slide
-            // Mandatory otherwise the next time SetRows() is run (on a different table)
-            // the rows from the previous tables will not contained the right data (from PptxParagraph.ReplaceTag())
-            slide.Save();
-
-            // Remove the template slide
-            this.slideTemplate.Remove();
-
-            return insertedSlides;
         }
 
         /// <summary>
