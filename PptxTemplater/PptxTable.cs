@@ -268,7 +268,7 @@
         /// Replaces a tag inside the table (a:tbl).
         /// </summary>
         /// <param name="cell">Contains the tag, the new text and a pciture.</param>
-        /// <returns>True if a tag has been found and replaced; false otherwise.</returns>
+        /// <returns><c>true</c> if a tag has been found and replaced, <c>false</c> otherwise.</returns>
         public bool ReplaceTag(Cell cell)
         {
             bool replacedAtLeastOnce = false;
@@ -299,7 +299,7 @@
         /// <param name="slide">The PptxSlide.</param>
         /// <param name="tc">The table cell (a:tc).</param>
         /// <param name="cell">Contains the tag, the new text and a picture.</param>
-        /// <returns>True if a tag has been found and replaced; false otherwise.</returns>
+        /// <returns><c>true</c> if a tag has been found and replaced, <c>false</c> otherwise.</returns>
         private static bool ReplaceTag(PptxSlide slide, A.TableCell tc, Cell cell)
         {
             bool replacedAtLeastOnce = false;

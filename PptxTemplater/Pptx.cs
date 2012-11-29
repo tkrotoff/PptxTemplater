@@ -6,6 +6,7 @@
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using DocumentFormat.OpenXml;
     using DocumentFormat.OpenXml.Packaging;
@@ -19,16 +20,38 @@
     {
         private readonly PresentationDocument presentationDocument;
 
+        /// <summary>
+        /// Regex pattern to extract tags from templates.
+        /// </summary>
+        public static readonly Regex TagPattern = new Regex(@"{{[A-Za-z0-9_+\-\.]*}}");
+
+        /// <summary>
+        /// MIME type for PowerPoint pptx files.
+        /// </summary>
+        public const string MimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
         #region ctor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pptx"/> class.
         /// </summary>
         /// <param name="file">The PowerPoint file.</param>
-        /// <param name="isEditable"><c>true</c> for read-write mode, <c>false</c> for read only mode.</param>
+        /// <param name="access">Access mode to use to open the PowerPoint file.</param>
         /// <remarks>Opens a PowerPoint file in read-write (default) or read only mode.</remarks>
-        public Pptx(string file, bool isEditable = true)
+        public Pptx(string file, FileAccess access)
         {
+            bool isEditable = false;
+            switch (access)
+            {
+                case FileAccess.Read:
+                    isEditable = false;
+                    break;
+                case FileAccess.Write:
+                case FileAccess.ReadWrite:
+                    isEditable = true;
+                    break;
+            }
+
             this.presentationDocument = PresentationDocument.Open(file, isEditable);
         }
 
@@ -36,10 +59,22 @@
         /// Initializes a new instance of the <see cref="Pptx"/> class.
         /// </summary>
         /// <param name="stream">The PowerPoint stream.</param>
-        /// <param name="isEditable"><c>true</c> for read-write mode, <c>false</c> for read only mode.</param>
+        /// <param name="access">Access mode to use to open the PowerPoint file.</param>
         /// <remarks>Opens a PowerPoint stream in read-write (default) or read only mode.</remarks>
-        public Pptx(Stream stream, bool isEditable = true)
+        public Pptx(Stream stream, FileAccess access)
         {
+            bool isEditable = false;
+            switch (access)
+            {
+                case FileAccess.Read:
+                    isEditable = false;
+                    break;
+                case FileAccess.Write:
+                case FileAccess.ReadWrite:
+                    isEditable = true;
+                    break;
+            }
+
             this.presentationDocument = PresentationDocument.Open(stream, isEditable);
         }
 

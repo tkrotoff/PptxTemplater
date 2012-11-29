@@ -53,7 +53,7 @@
         /// <param name="p">The paragraph (a:p).</param>
         /// <param name="tag">The tag to replace by newText, if null or empty do nothing; tag is a regex string.</param>
         /// <param name="newText">The new text to replace the tag with, if null replaced by empty string.</param>
-        /// <returns>True if a tag has been found and replaced; false otherwise.</returns>
+        /// <returns><c>true</c> if a tag has been found and replaced, <c>false</c> otherwise.</returns>
         internal static bool ReplaceTag(A.Paragraph p, string tag, string newText)
         {
             bool replaced = false;
