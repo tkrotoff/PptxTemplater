@@ -172,10 +172,9 @@
         /// <summary>
         /// Removes the table from the slide.
         /// </summary>
-        /// <returns>True if the table has been removed; false otherwise.</returns>
-        public bool Remove()
+        public void Remove()
         {
-            return this.slideTemplate.RemoveTable(this.tblId);
+            this.slideTemplate.RemoveTable(this.tblId);
         }
 
         /// <summary>

@@ -344,7 +344,6 @@
         /// Removes a table (a:tbl) given its "artificial" id (tblId).
         /// </summary>
         /// <param name="tblId">The table id.</param>
-        /// <returns>True if the table has been removed; false otherwise.</returns>
         /// <remarks>
         /// <![CDATA[
         /// p:graphicFrame
@@ -353,19 +352,11 @@
         ///    a:tbl (Table)
         /// ]]>
         /// </remarks>
-        internal bool RemoveTable(int tblId)
+        internal void RemoveTable(int tblId)
         {
-            bool removed = false;
-
             IEnumerable<GraphicFrame> graphicFrames = this.slidePart.Slide.Descendants<GraphicFrame>();
             GraphicFrame graphicFrame = graphicFrames.ElementAt(tblId);
-            if (graphicFrame != null)
-            {
-                graphicFrame.Remove();
-                removed = true;
-            }
-
-            return removed;
+            graphicFrame.Remove();
         }
 
         /// <summary>
