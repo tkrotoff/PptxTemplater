@@ -454,7 +454,8 @@
 
             PptxSlide slideTemplate = pptx.GetSlide(0);
 
-            var slidesCreated = Pptx.ReplaceTable_One(slideTemplate, "{{table1}}", rows);
+            var table = slideTemplate.FindTables("{{table1}}").First();
+            var slidesCreated = Pptx.ReplaceTable_One(slideTemplate, table, rows);
             Assert.AreEqual(1, slidesCreated.Count());
 
             // Force a slide duplication
@@ -537,7 +538,8 @@
                     rows.Add(row);
                 }
 
-                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table1}}", rows, existingSlides);
+                var table = slideTemplate.FindTables("{{table1}}").First();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, table, rows, existingSlides);
                 existingSlides.AddRange(slidesCreated);
             }
 
@@ -557,7 +559,8 @@
                     rows.Add(row);
                 }
 
-                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table2}}", rows, existingSlides);
+                var table = slideTemplate.FindTables("{{table2}}").First();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, table, rows, existingSlides);
                 existingSlides.AddRange(slidesCreated);
             }
 
@@ -577,7 +580,8 @@
                     rows.Add(row);
                 }
 
-                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table3}}", rows, existingSlides);
+                var table = slideTemplate.FindTables("{{table3}}").First();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, table, rows, existingSlides);
                 existingSlides.AddRange(slidesCreated);
             }
 
@@ -691,7 +695,8 @@ Tranquille. Il a deux trous rouges au côté droit.";
                         rows.Add(row.ToArray());
                     }
 
-                    var slidesCreated = Pptx.ReplaceTable_One(slideTemplate2, "{{table1}}", rows);
+                    var table = slideTemplate2.FindTables("{{table1}}").First();
+                    var slidesCreated = Pptx.ReplaceTable_One(slideTemplate2, table, rows);
                     existingSlides.AddRange(slidesCreated);
 
                     PptxSlide lastInsertedSlide = existingSlides.Last();
@@ -820,12 +825,14 @@ Tranquille. Il a deux trous rouges au côté droit.";
             List<PptxSlide> existingSlides = new List<PptxSlide>();
 
             {
-                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table1}}", rows, existingSlides);
+                var table = slideTemplate.FindTables("{{table1}}").First();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, table, rows, existingSlides);
                 existingSlides.AddRange(slidesCreated);
             }
 
             {
-                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, "{{table2}}", rows, existingSlides);
+                var table = slideTemplate.FindTables("{{table2}}").First();
+                var slidesCreated = Pptx.ReplaceTable_Multiple(slideTemplate, table, rows, existingSlides);
                 existingSlides.AddRange(slidesCreated);
             }
 

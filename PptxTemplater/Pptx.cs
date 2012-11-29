@@ -170,9 +170,9 @@
         /// Replaces the cells from a table (tbl).
         /// Algorithm for a slide template containing one table.
         /// </summary>
-        public static IEnumerable<PptxSlide> ReplaceTable_One(PptxSlide slideTemplate, string tag, IList<PptxTable.Cell[]> rows)
+        public static IEnumerable<PptxSlide> ReplaceTable_One(PptxSlide slideTemplate, PptxTable tableTemplate, IList<PptxTable.Cell[]> rows)
         {
-            return ReplaceTable_Multiple(slideTemplate, tag, rows, new List<PptxSlide>());
+            return ReplaceTable_Multiple(slideTemplate, tableTemplate, rows, new List<PptxSlide>());
         }
 
         /// <summary>
@@ -180,13 +180,15 @@
         /// Algorithm for a slide template containing multiple tables.
         /// </summary>
         /// <param name="slideTemplate">The slide template that contains the table(s).</param>
-        /// <param name="tag">The tag to find the table inside the slide template.</param>
+        /// <param name="tableTemplate">The table (tbl) to use, should be inside the slide template.</param>
         /// <param name="rows">The rows to replace the table's cells.</param>
         /// <param name="existingSlides">Existing slides created for the other tables inside the slide template.</param>
         /// <returns>The newly created slides if any.</returns>
-        public static IEnumerable<PptxSlide> ReplaceTable_Multiple(PptxSlide slideTemplate, string tag, IList<PptxTable.Cell[]> rows, List<PptxSlide> existingSlides)
+        public static IEnumerable<PptxSlide> ReplaceTable_Multiple(PptxSlide slideTemplate, PptxTable tableTemplate, IList<PptxTable.Cell[]> rows, List<PptxSlide> existingSlides)
         {
             List<PptxSlide> slidesCreated = new List<PptxSlide>();
+
+            string tag = tableTemplate.Title;
 
             PptxSlide lastSlide = slideTemplate;
             if (existingSlides.Count > 0)
@@ -198,12 +200,9 @@
 
             foreach (PptxSlide slide in existingSlides)
             {
-                PptxTable table = slide.FindTables(tag).FirstOrDefault();
-                if (table != null)
-                {
-                    List<PptxTable.Cell[]> remainingRows = table.SetRows(rows);
-                    rows = remainingRows;
-                }
+                PptxTable table = slide.FindTables(tag).First();
+                List<PptxTable.Cell[]> remainingRows = table.SetRows(rows);
+                rows = remainingRows;
             }
 
             // Force SetRows() at least once if there is no existingSlides
@@ -213,12 +212,9 @@
             while (loopOnce || rows.Count > 0)
             {
                 PptxSlide newSlide = lastSlideTemplate.Clone();
-                PptxTable table = newSlide.FindTables(tag).FirstOrDefault();
-                if (table != null)
-                {
-                    List<PptxTable.Cell[]> remainingRows = table.SetRows(rows);
-                    rows = remainingRows;
-                }
+                PptxTable table = newSlide.FindTables(tag).First();
+                List<PptxTable.Cell[]> remainingRows = table.SetRows(rows);
+                rows = remainingRows;
 
                 PptxSlide.InsertAfter(newSlide, lastSlide);
                 lastSlide = newSlide;
