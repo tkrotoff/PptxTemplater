@@ -206,7 +206,11 @@
                 }
             }
 
-            while (rows.Count > 0)
+            // Force SetRows() at least once if there is no existingSlides
+            // this means we are being called by ReplaceTable_One()
+            bool loopOnce = existingSlides.Count == 0;
+
+            while (loopOnce || rows.Count > 0)
             {
                 PptxSlide newSlide = lastSlideTemplate.Clone();
                 PptxTable table = newSlide.FindTables(tag).FirstOrDefault();
@@ -219,6 +223,8 @@
                 PptxSlide.InsertAfter(newSlide, lastSlide);
                 lastSlide = newSlide;
                 slidesCreated.Add(newSlide);
+
+                if (loopOnce) loopOnce = false;
             }
 
             lastSlideTemplate.Remove();
