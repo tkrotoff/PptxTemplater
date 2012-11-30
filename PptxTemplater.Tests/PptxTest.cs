@@ -13,7 +13,7 @@
     {
         private void AssertPptxEquals(string file, int nbSlides, string expected)
         {
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             Assert.AreEqual(nbSlides, pptx.SlidesCount());
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < nbSlides; i++)
@@ -31,7 +31,7 @@
         [ExpectedException(typeof(FileFormatException))]
         public void FileFormatException()
         {
-            Pptx pptx = new Pptx("../../files/picture1.png", false);
+            Pptx pptx = new Pptx("../../files/picture1.png", FileAccess.Read);
             pptx.Close();
         }
 
@@ -42,7 +42,7 @@
             const string thumbnail_empty_png = "../../files/thumbnail_empty.png";
             const string thumbnail_empty_output_png = "../../files/thumbnail_empty_output.png";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(0, nbSlides);
 
@@ -59,7 +59,7 @@
         {
             const string file = "../../files/GetTextsInAllSlides.pptx";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
@@ -100,7 +100,7 @@
         {
             const string file = "../../files/GetTextsInAllSlides.pptx";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
@@ -115,7 +115,7 @@
         {
             const string file = "../../files/GetNotesInAllSlides.pptx";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(4, nbSlides);
 
@@ -153,7 +153,7 @@
         {
             const string file = "../../files/GetNotesInAllSlides.pptx";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(4, nbSlides);
 
@@ -180,7 +180,7 @@
         {
             const string file = "../../files/ReplaceTablesInAllSlides.pptx";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
@@ -216,7 +216,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(3, nbSlides);
 
@@ -259,7 +259,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(2, nbSlides);
 
@@ -307,7 +307,7 @@
             {
                 File.Delete(dstFileName);
                 File.Copy(srcFileName, dstFileName);
-                Pptx pptx = new Pptx(dstFileName, true);
+                Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
                 PptxSlide slide = pptx.GetSlide(0);
                 PptxTable table = slide.FindTables("{{table1}}").First();
@@ -328,7 +328,7 @@
             {
                 File.Delete(dstFileName);
                 File.Copy(srcFileName, dstFileName);
-                Pptx pptx = new Pptx(dstFileName, true);
+                Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
                 PptxSlide slide = pptx.GetSlide(0);
                 PptxTable table = slide.FindTables("{{table1}}").First();
@@ -354,7 +354,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             const string icon_png = "../../files/icon.png";
             const string icon_png_contentType = "image/png";
@@ -507,7 +507,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             // Change the tags before to insert rows
             {
@@ -603,7 +603,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             PptxSlide slide0 = pptx.GetSlide(0);
             PptxSlide slide1 = pptx.GetSlide(1);
@@ -624,7 +624,7 @@
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             // Après la bataille (Victor Hugo)
             // http://fr.wikisource.org/wiki/Apr%C3%A8s_la_bataille_(Hugo)
@@ -750,7 +750,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             const string thumbnail_512x384_png = "../../files/thumbnail_512x384.png";
             const string thumbnail_512x384_output_png = "../../files/thumbnail_512x384_output.png";
 
-            Pptx pptx = new Pptx(file, false);
+            Pptx pptx = new Pptx(file, FileAccess.Read);
             byte[] thumbnail_default_output = pptx.GetThumbnail(); // Default size
             File.WriteAllBytes(thumbnail_default_output_png, thumbnail_default_output);
             byte[] thumbnail_128x96_output = pptx.GetThumbnail(new Size(128, 96));
@@ -773,7 +773,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             const string thumbnail_portrait_16_10_png = "../../files/thumbnail_portrait_16_10.png";
             const string thumbnail_portrait_16_10_output_png = "../../files/thumbnail_portrait_16_10_output.png";
 
-            pptx = new Pptx(file, false);
+            pptx = new Pptx(file, FileAccess.Read);
             byte[] thumbnail_portrait_16_10_output = pptx.GetThumbnail(); // Default size
             File.WriteAllBytes(thumbnail_portrait_16_10_output_png, thumbnail_portrait_16_10_output);
 
@@ -791,13 +791,13 @@ Tranquille. Il a deux trous rouges au côté droit.";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
             Assert.AreEqual(5, pptx.SlidesCount());
             pptx.GetSlide(1).Remove();
             Assert.AreEqual(4, pptx.SlidesCount());
             pptx.Close();
 
-            pptx = new Pptx(dstFileName, true);
+            pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
             Assert.AreEqual(4, pptx.SlidesCount());
             pptx.GetSlide(0).Remove();
             pptx.GetSlide(2).Remove(); // 2 = 3 - the first slide removed
@@ -806,7 +806,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
 
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
-            pptx = new Pptx(dstFileName, true);
+            pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
             int nbSlides = pptx.SlidesCount();
             Assert.AreEqual(5, nbSlides);
             for (int i = nbSlides - 1; i >= 0; i--)
@@ -828,7 +828,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             List<PptxTable.Cell[]> rows = new List<PptxTable.Cell[]>
                 {
@@ -877,7 +877,7 @@ Tranquille. Il a deux trous rouges au côté droit.";
             File.Delete(dstFileName);
             File.Copy(srcFileName, dstFileName);
 
-            Pptx pptx = new Pptx(dstFileName, true);
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
 
             const string picture1_replace_png = "../../files/picture1_replace.png";
             const string picture1_replace_png_contentType = "image/png";
