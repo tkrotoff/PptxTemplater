@@ -59,7 +59,7 @@
             string title = string.Empty;
 
             // Find the title if any
-            Shape titleShape = this.slidePart.Slide.Descendants<Shape>().FirstOrDefault(shape => IsShapeATitle(shape));
+            Shape titleShape = this.slidePart.Slide.Descendants<Shape>().FirstOrDefault(sp => IsShapeATitle(sp));
             if (titleShape != null)
             {
                 title = string.Join(" ", titleShape.Descendants<A.Paragraph>().Select(p => PptxParagraph.GetTexts(p)));
@@ -334,11 +334,11 @@
         /// <summary>
         /// Determines whether the given shape is a title.
         /// </summary>
-        private static bool IsShapeATitle(Shape shape)
+        private static bool IsShapeATitle(Shape sp)
         {
             bool isTitle = false;
 
-            var ph = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
+            var ph = sp.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
             if (ph != null && ph.Type != null && ph.Type.HasValue)
             {
                 switch ((PlaceholderValues)ph.Type)
