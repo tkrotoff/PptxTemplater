@@ -100,7 +100,9 @@
         /// Counts the number of slides.
         /// </summary>
         /// <returns>The number of slides.</returns>
+        /// <remarks>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278331">How to: Get All the Text in All Slides in a Presentation</see>
+        /// </remarks>
         public int SlidesCount()
         {
             PresentationPart presentationPart = this.presentationDocument.PresentationPart;

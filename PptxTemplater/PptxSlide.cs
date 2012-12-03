@@ -16,9 +16,21 @@
     /// <remarks>Could not simply be named Slide, conflicts with DocumentFormat.OpenXml.Drawing.Slide.</remarks>
     public class PptxSlide
     {
+        /// <summary>
+        /// Holds the presentation part.
+        /// </summary>
         private readonly PresentationPart presentationPart;
+
+        /// <summary>
+        /// Holds the slide part.
+        /// </summary>
         private readonly SlidePart slidePart;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PptxSlide"/> class.
+        /// </summary>
+        /// <param name="presentationPart">The presentation part.</param>
+        /// <param name="slidePart">The slide part.</param>
         internal PptxSlide(PresentationPart presentationPart, SlidePart slidePart)
         {
             this.presentationPart = presentationPart;
@@ -28,18 +40,14 @@
         /// <summary>
         /// Gets all the texts found inside the slide.
         /// </summary>
+        /// <returns>The list of texts detected into the slide.</returns>
         /// <remarks>
         /// Some strings inside the array can be empty, this happens when all A.Text from a paragraph are empty
         /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850836">How to: Get All the Text in a Slide in a Presentation</see>
         /// </remarks>
         public IEnumerable<string> GetTexts()
         {
-            List<string> texts = new List<string>();
-            foreach (A.Paragraph p in this.slidePart.Slide.Descendants<A.Paragraph>())
-            {
-                texts.Add(PptxParagraph.GetTexts(p));
-            }
-            return texts;
+            return this.slidePart.Slide.Descendants<A.Paragraph>().Select(p => PptxParagraph.GetTexts(p));
         }
 
         /// <summary>
@@ -54,48 +62,25 @@
             Shape titleShape = this.slidePart.Slide.Descendants<Shape>().FirstOrDefault(shape => IsShapeATitle(shape));
             if (titleShape != null)
             {
-                title = string.Join(" ", titleShape.Descendants<A.Paragraph>().Select(paragraph => PptxParagraph.GetTexts(paragraph)));
+                title = string.Join(" ", titleShape.Descendants<A.Paragraph>().Select(p => PptxParagraph.GetTexts(p)));
             }
 
             return title;
         }
 
         /// <summary>
-        /// Determines whether the given shape is a title.
-        /// </summary>
-        private static bool IsShapeATitle(Shape shape)
-        {
-            bool isTitle = false;
-
-            var ph = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
-            if (ph != null && ph.Type != null && ph.Type.HasValue)
-            {
-                switch ((PlaceholderValues)ph.Type)
-                {
-                    case PlaceholderValues.Title:
-                    case PlaceholderValues.CenteredTitle:
-                        isTitle = true;
-                        break;
-                }
-            }
-
-            return isTitle;
-        }
-
-        /// <summary>
         /// Gets all the notes associated with the slide.
         /// </summary>
         /// <returns>All the notes.</returns>
+        /// <remarks>
         /// <see href="http://msdn.microsoft.com/en-us/library/office/gg278319.aspx">Working with Notes Slides</see>
+        /// </remarks>
         public IEnumerable<string> GetNotes()
         {
-            List<string> notes = new List<string>();
+            var notes = new List<string>();
             if (this.slidePart.NotesSlidePart != null)
             {
-                foreach (A.Paragraph p in this.slidePart.NotesSlidePart.NotesSlide.Descendants<A.Paragraph>())
-                {
-                    notes.Add(PptxParagraph.GetTexts(p));
-                }
+                notes.AddRange(this.slidePart.NotesSlidePart.NotesSlide.Descendants<A.Paragraph>().Select(p => PptxParagraph.GetTexts(p)));
             }
             return notes;
         }
@@ -107,7 +92,7 @@
         /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
         public IEnumerable<PptxTable> GetTables()
         {
-            List<PptxTable> tables = new List<PptxTable>();
+            var tables = new List<PptxTable>();
 
             int tblId = 0;
             foreach (GraphicFrame graphicFrame in this.slidePart.Slide.Descendants<GraphicFrame>())
@@ -127,19 +112,11 @@
         /// <summary>
         /// Finds a table given its tag inside the slide.
         /// </summary>
+        /// <param name="tag">The tag associated with the table so it can be found.</param>
         /// <returns>The table or null.</returns>
-        /// <remarks>Assigns an "artificial" id (tblId) to the tables that match the tag.</remarks>
         public IEnumerable<PptxTable> FindTables(string tag)
         {
-            List<PptxTable> tables = new List<PptxTable>();
-            foreach (PptxTable table in this.GetTables())
-            {
-                if (table.Title.Contains(tag))
-                {
-                    tables.Add(table);
-                }
-            }
-            return tables;
+            return this.GetTables().Where(table => table.Title.Contains(tag));
         }
 
         /// <summary>
@@ -200,8 +177,188 @@
         }
 
         /// <summary>
+        /// Replaces a picture by another inside the slide.
+        /// </summary>
+        /// <param name="tag">The tag associated with the original picture so it can be found, if null or empty do nothing.</param>
+        /// <param name="newPicture">The new picture (as a byte array) to replace the original picture with, if null do nothing.</param>
+        /// <param name="contentType">The picture content type: image/png, image/jpeg...</param>
+        /// <remarks>
+        /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
+        /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
+        /// </remarks>
+        public void ReplacePicture(string tag, byte[] newPicture, string contentType)
+        {
+            if (string.IsNullOrEmpty(tag))
+            {
+                return;
+            }
+
+            if (newPicture == null)
+            {
+                return;
+            }
+
+            ImagePart imagePart = this.AddPicture(newPicture, contentType);
+
+            foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
+            {
+                var cNvPr = pic.NonVisualPictureProperties.NonVisualDrawingProperties;
+                if (cNvPr.Title != null)
+                {
+                    string title = cNvPr.Title.Value;
+                    if (title.Contains(tag))
+                    {
+                        // Gets the relationship ID of the part
+                        string rId = this.slidePart.GetIdOfPart(imagePart);
+
+                        pic.BlipFill.Blip.Embed.Value = rId;
+                    }
+                }
+            }
+
+            // Need to save the slide otherwise the relashionship is not saved.
+            // Example: <a:blip r:embed="rId2">
+            // r:embed is not updated with the right rId
+            this.Save();
+        }
+
+        /// <summary>
+        /// Replaces a picture by another inside the slide.
+        /// </summary>
+        /// <param name="tag">The tag associated with the original picture so it can be found, if null or empty do nothing.</param>
+        /// <param name="newPictureFile">The new picture (as a file path) to replace the original picture with, if null do nothing.</param>
+        /// <param name="contentType">The picture content type: image/png, image/jpeg...</param>
+        public void ReplacePicture(string tag, string newPictureFile, string contentType)
+        {
+            byte[] bytes = File.ReadAllBytes(newPictureFile);
+            this.ReplacePicture(tag, bytes, contentType);
+        }
+
+        /// <summary>
+        /// Clones this slide.
+        /// </summary>
+        /// <returns>The clone.</returns>
+        /// <remarks>
+        /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
+        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
+        /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations and Using Open XML SDK 2.0 Productivity Tool</see>
+        /// </remarks>
+        public PptxSlide Clone()
+        {
+            SlidePart slideTemplate = this.slidePart;
+
+            // Clone slide contents
+            SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
+            using (var templateStream = slideTemplate.GetStream(FileMode.Open))
+            {
+                slidePartClone.FeedData(templateStream);
+            }
+
+            // Copy layout part
+            slidePartClone.AddPart(slideTemplate.SlideLayoutPart);
+
+            // Copy the image parts
+            foreach (ImagePart image in slideTemplate.ImageParts)
+            {
+                ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, slideTemplate.GetIdOfPart(image));
+                using (var imageStream = image.GetStream())
+                {
+                    imageClone.FeedData(imageStream);
+                }
+            }
+
+            return new PptxSlide(this.presentationPart, slidePartClone);
+        }
+
+        /// <summary>
+        /// Inserts this slide after a given target slide.
+        /// </summary>
+        /// <param name="newSlide">The new slide to insert.</param>
+        /// <param name="prevSlide">The previous slide.</param>
+        /// <remarks>
+        /// This slide will be inserted after the slide specified as a parameter.
+        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
+        /// </remarks>
+        public static void InsertAfter(PptxSlide newSlide, PptxSlide prevSlide)
+        {
+            // Find the presentationPart
+            var presentationPart = prevSlide.presentationPart;
+
+            SlideIdList slideIdList = presentationPart.Presentation.SlideIdList;
+
+            // Find the slide id where to insert our slide
+            SlideId prevSlideId = null;
+            foreach (SlideId slideId in slideIdList.ChildElements)
+            {
+                // See http://openxmldeveloper.org/discussions/development_tools/f/17/p/5302/158602.aspx
+                if (slideId.RelationshipId == presentationPart.GetIdOfPart(prevSlide.slidePart))
+                {
+                    prevSlideId = slideId;
+                    break;
+                }
+            }
+
+            // Find the highest id
+            uint maxSlideId = slideIdList.ChildElements.Cast<SlideId>().Max(x => x.Id.Value);
+
+            // public override T InsertAfter<T>(T newChild, DocumentFormat.OpenXml.OpenXmlElement refChild)
+            // Inserts the specified element immediately after the specified reference element.
+            SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
+            newSlideId.Id = maxSlideId + 1;
+            newSlideId.RelationshipId = presentationPart.GetIdOfPart(newSlide.slidePart);
+        }
+
+        /// <summary>
+        /// Removes the slide from the PowerPoint file.
+        /// </summary>
+        /// <remarks>
+        /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
+        /// </remarks>
+        public void Remove()
+        {
+            SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
+
+            foreach (SlideId slideId in slideIdList.ChildElements)
+            {
+                if (slideId.RelationshipId == this.presentationPart.GetIdOfPart(this.slidePart))
+                {
+                    slideIdList.RemoveChild(slideId);
+                    break;
+                }
+            }
+
+            this.presentationPart.DeletePart(this.slidePart);
+        }
+
+        /// <summary>
+        /// Determines whether the given shape is a title.
+        /// </summary>
+        private static bool IsShapeATitle(Shape shape)
+        {
+            bool isTitle = false;
+
+            var ph = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
+            if (ph != null && ph.Type != null && ph.Type.HasValue)
+            {
+                switch ((PlaceholderValues)ph.Type)
+                {
+                    case PlaceholderValues.Title:
+                    case PlaceholderValues.CenteredTitle:
+                        isTitle = true;
+                        break;
+                }
+            }
+
+            return isTitle;
+        }
+
+        /// <summary>
         /// Adds a new picture to the slide in order to re-use the picture later on.
         /// </summary>
+        /// <param name="picture">The picture as a byte array.</param>
+        /// <param name="contentType">The picture content type: image/png, image/jpeg...</param>
+        /// <returns>The image part</returns>
         internal ImagePart AddPicture(byte[] picture, string contentType)
         {
             ImagePartType type = 0;
@@ -262,65 +419,6 @@
         }
 
         /// <summary>
-        /// Replaces a picture by another inside the slide.
-        /// </summary>
-        /// <param name="tag">The tag to replace by newPicture, if null or empty do nothing.</param>
-        /// <param name="newPicture">The new picture (as a byte array) to replace the tag with, if null do nothing.</param>
-        /// <param name="contentType">The picture content type (image/png, image/jpeg...).</param>
-        /// <remarks>
-        /// <see href="http://stackoverflow.com/questions/7070074/how-can-i-retrieve-images-from-a-pptx-file-using-ms-open-xml-sdk">How can I retrieve images from a .pptx file using MS Open XML SDK?</see>
-        /// <see href="http://stackoverflow.com/questions/7137144/how-can-i-retrieve-some-image-data-and-format-using-ms-open-xml-sdk">How can I retrieve some image data and format using MS Open XML SDK?</see>
-        /// <see href="http://msdn.microsoft.com/en-us/library/office/bb497430.aspx">How to: Insert a Picture into a Word Processing Document</see>
-        /// </remarks>
-        public void ReplacePicture(string tag, byte[] newPicture, string contentType)
-        {
-            if (string.IsNullOrEmpty(tag))
-            {
-                return;
-            }
-
-            if (newPicture == null)
-            {
-                return;
-            }
-
-            ImagePart imagePart = this.AddPicture(newPicture, contentType);
-
-            foreach (Picture pic in this.slidePart.Slide.Descendants<Picture>())
-            {
-                var cNvPr = pic.NonVisualPictureProperties.NonVisualDrawingProperties;
-                if (cNvPr.Title != null)
-                {
-                    string title = cNvPr.Title.Value;
-                    if (title.Contains(tag))
-                    {
-                        // Gets the relationship ID of the part
-                        string rId = this.slidePart.GetIdOfPart(imagePart);
-
-                        pic.BlipFill.Blip.Embed.Value = rId;
-                    }
-                }
-            }
-
-            // Need to save the slide otherwise the relashionship is not saved.
-            // Example: <a:blip r:embed="rId2">
-            // r:embed is not updated with the right rId
-            this.Save();
-        }
-
-        /// <summary>
-        /// Replaces a picture by another inside the slide.
-        /// </summary>
-        /// <param name="tag">The tag.</param>
-        /// <param name="newPictureFile">The new picture (as a file path) to replace the tag with.</param>
-        /// <param name="contentType">Type of the content (image/png, image/jpeg...).</param>
-        public void ReplacePicture(string tag, string newPictureFile, string contentType)
-        {
-            byte[] bytes = File.ReadAllBytes(newPictureFile);
-            this.ReplacePicture(tag, bytes, contentType);
-        }
-
-        /// <summary>
         /// Finds a table (a:tbl) given its "artificial" id (tblId).
         /// </summary>
         /// <param name="tblId">The table id.</param>
@@ -357,94 +455,6 @@
             IEnumerable<GraphicFrame> graphicFrames = this.slidePart.Slide.Descendants<GraphicFrame>();
             GraphicFrame graphicFrame = graphicFrames.ElementAt(tblId);
             graphicFrame.Remove();
-        }
-
-        /// <summary>
-        /// Clones this slide.
-        /// </summary>
-        /// <returns>The clone.</returns>
-        /// <see href="http://blogs.msdn.com/b/brian_jones/archive/2009/08/13/adding-repeating-data-to-powerpoint.aspx">Adding Repeating Data to PowerPoint</see>
-        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
-        /// <see href="http://www.exsilio.com/blog/post/2011/03/21/Cloning-Slides-including-Images-and-Charts-in-PowerPoint-presentations-Using-Open-XML-SDK-20-Productivity-Tool.aspx">See Cloning Slides including Images and Charts in PowerPoint presentations and Using Open XML SDK 2.0 Productivity Tool</see>
-        public PptxSlide Clone()
-        {
-            SlidePart slideTemplate = this.slidePart;
-
-            // Clone slide contents
-            SlidePart slidePartClone = this.presentationPart.AddNewPart<SlidePart>();
-            using (var templateStream = slideTemplate.GetStream(FileMode.Open))
-            {
-                slidePartClone.FeedData(templateStream);
-            }
-
-            // Copy layout part
-            slidePartClone.AddPart(slideTemplate.SlideLayoutPart);
-
-            // Copy the image parts
-            foreach (ImagePart image in slideTemplate.ImageParts)
-            {
-                ImagePart imageClone = slidePartClone.AddImagePart(image.ContentType, slideTemplate.GetIdOfPart(image));
-                using (var imageStream = image.GetStream())
-                {
-                    imageClone.FeedData(imageStream);
-                }
-            }
-
-            return new PptxSlide(this.presentationPart, slidePartClone);
-        }
-
-        /// <summary>
-        /// Inserts this slide after a given target slide.
-        /// </summary>
-        /// <remarks>This slide will be inserted after the slide specified as a parameter.</remarks>
-        /// <see href="http://startbigthinksmall.wordpress.com/2011/05/17/cloning-a-slide-using-open-xml-sdk-2-0/">Cloning a Slide using Open Xml SDK 2.0</see>
-        public static void InsertAfter(PptxSlide newSlide, PptxSlide prevSlide)
-        {
-            // Find the presentationPart
-            var presentationPart = prevSlide.presentationPart;
-
-            SlideIdList slideIdList = presentationPart.Presentation.SlideIdList;
-
-            // Find the slide id where to insert our slide
-            SlideId prevSlideId = null;
-            foreach (SlideId slideId in slideIdList.ChildElements)
-            {
-                // See http://openxmldeveloper.org/discussions/development_tools/f/17/p/5302/158602.aspx
-                if (slideId.RelationshipId == presentationPart.GetIdOfPart(prevSlide.slidePart))
-                {
-                    prevSlideId = slideId;
-                    break;
-                }
-            }
-
-            // Find the highest id
-            uint maxSlideId = slideIdList.ChildElements.Cast<SlideId>().Max(x => x.Id.Value);
-
-            // public override T InsertAfter<T>(T newChild, DocumentFormat.OpenXml.OpenXmlElement refChild)
-            // Inserts the specified element immediately after the specified reference element.
-            SlideId newSlideId = slideIdList.InsertAfter(new SlideId(), prevSlideId);
-            newSlideId.Id = maxSlideId + 1;
-            newSlideId.RelationshipId = presentationPart.GetIdOfPart(newSlide.slidePart);
-        }
-
-        /// <summary>
-        /// Removes the slide from the PowerPoint file.
-        /// </summary>
-        /// <see href="http://msdn.microsoft.com/en-us/library/office/cc850840.aspx">How to: Delete a Slide from a Presentation</see>
-        public void Remove()
-        {
-            SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
-
-            foreach (SlideId slideId in slideIdList.ChildElements)
-            {
-                if (slideId.RelationshipId == this.presentationPart.GetIdOfPart(this.slidePart))
-                {
-                    slideIdList.RemoveChild(slideId);
-                    break;
-                }
-            }
-
-            this.presentationPart.DeletePart(this.slidePart);
         }
 
         /// <summary>
