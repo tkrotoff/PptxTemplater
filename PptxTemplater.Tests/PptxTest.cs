@@ -912,5 +912,26 @@ Tranquille. Il a deux trous rouges au côté droit.";
 
             // Sorry, you will have to manually check that the pictures have been replaced
         }
+
+        [TestMethod]
+        public void InvalidXMLCharacters()
+        {
+            const string srcFileName = "../../files/ReplaceTagsInAllSlides.pptx";
+            const string dstFileName = "../../files/ReplaceTagsInAllSlides_invalidxml.pptx";
+            File.Delete(dstFileName);
+            File.Copy(srcFileName, dstFileName);
+
+            Pptx pptx = new Pptx(dstFileName, FileAccess.ReadWrite);
+
+            // See UTF-8 encoding table and Unicode characters http://www.utf8-chartable.de/
+            // See Table of ASCII Characters http://web.cs.mun.ca/~michael/c/ascii-table.html
+
+            const string sub = "\u001A";
+            pptx.GetSlide(0).ReplaceTag("{{hello}}", "hexadecimal value 0x1A (SUB), is an invalid character: " + sub, PptxSlide.ReplacementType.Global);
+            const string esc = "\u001B";
+            pptx.GetSlide(0).ReplaceTag("{{hello}}", "hexadecimal value 0x1B (ESC), is an invalid character: " + esc, PptxSlide.ReplacementType.Global);
+
+            pptx.Close();
+        }
     }
 }

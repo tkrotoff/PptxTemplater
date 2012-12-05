@@ -1,6 +1,7 @@
 ﻿namespace PptxTemplater
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -67,6 +68,7 @@
             {
                 newText = string.Empty;
             }
+            newText = RemoveInvalidXMLChars(newText);
 
             while (true)
             {
@@ -146,6 +148,24 @@
             }
 
             return replaced;
+        }
+
+        /// <summary>
+        /// Removes characters that are invalid for XML encoding.
+        /// </summary>
+        /// <param name="input">Text to be encoded.</param>
+        /// <returns>Text with invalid XML characters removed.</returns>
+        /// <remarks>
+        /// <see href="http://stackoverflow.com/questions/20762/how-do-you-remove-invalid-hexadecimal-characters-from-an-xml-based-data-source-p">How do you remove invalid hexadecimal characters from an XML-based data source</see>
+        /// </remarks>
+        private static string RemoveInvalidXMLChars(string input)
+        {
+            return new string(input.Where(value =>
+                                (value >= 0x0020 && value <= 0xD7FF) ||
+                                (value >= 0xE000 && value <= 0xFFFD) ||
+                                value == 0x0009 ||
+                                value == 0x000A ||
+                                value == 0x000D).ToArray());
         }
 
         /// <summary>
