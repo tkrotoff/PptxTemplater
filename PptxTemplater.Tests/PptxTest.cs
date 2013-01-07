@@ -209,6 +209,31 @@
         }
 
         [TestMethod]
+        public void TableColumnTitles()
+        {
+            const string file = "../../files/TableColumnTitles.pptx";
+
+            Pptx pptx = new Pptx(file, FileAccess.Read);
+            int nbSlides = pptx.SlidesCount();
+            Assert.AreEqual(1, nbSlides);
+
+            Assert.AreEqual(string.Empty, pptx.GetSlide(0).GetTitle());
+
+            var slidesTables = new Dictionary<int, PptxTable[]>();
+            for (int i = 0; i < nbSlides; i++)
+            {
+                PptxSlide slide = pptx.GetSlide(i);
+                IEnumerable<PptxTable> tables = slide.GetTables();
+                slidesTables.Add(i, tables.ToArray());
+            }
+
+            string[] expected = { "1 Multiple lines", "2", "3", "4", "5" };
+            CollectionAssert.AreEqual(expected, slidesTables[0][0].ColumnTitles().ToArray());
+
+            pptx.Close();
+        }
+
+        [TestMethod]
         public void ReplaceTags()
         {
             const string srcFileName = "../../files/ReplaceTags.pptx";

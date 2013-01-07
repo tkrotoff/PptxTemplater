@@ -395,10 +395,13 @@
 
             A.Table tbl = this.slideTemplate.FindTable(this.tblId);
             A.TableRow tr = GetRow(tbl, 0); // The first table row == the columns
-            foreach (A.Paragraph p in tr.Descendants<A.Paragraph>())
+
+            int columnsCount = this.ColumnsCount();
+            for (int i = 0; i < columnsCount; i++)
             {
-                string columnTitle = PptxParagraph.GetTexts(p);
-                titles.Add(columnTitle);
+                A.TableCell tc = GetCell(tr, i);
+                var text = string.Join(" ", tc.Descendants<A.Paragraph>().Select(PptxParagraph.GetTexts).ToArray());
+                titles.Add(text);
             }
 
             return titles;
